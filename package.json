@@ -1,0 +1,43 @@
+{
+  "name": "@withwiz/block-editor",
+  "version": "0.1.0",
+  "description": "Block-based content editor for web publishing",
+  "private": false,
+  "files": ["dist", "styles"],
+  "typesVersions": {
+    "*": {
+      "*": ["./dist/*"]
+    }
+  },
+  "exports": {
+    ".": "./dist/index.js",
+    "./types": "./dist/types.js",
+    "./blocks/built-in": "./dist/blocks/built-in.js",
+    "./components/BlockEditor": "./dist/components/BlockEditor.js",
+    "./components/BlockRenderer": "./dist/components/BlockRenderer.js",
+    "./components/ImageUploadField": "./dist/components/ImageUploadField.js",
+    "./components/ArtistEditor": "./dist/components/ArtistEditor.js",
+    "./context/BlockEditorProvider": "./dist/context/BlockEditorProvider.js",
+    "./core/serializer": "./dist/core/serializer.js",
+    "./core/html-renderer": "./dist/core/html-renderer.js",
+    "./core/image-resize": "./dist/core/image-resize.js",
+    "./hooks/useImageDropZone": "./dist/hooks/useImageDropZone.js",
+    "./styles/editor.css": "./styles/editor.css",
+    "./styles/preview.css": "./styles/preview.css",
+    "./styles/artist.css": "./styles/artist.css"
+  },
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly --skipLibCheck",
+    "build:js": "tsup",
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck"
+  },
+  "peerDependencies": {
+    "react": ">=18.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "19.2.7",
+    "@types/react-dom": "19.2.3",
+    "tsup": "^8.0.0",
+    "typescript": "^5"
+  }
+}
