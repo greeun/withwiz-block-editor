@@ -29,7 +29,18 @@
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --skipLibCheck",
     "build:js": "tsup",
-    "build:types": "tsc --emitDeclarationOnly --skipLibCheck"
+    "build:types": "tsc --emitDeclarationOnly --skipLibCheck",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "test:unit": "vitest run __tests__/unit",
+    "test:e2e": "vitest run __tests__/e2e",
+    "test:integration": "vitest run __tests__/integration",
+    "test:security": "vitest run __tests__/security",
+    "test:performance": "vitest run __tests__/performance",
+    "test:accessibility": "vitest run __tests__/accessibility",
+    "test:api": "vitest run __tests__/api",
+    "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
     "react": ">=18.0.0"
