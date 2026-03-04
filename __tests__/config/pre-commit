@@ -1,0 +1,9 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Run linting on staged files
+npx lint-staged
+
+# Run security and unit tests
+npm run test:security
+npm run test:unit
