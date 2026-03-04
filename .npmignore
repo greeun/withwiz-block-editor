@@ -1,0 +1,43 @@
+# Development and testing
+__tests__/
+.vitest/
+coverage/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Configuration files
+vitest.config.ts
+tsconfig.json
+.eslintrc.json
+.prettierrc
+.gitignore
+.env.test
+
+# Source files (only dist/ and styles/ should be published)
+src/
+docs/
+
+# Build artifacts
+tsconfig.tsbuildinfo
+*.tsbuildinfo
+
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Misc
+.git/
+.github/
+.serena/
+*.jsonl
+README.md
