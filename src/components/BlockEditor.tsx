@@ -98,7 +98,8 @@ export function BlockEditor(props: BlockEditorProps) {
   // Sync raw mode blocks from parent
   useEffect(() => {
     if (!isSerialized(props)) {
-      setBlocksState(props.blocks);
+      const incoming = (props as RawMode).blocks;
+      setBlocksState((prev) => (prev === incoming ? prev : incoming));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [!isSerialized(props) && (props as RawMode).blocks]);

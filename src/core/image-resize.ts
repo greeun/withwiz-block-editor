@@ -7,9 +7,18 @@ import type { ResizeResult } from "../types";
 
 const RESIZE_THRESHOLD = 10 * 1024 * 1024; // 10MB
 const ABSOLUTE_MAX_SIZE = 50 * 1024 * 1024; // 50MB
+const MAX_UPLOAD_SIZE = 10 * 1024 * 1024; // 10MB for upload validation
 const SKIP_RESIZE_TYPES = ["image/gif"];
 
 export const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif"];
+
+/** Magic numbers (file signatures) for image format verification */
+const MAGIC_NUMBERS = {
+  jpeg: [0xFF, 0xD8, 0xFF],
+  png: [0x89, 0x50, 0x4E, 0x47],
+  gif: [0x47, 0x49, 0x46],
+  webp: [0x52, 0x49, 0x46, 0x46], // RIFF (need to check for WEBP signature later)
+};
 
 /**
  * Resizes images over 10MB using Canvas API.
@@ -63,19 +72,233 @@ export async function resizeImageIfNeeded(file: File): Promise<ResizeResult> {
   return toResult(finalBlob, file.name, outputMime, originalSize);
 }
 
-/** Validate image file type and size */
-export function validateImageFile(file: File): string | null {
-  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
-    const allowed = ALLOWED_IMAGE_TYPES.map((t) => t.split("/")[1]).join(", ");
-    return `지원하지 않는 파일 형식입니다. (허용: ${allowed})`;
-  }
-  if (file.size > ABSOLUTE_MAX_SIZE) {
-    return `파일 크기가 너무 큽니다. (${(file.size / 1024 / 1024).toFixed(0)}MB, 최대 50MB)`;
-  }
-  if (SKIP_RESIZE_TYPES.includes(file.type) && file.size > RESIZE_THRESHOLD) {
-    return `GIF 파일은 10MB 이하만 업로드할 수 있습니다. (${(file.size / 1024 / 1024).toFixed(1)}MB)`;
+/** Validate image file type and size (legacy function - returns error string) */
+export function validateImageFile(file: File): string | null;
+export function validateImageFile(file: File): ValidationResult;
+export function validateImageFile(file: File): string | null | ValidationResult {
+  // If called with single argument, perform full validation
+  if (arguments.length === 1) {
+    return performImageValidation(file);
   }
   return null;
+}
+
+/** Image validation result interface */
+export interface ValidationResult {
+  valid: boolean;
+  error?: string;
+  hasMetadata?: boolean;
+}
+
+/**
+ * Comprehensive image file validation (sync version)
+ * - Validates MIME type
+ * - Checks file size
+ * - Validates filename
+ * - Validates against SVG/script injection
+ */
+function performImageValidation(file: File): ValidationResult {
+  // 0. Special handling for SVG files (security risk) - check first
+  if (file.type === "image/svg+xml") {
+    return {
+      valid: false,
+      error: "SVG 파일은 보안상의 이유로 업로드가 제한됩니다.",
+    };
+  }
+
+  // 1. MIME type validation
+  if (!file.type) {
+    return {
+      valid: false,
+      error: "파일 형식이 지정되지 않았습니다.",
+    };
+  }
+
+  if (!ALLOWED_IMAGE_TYPES.includes(file.type)) {
+    return {
+      valid: false,
+      error: `지원하지 않는 파일 형식입니다: ${file.type}. 허용된 형식: jpeg, png, webp, gif`,
+    };
+  }
+
+  // 2. File size validation
+  if (file.size === 0) {
+    return {
+      valid: false,
+      error: "파일이 비어있습니다.",
+    };
+  }
+
+  if (file.size > MAX_UPLOAD_SIZE) {
+    return {
+      valid: false,
+      error: `파일 크기가 10MB를 초과합니다: ${(file.size / 1024 / 1024).toFixed(1)}MB`,
+    };
+  }
+
+  // 3. Filename validation
+  const filenameError = validateFilename(file.name);
+  if (filenameError) {
+    return {
+      valid: false,
+      error: filenameError,
+    };
+  }
+
+  // 4. Check for malicious content in filename
+  if (file.name.includes("\0")) {
+    return {
+      valid: false,
+      error: "파일명에 올바르지 않은 문자가 포함되어 있습니다.",
+    };
+  }
+
+  // 5. Special handling for SVG files (security risk)
+  if (file.type === "image/svg+xml") {
+    return {
+      valid: false,
+      error: "SVG 파일은 보안상의 이유로 업로드가 제한됩니다.",
+    };
+  }
+
+  // Return valid with metadata detection
+  return {
+    valid: true,
+    hasMetadata: checkPotentialMetadata(file.type),
+  };
+}
+
+/**
+ * Async magic number validation for enhanced security
+ * Validates that file content matches the claimed MIME type
+ */
+export async function validateImageFileAsync(file: File): Promise<ValidationResult> {
+  // First do sync validation
+  const syncResult = performImageValidation(file);
+  if (!syncResult.valid) {
+    return syncResult;
+  }
+
+  // Then validate magic numbers
+  try {
+    const magicResult = await validateMagicNumbers(file);
+    if (!magicResult.valid) {
+      return magicResult;
+    }
+  } catch (e) {
+    // If we can't read the file, reject it
+    return {
+      valid: false,
+      error: "파일 형식 검증에 실패했습니다.",
+    };
+  }
+
+  return syncResult;
+}
+
+/**
+ * Validate file magic numbers (file signatures)
+ */
+async function validateMagicNumbers(file: File): Promise<ValidationResult> {
+  try {
+    const buffer = await file.slice(0, 12).arrayBuffer();
+    const bytes = new Uint8Array(buffer);
+
+    const mimeType = file.type;
+
+    // Check magic numbers based on claimed MIME type
+    if (mimeType === "image/jpeg") {
+      // JPEG: FF D8 FF
+      if (bytes[0] === 0xFF && bytes[1] === 0xD8 && bytes[2] === 0xFF) {
+        return { valid: true };
+      }
+      return {
+        valid: false,
+        error: "파일 형식이 올바르지 않습니다: JPEG로 클레임되었지만 다른 형식입니다.",
+      };
+    }
+
+    if (mimeType === "image/png") {
+      // PNG: 89 50 4E 47
+      if (bytes[0] === 0x89 && bytes[1] === 0x50 && bytes[2] === 0x4E && bytes[3] === 0x47) {
+        return { valid: true };
+      }
+      return {
+        valid: false,
+        error: "파일 형식이 올바르지 않습니다: PNG로 클레임되었지만 다른 형식입니다.",
+      };
+    }
+
+    if (mimeType === "image/gif") {
+      // GIF: 47 49 46 (GIF)
+      if (bytes[0] === 0x47 && bytes[1] === 0x49 && bytes[2] === 0x46) {
+        return { valid: true };
+      }
+      return {
+        valid: false,
+        error: "파일 형식이 올바르지 않습니다: GIF로 클레임되었지만 다른 형식입니다.",
+      };
+    }
+
+    if (mimeType === "image/webp") {
+      // WebP: RIFF ... WEBP
+      if (
+        bytes[0] === 0x52 &&
+        bytes[1] === 0x49 &&
+        bytes[2] === 0x46 &&
+        bytes[3] === 0x46 &&
+        bytes[8] === 0x57 &&
+        bytes[9] === 0x45 &&
+        bytes[10] === 0x42 &&
+        bytes[11] === 0x50
+      ) {
+        return { valid: true };
+      }
+      return {
+        valid: false,
+        error: "파일 형식이 올바르지 않습니다: WebP로 클레임되었지만 다른 형식입니다.",
+      };
+    }
+
+    return { valid: true };
+  } catch (e) {
+    return {
+      valid: false,
+      error: "파일 내용 검증에 실패했습니다.",
+    };
+  }
+}
+
+/**
+ * Validate filename for security issues
+ */
+function validateFilename(filename: string): string | null {
+  // Check for path traversal
+  if (filename.includes("../") || filename.includes("..\\")) {
+    return "파일명에 경로 이동 문자가 포함되어 있습니다.";
+  }
+
+  // Check for double extensions (e.g., photo.jpg.exe)
+  const parts = filename.split(".");
+  if (parts.length > 2) {
+    const ext = parts[parts.length - 1].toLowerCase();
+    // Common dangerous extensions
+    const dangerousExts = ["exe", "bat", "cmd", "com", "pif", "scr", "vbs", "js", "jar", "zip"];
+    if (dangerousExts.includes(ext)) {
+      return "위험한 파일 확장자가 감지되었습니다.";
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Check if file metadata might be present
+ * This is a heuristic check based on file type
+ */
+function checkPotentialMetadata(mimeType: string): boolean {
+  // JPEG and PNG files commonly contain metadata
+  return mimeType === "image/jpeg" || mimeType === "image/png";
 }
 
 // --- internal helpers ---

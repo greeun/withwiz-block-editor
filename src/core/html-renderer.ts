@@ -7,7 +7,96 @@ export function h(s: string): string {
 }
 
 export function nl2br(s: string): string {
-  return h(s).replace(/\n/g, "<br>");
+  return h(s).replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
+}
+
+/**
+ * Escapes a string for use in HTML attributes.
+ * Handles quotes to prevent attribute injection attacks.
+ */
+export function hAttr(s: string): string {
+  return h(s).replace(/"/g, "&quot;");
+}
+
+/**
+ * Validates and sanitizes URLs to prevent protocol-based XSS attacks.
+ * Allows: http(s), relative paths, and anchor links.
+ * Blocks: javascript:, data:, vbscript:, and other dangerous protocols.
+ */
+export function sanitizeUrl(url: string): string {
+  if (!url) return "";
+
+  const trimmed = url.trim();
+  if (!trimmed) return "";
+
+  // Block URLs with dangerous characters that could break attributes
+  if (trimmed.includes('"') || trimmed.includes("'") || trimmed.includes("<") || trimmed.includes(">")) {
+    return "";
+  }
+
+  const trimmedLower = trimmed.toLowerCase();
+
+  // Block dangerous protocols
+  if (trimmedLower.startsWith("javascript:") ||
+      trimmedLower.startsWith("vbscript:") ||
+      trimmedLower.startsWith("data:") ||
+      trimmedLower.startsWith("file://")) {
+    return "";
+  }
+
+  // Allow safe URLs (http, https, relative paths, anchor links)
+  if (trimmedLower.startsWith("http://") ||
+      trimmedLower.startsWith("https://") ||
+      trimmedLower.startsWith("/") ||
+      trimmedLower.startsWith("#") ||
+      trimmedLower.startsWith("./") ||
+      trimmedLower.startsWith("../")) {
+    return trimmed; // Return trimmed URL
+  }
+
+  // Default to empty string for unknown protocols
+  return "";
+}
+
+/**
+ * Sanitizes image sources to prevent protocol-based XSS attacks.
+ */
+export function sanitizeImageSrc(src: string): string {
+  if (!src) return "";
+
+  const trimmed = src.trim();
+  if (!trimmed) return "";
+
+  // Block URLs with dangerous characters that could break attributes
+  if (trimmed.includes('"') || trimmed.includes("'") || trimmed.includes("<") || trimmed.includes(">")) {
+    return "";
+  }
+
+  const trimmedLower = trimmed.toLowerCase();
+
+  // Block dangerous protocols
+  if (trimmedLower.startsWith("javascript:") ||
+      trimmedLower.startsWith("data:") ||
+      trimmedLower.startsWith("vbscript:") ||
+      trimmedLower.startsWith("file://") ||
+      trimmedLower.includes("<svg") ||
+      trimmedLower.includes("<img")) {
+    return "";
+  }
+
+  // Allow http(s) and relative paths
+  if (trimmedLower.startsWith("http://") ||
+      trimmedLower.startsWith("https://") ||
+      trimmedLower.startsWith("/")) {
+    return trimmed;
+  }
+
+  // Allow relative paths without protocol
+  if (!trimmed.includes("://")) {
+    return trimmed;
+  }
+
+  return "";
 }
 
 /* === Renderer Factory === */
@@ -42,21 +131,21 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
       }
       case "img-full":
         return b.src
-          ? `<div class="${p}-imgf"><img src="${b.src}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
+          ? `<div class="${p}-imgf"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
           : "";
       case "img-inline":
         if (!b.src) return "";
         { const w = b.size === "small" ? "50%" : b.size === "medium" ? "70%" : "100%";
-          return `<div class="${p}-imgi" style="width:${w}"><img src="${b.src}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`; }
+          return `<div class="${p}-imgi" style="width:${w}"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`; }
       case "img-pair":
         return (b.src1 || b.src2)
-          ? `<div class="${p}-pair">${b.src1 ? `<img src="${b.src1}" alt="">` : ""}${b.src2 ? `<img src="${b.src2}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
+          ? `<div class="${p}-pair">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
           : "";
       case "gallery":
-        return `<div class="${p}-gal">${b.src1 ? `<img src="${b.src1}" alt="">` : ""}${b.src2 ? `<img src="${b.src2}" alt="">` : ""}${b.src3 ? `<img src="${b.src3}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`;
+        return `<div class="${p}-gal">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="">` : ""}${b.src3 ? `<img src="${hAttr(sanitizeImageSrc(b.src3))}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`;
       case "img-text":
         return (b.src || b.name)
-          ? `<div class="${p}-prof">${b.src ? `<img src="${b.src}" alt="">` : ""}<div>${b.name ? `<div class="${p}-nm">${h(b.name)}</div>` : ""}${b.role ? `<div class="${p}-rl">${h(b.role)}</div>` : ""}${b.bio ? `<div class="${p}-bio">${nl2br(b.bio)}</div>` : ""}</div></div>`
+          ? `<div class="${p}-prof">${b.src ? `<img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">` : ""}<div>${b.name ? `<div class="${p}-nm">${h(b.name)}</div>` : ""}${b.role ? `<div class="${p}-rl">${h(b.role)}</div>` : ""}${b.bio ? `<div class="${p}-bio">${nl2br(b.bio)}</div>` : ""}</div></div>`
           : "";
       case "quote":
         return b.text
@@ -89,7 +178,7 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
         { let out = `<div class="${p}-pl">`;
           for (const it of b.items) {
             if (!it.src && !it.title) continue;
-            out += `<div class="${p}-pli"><div class="${p}-src">${h(it.src)}<span class="${p}-pd">${h(it.date)}</span></div><div><div class="${p}-ptt">${h(it.title)}</div><div class="${p}-pex">${h(it.ex)}</div>${it.link ? `<a class="${p}-plk" href="${h(it.link)}" target="_blank" rel="noopener noreferrer">원문 보기 &rarr;</a>` : ""}</div></div>`;
+            out += `<div class="${p}-pli"><div class="${p}-src">${h(it.src)}<span class="${p}-pd">${h(it.date)}</span></div><div><div class="${p}-ptt">${h(it.title)}</div><div class="${p}-pex">${h(it.ex)}</div>${it.link ? `<a class="${p}-plk" href="${hAttr(sanitizeUrl(it.link))}" target="_blank" rel="noopener noreferrer">원문 보기 &rarr;</a>` : ""}</div></div>`;
           }
           return out + `</div>`; }
       case "timeline":
@@ -97,11 +186,11 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
         return `<div class="${p}-tl">${b.items.map((it) => `<div class="${p}-tli">${it.date ? `<div class="${p}-td">${h(it.date)}</div>` : ""}${it.title ? `<div class="${p}-tt">${h(it.title)}</div>` : ""}${it.desc ? `<p>${h(it.desc)}</p>` : ""}</div>`).join("")}</div>`;
       case "video":
         return b.url
-          ? `<div class="${p}-vid"><div class="${p}-vw"><iframe src="${b.url}" allowfullscreen></iframe></div>${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
+          ? `<div class="${p}-vid"><div class="${p}-vw"><iframe src="${hAttr(sanitizeUrl(b.url))}" allowfullscreen></iframe></div>${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
           : "";
       case "cta":
         return (b.text || b.label)
-          ? `<div class="${p}-cta${cc ? ` ${cc}` : ""}"><p>${h(b.text || "")}</p>${b.label ? `<a class="${p}-cta-btn" href="${b.url || "#"}">${h(b.label)}</a>` : ""}</div>`
+          ? `<div class="${p}-cta${cc ? ` ${cc}` : ""}"><p>${h(b.text || "")}</p>${b.label ? `<a class="${p}-cta-btn" href="${hAttr(sanitizeUrl(b.url || "#"))}">${h(b.label)}</a>` : ""}</div>`
           : "";
       default:
         return "";
