@@ -54,7 +54,8 @@ export function ImageUploadField({
         ) : (
           <>
             <span className="be-img-upload-text">+ 이미지 업로드</span>
-            <span className="be-img-upload-hint">JPG, PNG, WebP, GIF / 10MB 초과 시 자동 최적화</span>
+            <span className="be-img-upload-hint">JPG, PNG, WebP, GIF</span>
+            <span className="be-img-upload-hint">10MB 초과시 자동 최적화</span>
           </>
         )}
         {src && (
