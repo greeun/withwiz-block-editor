@@ -274,6 +274,10 @@
 .be-img-upload.small { aspect-ratio: 4/3; }
 .be-img-upload.square { aspect-ratio: 1/1; }
 .be-img-upload.portrait { width: 120px; aspect-ratio: 3/4; }
+.be-img-upload.has-image.landscape,
+.be-img-upload.has-image.small,
+.be-img-upload.has-image.square,
+.be-img-upload.has-image.portrait { aspect-ratio: auto; }
 
 .be-img-pair-grid {
   display: grid;

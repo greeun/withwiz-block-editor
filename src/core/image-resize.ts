@@ -72,15 +72,15 @@ export async function resizeImageIfNeeded(file: File): Promise<ResizeResult> {
   return toResult(finalBlob, file.name, outputMime, originalSize);
 }
 
-/** Validate image file type and size (legacy function - returns error string) */
-export function validateImageFile(file: File): string | null;
-export function validateImageFile(file: File): ValidationResult;
-export function validateImageFile(file: File): string | null | ValidationResult {
-  // If called with single argument, perform full validation
-  if (arguments.length === 1) {
-    return performImageValidation(file);
-  }
-  return null;
+/** Validate image file type and size - returns error string or null */
+export function validateImageFile(file: File): string | null {
+  const result = performImageValidation(file);
+  return result.valid ? null : (result.error ?? "파일 검증에 실패했습니다.");
+}
+
+/** Full validation returning detailed result */
+export function validateImageFileDetailed(file: File): ValidationResult {
+  return performImageValidation(file);
 }
 
 /** Image validation result interface */
