@@ -133,7 +133,7 @@ export function BlockRenderer({ block, updateBlock, addSubItem, removeSubItem, o
               <option value="small">작게 (50%)</option>
             </select>
           </div>
-          {imgUp("src")}
+          {imgUp("src", "landscape")}
           {inp("cap", "캡션 (선택)", { fontSize: 11 })}
         </>
       );

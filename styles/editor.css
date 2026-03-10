@@ -259,6 +259,7 @@
   height: 100%;
   object-fit: cover;
 }
+.be-img-upload.landscape { aspect-ratio: 3/2; }
 .be-img-upload.small { aspect-ratio: 4/3; }
 .be-img-upload.square { aspect-ratio: 1/1; }
 .be-img-upload.portrait { width: 120px; aspect-ratio: 3/4; }
