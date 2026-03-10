@@ -1,6 +1,6 @@
 {
   "name": "@withwiz/block-editor",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Block-based content editor for web publishing",
   "private": false,
   "files": ["dist", "styles"],

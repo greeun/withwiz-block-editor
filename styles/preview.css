@@ -65,24 +65,24 @@
 
 /* ═══ Images ═══ */
 .nbe-pvb-imgf { margin: 2.5rem -40px; overflow: hidden; }
-.nbe-pvb-imgf img { width: 100%; display: block; aspect-ratio: 16/9; object-fit: cover; }
+.nbe-pvb-imgf img { width: 100%; display: block; height: auto; }
 .nbe-pvb-imgf .nbe-pvb-cap { padding: 0.75rem 40px; font-size: 0.85rem; color: var(--td); font-weight: 300; }
 
 .nbe-pvb-imgi { margin: 2.5rem auto; }
-.nbe-pvb-imgi img { width: 100%; display: block; aspect-ratio: 3/2; object-fit: cover; }
+.nbe-pvb-imgi img { width: 100%; display: block; height: auto; }
 .nbe-pvb-imgi .nbe-pvb-cap { padding: 0.75rem 0; font-size: 0.85rem; color: var(--td); font-weight: 300; text-align: center; }
 
 .nbe-pvb-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 2.5rem 0; }
-.nbe-pvb-pair img { width: 100%; display: block; aspect-ratio: 4/3; object-fit: cover; }
+.nbe-pvb-pair img { width: 100%; display: block; height: auto; }
 .nbe-pvb-pair .nbe-pvb-cap { grid-column: 1/-1; font-size: 0.85rem; color: var(--td); font-weight: 300; padding-top: 0.5rem; }
 
 .nbe-pvb-gal { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 2.5rem 0; }
-.nbe-pvb-gal img { width: 100%; display: block; aspect-ratio: 1/1; object-fit: cover; }
+.nbe-pvb-gal img { width: 100%; display: block; height: auto; }
 .nbe-pvb-gal .nbe-pvb-cap { grid-column: 1/-1; font-size: 0.85rem; color: var(--td); font-weight: 300; padding-top: 0.5rem; }
 
 /* ═══ Profile (img-text) ═══ */
 .nbe-pvb-prof { display: flex; gap: 2rem; margin: 2.5rem 0; align-items: start; }
-.nbe-pvb-prof img { width: 160px; display: block; aspect-ratio: 3/4; object-fit: cover; }
+.nbe-pvb-prof img { width: 160px; display: block; height: auto; }
 .nbe-pvb-prof .nbe-pvb-nm { font-family: 'Noto Serif KR', serif; font-size: 1.25rem; font-weight: 600; color: var(--th); margin-bottom: 0.25rem; }
 .nbe-pvb-prof .nbe-pvb-rl { font-size: 0.95rem; color: var(--cat-main, var(--tm)); margin-bottom: 1rem; font-weight: 400; }
 .nbe-pvb-prof .nbe-pvb-bio { font-size: 1rem; line-height: 1.9; font-weight: 400; color: var(--tb); }
