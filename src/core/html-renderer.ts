@@ -6,8 +6,19 @@ export function h(s: string): string {
   return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
+/**
+ * Converts URLs in HTML-escaped text into clickable anchor tags.
+ * Only matches http(s) URLs not already inside HTML tags.
+ */
+export function linkify(html: string): string {
+  return html.replace(
+    /https?:\/\/[^\s<]+/g,
+    (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`,
+  );
+}
+
 export function nl2br(s: string): string {
-  return h(s).replace(/\r\n/g, "<br>").replace(/\n/g, "<br>");
+  return linkify(h(s).replace(/\r\n/g, "<br>").replace(/\n/g, "<br>"));
 }
 
 /**
