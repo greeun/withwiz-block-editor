@@ -17,7 +17,7 @@ export type {
 /* --- Core --- */
 export { createSerializer } from "./core/serializer";
 export { createHtmlRenderer, h, nl2br } from "./core/html-renderer";
-export { resizeImageIfNeeded, validateImageFile, ALLOWED_IMAGE_TYPES } from "./core/image-resize";
+export { resizeImageIfNeeded, validateImageFile, validateImageFileDetailed, ALLOWED_IMAGE_TYPES } from "./core/image-resize";
 
 /* --- Block Definitions --- */
 export { BUILT_IN_BLOCKS, createEmptyBlock, getBlockDef } from "./blocks/built-in";
