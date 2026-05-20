@@ -3,28 +3,36 @@
   "version": "0.1.5",
   "description": "Block-based content editor for web publishing",
   "private": false,
-  "files": ["dist", "styles"],
+  "files": [
+    "dist",
+    "styles"
+  ],
   "typesVersions": {
     "*": {
-      "*": ["./dist/*"]
+      "*": [
+        "./dist/*"
+      ]
     }
   },
   "exports": {
     ".": "./dist/index.js",
-    "./types": "./dist/types.js",
     "./blocks/built-in": "./dist/blocks/built-in.js",
+    "./components/ArtistEditor": "./dist/components/ArtistEditor.js",
     "./components/BlockEditor": "./dist/components/BlockEditor.js",
+    "./components/BlockPreviewTheme": "./dist/components/BlockPreviewTheme.js",
     "./components/BlockRenderer": "./dist/components/BlockRenderer.js",
     "./components/ImageUploadField": "./dist/components/ImageUploadField.js",
-    "./components/ArtistEditor": "./dist/components/ArtistEditor.js",
     "./context/BlockEditorProvider": "./dist/context/BlockEditorProvider.js",
-    "./core/serializer": "./dist/core/serializer.js",
     "./core/html-renderer": "./dist/core/html-renderer.js",
     "./core/image-resize": "./dist/core/image-resize.js",
+    "./core/serializer": "./dist/core/serializer.js",
     "./hooks/useImageDropZone": "./dist/hooks/useImageDropZone.js",
+    "./mini-editor/MiniEditor": "./dist/mini-editor/MiniEditor.js",
+    "./styles/artist.css": "./styles/artist.css",
     "./styles/editor.css": "./styles/editor.css",
+    "./styles/mini-editor.css": "./styles/mini-editor.css",
     "./styles/preview.css": "./styles/preview.css",
-    "./styles/artist.css": "./styles/artist.css"
+    "./types": "./dist/types.js"
   },
   "scripts": {
     "build": "tsup && tsc --emitDeclarationOnly --skipLibCheck",
@@ -46,9 +54,13 @@
     "react": ">=18.0.0"
   },
   "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/react": "19.2.7",
     "@types/react-dom": "19.2.3",
+    "jsdom": "^29.1.1",
     "tsup": "^8.0.0",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^4.1.7"
   }
 }
