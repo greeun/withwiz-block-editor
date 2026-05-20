@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════
+   @withwiz/block-editor — MiniEditor Styles
+   Prefix: bme-*
+   ═══════════════════════════════════════════════ */
+
+:root {
+  --bme-border: rgba(0, 0, 0, 0.12);
+  --bme-border-radius: 8px;
+  --bme-toolbar-bg: #ffffff;
+  --bme-toolbar-border: rgba(0, 0, 0, 0.10);
+  --bme-btn-color: #374151;
+  --bme-btn-hover-bg: #f3f4f6;
+  --bme-btn-active-bg: #e5e7eb;
+  --bme-btn-active-color: #111827;
+  --bme-content-bg: #ffffff;
+  --bme-placeholder-color: #9ca3af;
+  --bme-separator-color: rgba(0, 0, 0, 0.12);
+}
+
+.bme-wrapper {
+  border: 1px solid var(--bme-border);
+  border-radius: var(--bme-border-radius);
+  background: var(--bme-content-bg);
+  overflow: hidden;
+}
+
+.bme-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--bme-toolbar-border);
+  background: var(--bme-toolbar-bg);
+  flex-wrap: wrap;
+}
+
+.bme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--bme-btn-color);
+  font-family: inherit;
+  transition: background 0.15s;
+  line-height: 1;
+}
+
+.bme-btn:hover {
+  background: var(--bme-btn-hover-bg);
+}
+
+.bme-btn--active {
+  background: var(--bme-btn-active-bg);
+  color: var(--bme-btn-active-color);
+}
+
+/* H1/H2/H3 buttons use monospace weight visually */
+.bme-btn[title^="Heading"] {
+  font-size: 11px;
+  font-family: monospace;
+  width: auto;
+  padding: 0 5px;
+}
+
+.bme-separator {
+  width: 1px;
+  height: 18px;
+  background: var(--bme-separator-color);
+  margin: 0 6px;
+  flex-shrink: 0;
+}
+
+.bme-content {
+  padding: 16px;
+  outline: none;
+  font-size: 15px;
+  line-height: 1.7;
+  color: #374151;
+  word-break: break-word;
+}
+
+.bme-content:empty::before {
+  content: attr(data-placeholder);
+  color: var(--bme-placeholder-color);
+  pointer-events: none;
+  display: block;
+}
+
+.bme-content h1 { font-size: 1.6em; font-weight: 700; margin: 0.4em 0; }
+.bme-content h2 { font-size: 1.3em; font-weight: 600; margin: 0.4em 0; }
+.bme-content h3 { font-size: 1.1em; font-weight: 600; margin: 0.4em 0; }
+.bme-content ul,
+.bme-content ol  { padding-left: 1.5em; margin: 0.4em 0; }
+.bme-content blockquote {
+  border-left: 3px solid var(--bme-separator-color);
+  margin: 0.4em 0;
+  padding: 0.2em 0 0.2em 1em;
+  color: #6b7280;
+}
+.bme-content p { margin: 0; }
