@@ -10,6 +10,7 @@ Block-based content editor for web publishing. A React component library providi
 - Two operation modes: serialized (HTML string) or raw (block array)
 - Image upload with resize support
 - Artist/bio editor component
+- **MiniEditor** — lightweight rich text editor (B/I/S · H1–H3 · lists · blockquote)
 - HTML renderer for preview and server-side rendering
 - TypeScript support with full type definitions
 - CSS themes included
@@ -181,14 +182,62 @@ import { resizeImageIfNeeded, validateImageFile } from "@withwiz/block-editor/co
 import { useImageDropZone } from "@withwiz/block-editor/hooks/useImageDropZone";
 ```
 
+### `<MiniEditor />`
+
+A lightweight rich text editor for short-form content. No external dependencies — built on native `contenteditable`. Outputs and accepts HTML strings.
+
+```tsx
+import { MiniEditor } from "@withwiz/block-editor/mini-editor/MiniEditor";
+import "@withwiz/block-editor/styles/mini-editor.css";
+
+function MyForm() {
+  const [html, setHtml] = useState("");
+
+  return (
+    <MiniEditor
+      value={html}
+      onChange={setHtml}
+      placeholder="내용을 입력하세요."
+      minHeight={200}
+    />
+  );
+}
+```
+
+**Toolbar buttons:** Bold · Italic · Strikethrough · H1 · H2 · H3 · Bullet list · Numbered list · Blockquote
+
+**Props:**
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `value` | `string` | — | Initial HTML content |
+| `onChange` | `(html: string) => void` | — | Called on every edit |
+| `placeholder` | `string` | `'내용을 입력하세요.'` | Placeholder text |
+| `className` | `string` | — | Extra class on wrapper element |
+| `minHeight` | `number` | `200` | Minimum height of editing area (px) |
+
+**CSS variables** (override in your stylesheet):
+
+```css
+:root {
+  --bme-border: rgba(0, 0, 0, 0.12);
+  --bme-border-radius: 8px;
+  --bme-btn-color: #374151;
+  --bme-btn-hover-bg: #f3f4f6;
+  --bme-btn-active-bg: #e5e7eb;
+  --bme-placeholder-color: #9ca3af;
+}
+```
+
 ## Styles
 
-Three CSS files are included:
+Four CSS files are included:
 
 ```ts
-import "@withwiz/block-editor/styles/editor.css";   // Editor UI styles
-import "@withwiz/block-editor/styles/preview.css";  // Published content styles
-import "@withwiz/block-editor/styles/artist.css";   // Artist editor styles
+import "@withwiz/block-editor/styles/editor.css";      // Editor UI styles
+import "@withwiz/block-editor/styles/preview.css";     // Published content styles
+import "@withwiz/block-editor/styles/artist.css";      // Artist editor styles
+import "@withwiz/block-editor/styles/mini-editor.css"; // MiniEditor styles
 ```
 
 ## Custom Block Types

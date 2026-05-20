@@ -71,6 +71,13 @@ The library is published as an ESM-only package with subpath exports, enabling g
 - Custom hook for drag-drop image handling
 - Returns refs and handlers for file drops
 
+**src/mini-editor/** - Lightweight rich text editor (independent of block-editor)
+- **toolbar-config.ts**: `TOOLBAR_GROUPS` — toolbar button definitions (pure data, no React)
+- **useRichText.ts**: `useRichText(value, onChange)` — `execCommand`-based formatting hook; tracks format state via `queryCommandState`/`queryCommandValue`
+- **MiniEditor.tsx**: Main component — toolbar + `contenteditable` div; CSS prefix `bme-*`
+- Styles: `styles/mini-editor.css`
+- Import: `@withwiz/block-editor/mini-editor/MiniEditor`
+
 ### Data Flow
 
 1. **User edits blocks** → BlockEditor component updates state
@@ -136,6 +143,10 @@ New features must include tests. Use the factories in `__tests__/__mocks__/facto
 | src/core/serializer.ts | HTML ↔ block array conversion |
 | src/core/html-renderer.ts | Block → HTML rendering |
 | src/components/BlockEditor.tsx | Main editor component |
+| src/mini-editor/MiniEditor.tsx | Lightweight rich text editor component |
+| src/mini-editor/useRichText.ts | execCommand formatting hook |
+| src/mini-editor/toolbar-config.ts | Toolbar button group definitions |
+| styles/mini-editor.css | MiniEditor styles (bme-* prefix) |
 | vitest.config.ts | Test configuration with coverage thresholds |
 | tsup.config.ts | Build configuration (ESM, no bundling, subpath exports) |
 
