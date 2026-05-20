@@ -12,6 +12,8 @@ export default defineConfig({
     "src/context/**/*.tsx",
     "src/core/**/*.ts",
     "src/hooks/**/*.ts",
+    "src/mini-editor/**/*.ts",
+    "src/mini-editor/**/*.tsx",
   ],
   format: ["esm"],
   outExtension: () => ({ js: ".js" }),
@@ -21,4 +23,7 @@ export default defineConfig({
   clean: true,
   outDir: "dist",
   external: ["react", "react-dom"],
+  loader: {
+    ".css": "text",
+  },
 });
