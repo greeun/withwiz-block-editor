@@ -47,14 +47,14 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
     });
 
     describe('subheading - 소제목', () => {
-      it('텍스트가 있으면 div.test-sh로 렌더링', () => {
+      it('텍스트가 있으면 h2.test-sh로 렌더링 (semantic upgrade for SEO/a11y)', () => {
         const block: BlockData = { type: 'subheading', id: 1, text: '소제목' };
-        expect(renderBlock(block)).toBe('<div class="test-sh">소제목</div>');
+        expect(renderBlock(block)).toBe('<h2 class="test-sh">소제목</h2>');
       });
 
       it('HTML 이스케이핑 (줄바꿈 미변환)', () => {
         const block: BlockData = { type: 'subheading', id: 1, text: '제목\n다음줄' };
-        expect(renderBlock(block)).toBe('<div class="test-sh">제목\n다음줄</div>');
+        expect(renderBlock(block)).toBe('<h2 class="test-sh">제목\n다음줄</h2>');
       });
 
       it('텍스트가 없으면 빈 문자열', () => {
@@ -64,14 +64,14 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
     });
 
     describe('subheading-label - 소제목+부제', () => {
-      it('en 필드가 있으면 sh-en + sh 모두 렌더링', () => {
+      it('en 필드가 있으면 sh-en(보조 div) + h2.sh 둘 모두 렌더링', () => {
         const block: BlockData = { type: 'subheading-label', id: 1, en: 'Subtitle', text: '부제목' };
-        expect(renderBlock(block)).toBe('<div class="test-sh-en">Subtitle</div><div class="test-sh">부제목</div>');
+        expect(renderBlock(block)).toBe('<div class="test-sh-en">Subtitle</div><h2 class="test-sh">부제목</h2>');
       });
 
-      it('en 필드 없으면 sh만 렌더링', () => {
+      it('en 필드 없으면 h2.sh만 렌더링', () => {
         const block: BlockData = { type: 'subheading-label', id: 1, en: '', text: '부제목' };
-        expect(renderBlock(block)).toBe('<div class="test-sh">부제목</div>');
+        expect(renderBlock(block)).toBe('<h2 class="test-sh">부제목</h2>');
       });
 
       it('text가 없으면 en만 렌더링', () => {
@@ -124,9 +124,11 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(renderBlock(block)).toContain('<img src="https://example.com/img.jpg" alt="">');
       });
 
-      it('cap이 있으면 캡션 추가', () => {
+      it('cap이 있으면 figcaption 추가 + alt에 캡션 텍스트 반영', () => {
         const block: BlockData = { type: 'img-full', id: 1, src: 'https://example.com/img.jpg', cap: '사진 설명' };
-        expect(renderBlock(block)).toContain('<div class="test-cap">사진 설명</div>');
+        const html = renderBlock(block);
+        expect(html).toContain('<figcaption class="test-cap">사진 설명</figcaption>');
+        expect(html).toContain('alt="사진 설명"');
       });
 
       it('src가 없으면 빈 문자열', () => {
@@ -134,9 +136,9 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(renderBlock(block)).toBe('');
       });
 
-      it('위험한 src는 제거됨', () => {
+      it('위험한 src는 제거됨 (figure 래퍼 유지)', () => {
         const block: BlockData = { type: 'img-full', id: 1, src: 'javascript:alert(1)', cap: '' };
-        expect(renderBlock(block)).toBe('<div class="test-imgf"><img src="" alt=""></div>');
+        expect(renderBlock(block)).toBe('<figure class="test-imgf"><img src="" alt=""></figure>');
       });
     });
 
@@ -185,9 +187,11 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(renderBlock(block)).toBe('');
       });
 
-      it('cap이 있으면 캡션 추가', () => {
+      it('cap이 있으면 figcaption 추가 + alt에 캡션 반영', () => {
         const block: BlockData = { type: 'img-pair', id: 1, src1: 'https://example.com/1.jpg', src2: '', cap: '두 사진' };
-        expect(renderBlock(block)).toContain('<div class="test-cap">두 사진</div>');
+        const html = renderBlock(block);
+        expect(html).toContain('<figcaption class="test-cap">두 사진</figcaption>');
+        expect(html).toContain('alt="두 사진"');
       });
     });
 
@@ -220,7 +224,7 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(html).toContain('https://example.com/1.jpg');
       });
 
-      it('캡션도 렌더링 가능', () => {
+      it('캡션은 figcaption으로 렌더 + 각 img alt에도 동일 캡션 반영', () => {
         const block: BlockData = {
           type: 'gallery',
           id: 1,
@@ -229,7 +233,9 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
           src3: '',
           cap: '갤러리 캡션'
         };
-        expect(renderBlock(block)).toContain('<div class="test-cap">갤러리 캡션</div>');
+        const html = renderBlock(block);
+        expect(html).toContain('<figcaption class="test-cap">갤러리 캡션</figcaption>');
+        expect(html).toContain('alt="갤러리 캡션"');
       });
     });
 

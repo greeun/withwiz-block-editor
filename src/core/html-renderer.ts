@@ -128,35 +128,43 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
       case "paragraph":
         return b.text ? `<p class="${p}-p">${nl2br(b.text)}</p>` : "";
       case "subheading":
-        return b.text ? `<div class="${p}-sh">${h(b.text)}</div>` : "";
+        return b.text ? `<h2 class="${p}-sh">${h(b.text)}</h2>` : "";
       case "subheading-label":
         if (b.en) {
-          return `<div class="${p}-sh-en">${h(b.en)}</div>${b.text ? `<div class="${p}-sh">${h(b.text)}</div>` : ""}`;
+          return `<div class="${p}-sh-en">${h(b.en)}</div>${b.text ? `<h2 class="${p}-sh">${h(b.text)}</h2>` : ""}`;
         }
-        return b.text ? `<div class="${p}-sh">${h(b.text)}</div>` : "";
+        return b.text ? `<h2 class="${p}-sh">${h(b.text)}</h2>` : "";
       case "divider":
         return `<div class="${p}-hr"></div>`;
       case "spacer": {
         const sh = b.size === "small" ? 16 : b.size === "large" ? 56 : 32;
         return `<div style="height:${sh}px"></div>`;
       }
-      case "img-full":
-        return b.src
-          ? `<div class="${p}-imgf"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
-          : "";
-      case "img-inline":
+      case "img-full": {
         if (!b.src) return "";
-        { const w = b.size === "small" ? "50%" : b.size === "medium" ? "70%" : "100%";
-          return `<div class="${p}-imgi" style="width:${w}"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`; }
-      case "img-pair":
-        return (b.src1 || b.src2)
-          ? `<div class="${p}-pair">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
-          : "";
-      case "gallery":
-        return `<div class="${p}-gal">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="">` : ""}${b.src3 ? `<img src="${hAttr(sanitizeImageSrc(b.src3))}" alt="">` : ""}${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`;
+        const alt = b.cap || "";
+        return `<figure class="${p}-imgf"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="${hAttr(alt)}">${b.cap ? `<figcaption class="${p}-cap">${h(b.cap)}</figcaption>` : ""}</figure>`;
+      }
+      case "img-inline": {
+        if (!b.src) return "";
+        const w = b.size === "small" ? "50%" : b.size === "medium" ? "70%" : "100%";
+        const alt = b.cap || "";
+        return `<figure class="${p}-imgi" style="width:${w}"><img src="${hAttr(sanitizeImageSrc(b.src))}" alt="${hAttr(alt)}">${b.cap ? `<figcaption class="${p}-cap">${h(b.cap)}</figcaption>` : ""}</figure>`;
+      }
+      case "img-pair": {
+        if (!(b.src1 || b.src2)) return "";
+        const alt = b.cap || "";
+        return `<figure class="${p}-pair">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="${hAttr(alt)}">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="${hAttr(alt)}">` : ""}${b.cap ? `<figcaption class="${p}-cap">${h(b.cap)}</figcaption>` : ""}</figure>`;
+      }
+      case "gallery": {
+        const alt = b.cap || "";
+        return `<figure class="${p}-gal">${b.src1 ? `<img src="${hAttr(sanitizeImageSrc(b.src1))}" alt="${hAttr(alt)}">` : ""}${b.src2 ? `<img src="${hAttr(sanitizeImageSrc(b.src2))}" alt="${hAttr(alt)}">` : ""}${b.src3 ? `<img src="${hAttr(sanitizeImageSrc(b.src3))}" alt="${hAttr(alt)}">` : ""}${b.cap ? `<figcaption class="${p}-cap">${h(b.cap)}</figcaption>` : ""}</figure>`;
+      }
       case "img-text":
+        // 인물 카드 — figcaption은 의미상 부자연(이름+직책+소개가 figure 캡션 짧은 텍스트 모델과
+        // 맞지 않음). div 유지 + img alt에 name을 채워 SEO/스크린리더 컨텍스트만 보강.
         return (b.src || b.name)
-          ? `<div class="${p}-prof">${b.src ? `<img src="${hAttr(sanitizeImageSrc(b.src))}" alt="">` : ""}<div>${b.name ? `<div class="${p}-nm">${h(b.name)}</div>` : ""}${b.role ? `<div class="${p}-rl">${h(b.role)}</div>` : ""}${b.bio ? `<div class="${p}-bio">${nl2br(b.bio)}</div>` : ""}</div></div>`
+          ? `<div class="${p}-prof">${b.src ? `<img src="${hAttr(sanitizeImageSrc(b.src))}" alt="${hAttr(b.name || "")}">` : ""}<div>${b.name ? `<div class="${p}-nm">${h(b.name)}</div>` : ""}${b.role ? `<div class="${p}-rl">${h(b.role)}</div>` : ""}${b.bio ? `<div class="${p}-bio">${nl2br(b.bio)}</div>` : ""}</div></div>`
           : "";
       case "quote":
         return b.text
