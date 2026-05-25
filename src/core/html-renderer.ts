@@ -168,11 +168,11 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
           : "";
       case "quote":
         return b.text
-          ? `<div class="${p}-q"><p>${nl2br(b.text)}</p>${b.attr ? `<div class="${p}-at">${h(b.attr)}</div>` : ""}</div>`
+          ? `<blockquote class="${p}-q"><p>${nl2br(b.text)}</p>${b.attr ? `<div class="${p}-at">${h(b.attr)}</div>` : ""}</blockquote>`
           : "";
       case "quote-large":
         return b.text
-          ? `<div class="${p}-ql"><div class="${p}-mk">&ldquo;</div><p>${nl2br(b.text)}</p>${b.attr ? `<div class="${p}-at">${h(b.attr)}</div>` : ""}</div>`
+          ? `<blockquote class="${p}-ql"><div class="${p}-mk">&ldquo;</div><p>${nl2br(b.text)}</p>${b.attr ? `<div class="${p}-at">${h(b.attr)}</div>` : ""}</blockquote>`
           : "";
       case "stats":
         if (!b.items?.length) return "";
@@ -205,7 +205,7 @@ export function createHtmlRenderer(prefix: string, catClass?: string) {
         return `<div class="${p}-tl">${b.items.map((it) => `<div class="${p}-tli">${it.date ? `<div class="${p}-td">${h(it.date)}</div>` : ""}${it.title ? `<div class="${p}-tt">${h(it.title)}</div>` : ""}${it.desc ? `<p>${h(it.desc)}</p>` : ""}</div>`).join("")}</div>`;
       case "video":
         return b.url
-          ? `<div class="${p}-vid"><div class="${p}-vw"><iframe src="${hAttr(sanitizeUrl(b.url))}" allowfullscreen></iframe></div>${b.cap ? `<div class="${p}-cap">${h(b.cap)}</div>` : ""}</div>`
+          ? `<figure class="${p}-vid"><div class="${p}-vw"><iframe src="${hAttr(sanitizeUrl(b.url))}" allowfullscreen></iframe></div>${b.cap ? `<figcaption class="${p}-cap">${h(b.cap)}</figcaption>` : ""}</figure>`
           : "";
       case "cta":
         return (b.text || b.label)

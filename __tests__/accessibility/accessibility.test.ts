@@ -65,6 +65,23 @@ describe('A11Y-001: Semantic HTML and ARIA Labels (renderer output)', () => {
     expect(html).toContain('A caption');
   });
 
+  it('quote / quote-large blocks render as <blockquote> (semantic — search engines recognize as Quote)', () => {
+    const html = RENDERER.renderBlocks([
+      { id: 1, type: 'quote', text: 'inline quote', attr: 'src' },
+      { id: 2, type: 'quote-large', text: 'big quote', attr: 'author' },
+    ]);
+    expect(html).toMatch(/<blockquote[^>]*test-q[^>]*>/);
+    expect(html).toMatch(/<blockquote[^>]*test-ql[^>]*>/);
+  });
+
+  it('video block renders as <figure>/<figcaption> so caption is grouped with the iframe', () => {
+    const html = RENDERER.renderBlocks([
+      { id: 1, type: 'video', url: 'https://www.youtube.com/embed/x', cap: '영상 설명' },
+    ]);
+    expect(html).toMatch(/<figure[^>]*test-vid/);
+    expect(html).toMatch(/<figcaption[^>]*>영상 설명<\/figcaption>/);
+  });
+
   it.todo(
     'icon-only toolbar buttons expose aria-label — Layer Owner: MiniEditor component (see MiniEditor.regressions.test.tsx Regression #4)',
   );

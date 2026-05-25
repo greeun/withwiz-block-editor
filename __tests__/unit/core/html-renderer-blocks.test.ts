@@ -584,9 +584,11 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(renderBlock(block)).toContain('https://youtube.com/embed/abc');
       });
 
-      it('cap이 있으면 캡션 추가', () => {
+      it('cap이 있으면 figcaption 으로 렌더 (figure 래핑, 0.2.0+)', () => {
         const block: BlockData = { type: 'video', id: 1, url: 'https://youtube.com/embed/abc', cap: '영상 설명' };
-        expect(renderBlock(block)).toContain('<div class="test-cap">영상 설명</div>');
+        const html = renderBlock(block);
+        expect(html).toContain('<figure class="test-vid"');
+        expect(html).toContain('<figcaption class="test-cap">영상 설명</figcaption>');
       });
 
       it('url이 없으면 빈 문자열', () => {
@@ -594,9 +596,9 @@ describe('html-renderer 블록 렌더링 (22개 타입)', () => {
         expect(renderBlock(block)).toBe('');
       });
 
-      it('위험한 url은 제거됨', () => {
+      it('위험한 url은 제거됨 (figure 래퍼 유지)', () => {
         const block: BlockData = { type: 'video', id: 1, url: 'javascript:alert(1)', cap: '' };
-        expect(renderBlock(block)).toBe('<div class="test-vid"><div class="test-vw"><iframe src="" allowfullscreen></iframe></div></div>');
+        expect(renderBlock(block)).toBe('<figure class="test-vid"><div class="test-vw"><iframe src="" allowfullscreen></iframe></div></figure>');
       });
     });
 
