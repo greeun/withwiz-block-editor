@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useCallback, useRef, type DragEvent } from "react";
+import { useState, useCallback, useRef, useEffect, type DragEvent } from "react";
 import { useBlockEditorContext } from "../context/BlockEditorProvider";
 import { resizeImageIfNeeded, validateImageFile, ALLOWED_IMAGE_TYPES } from "../core/image-resize";
 import type { UploadResult } from "../types";
+
+/** Milliseconds the "maxFiles 초과" cap notice stays visible before auto-dismissing. */
+const CAP_NOTICE_DISMISS_MS = 4000;
 
 interface UseImageDropZoneOptions {
   multiple?: boolean;
@@ -30,6 +33,20 @@ export function useImageDropZone(options: UseImageDropZoneOptions) {
   const [isResizing, setIsResizing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const dragCounterRef = useRef(0);
+  // Tracks the auto-dismiss timer for the maxFiles cap notice so a fresh cap
+  // event cancels the previous countdown, and unmount cleans it up.
+  const capDismissTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const clearCapDismissTimer = useCallback(() => {
+    if (capDismissTimerRef.current !== null) {
+      clearTimeout(capDismissTimerRef.current);
+      capDismissTimerRef.current = null;
+    }
+  }, []);
+
+  useEffect(() => {
+    return clearCapDismissTimer;
+  }, [clearCapDismissTimer]);
 
   const processFiles = useCallback(
     async (files: File[]) => {
@@ -37,21 +54,36 @@ export function useImageDropZone(options: UseImageDropZoneOptions) {
 
       let toProcess = multiple ? files : [files[0]];
 
+      // maxFiles cap notice — must survive the setError(null) reset below
+      // so the user sees WHY only N of M files were uploaded. Auto-dismisses
+      // after CAP_NOTICE_DISMISS_MS, and any subsequent error (validation,
+      // resize, upload) immediately replaces it.
+      let capMessage: string | null = null;
       if (maxFiles && toProcess.length > maxFiles) {
         toProcess = toProcess.slice(0, maxFiles);
-        setError(`최대 ${maxFiles}개까지 업로드할 수 있습니다.`);
+        capMessage = `최대 ${maxFiles}개까지 업로드할 수 있습니다.`;
       }
 
       // Validate
       for (const file of toProcess) {
         const validationError = validateImageFile(file);
         if (validationError) {
+          clearCapDismissTimer();
           setError(validationError);
           return;
         }
       }
 
-      setError(null);
+      clearCapDismissTimer();
+      setError(capMessage);
+      if (capMessage) {
+        capDismissTimerRef.current = setTimeout(() => {
+          // Only clear if the cap message is still the one displayed —
+          // a newer error must not be wiped out.
+          setError((prev) => (prev === capMessage ? null : prev));
+          capDismissTimerRef.current = null;
+        }, CAP_NOTICE_DISMISS_MS);
+      }
 
       // Resize if needed
       let resizedFiles: File[];
