@@ -39,7 +39,7 @@ describe('MiniEditor', () => {
   it('calls onChange when toolbar button is clicked', () => {
     const onChange = vi.fn();
     render(<MiniEditor onChange={onChange} />);
-    const boldBtn = screen.getByTitle('Bold');
+    const boldBtn = screen.getByLabelText('굵게');
     fireEvent.mouseDown(boldBtn);
     expect(document.execCommand).toHaveBeenCalledWith('bold', false, undefined);
   });
@@ -59,7 +59,10 @@ describe('MiniEditor', () => {
     vi.spyOn(document, 'queryCommandState').mockImplementation((cmd) => cmd === 'bold');
     const onChange = vi.fn();
     render(<MiniEditor onChange={onChange} />);
-    const boldBtn = screen.getByTitle('Bold');
+    const boldBtn = screen.getByLabelText('굵게');
+    // Focus the editor so the activeElement guard in readFormatState passes.
+    const content = document.querySelector<HTMLElement>('.bme-content');
+    content?.focus();
     fireEvent.mouseDown(boldBtn);
     expect(boldBtn.classList.contains('bme-btn--active')).toBe(true);
   });
