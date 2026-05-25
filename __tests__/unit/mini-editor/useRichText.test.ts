@@ -3,21 +3,37 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRichText } from '../../../src/mini-editor/useRichText';
 
-// jsdom does not implement execCommand — stub it
+// jsdom does not implement execCommand — stub it. We also need a real
+// DOM element attached to the document so that `activeElement` checks
+// in `readFormatState` and `syncEmptyAttr`'s DOM APIs work.
+function attachEditor(result: { current: { editorRef: { current: HTMLDivElement | null } } }) {
+  const el = document.createElement('div');
+  el.contentEditable = 'true';
+  // jsdom won't promote a contentEditable div to activeElement on focus()
+  // unless it's also explicitly focusable.
+  el.tabIndex = 0;
+  document.body.appendChild(el);
+  Object.defineProperty(result.current.editorRef, 'current', {
+    value: el,
+    writable: true,
+    configurable: true,
+  });
+  el.focus();
+  return el;
+}
+
 beforeEach(() => {
-  // Create stub methods if they don't exist
+  document.body.innerHTML = '';
   if (!document.execCommand) {
     (document as any).execCommand = vi.fn().mockReturnValue(true);
   } else {
     vi.spyOn(document, 'execCommand' as any).mockReturnValue(true);
   }
-
   if (!document.queryCommandState) {
     (document as any).queryCommandState = vi.fn().mockReturnValue(false);
   } else {
     vi.spyOn(document, 'queryCommandState' as any).mockReturnValue(false);
   }
-
   if (!document.queryCommandValue) {
     (document as any).queryCommandValue = vi.fn().mockReturnValue('');
   } else {
@@ -26,12 +42,14 @@ beforeEach(() => {
 });
 
 describe('useRichText', () => {
-  it('returns editorRef, formatState, execFormat, handleInput', () => {
+  it('returns editorRef, formatState, execFormat, handleInput, composition handlers', () => {
     const { result } = renderHook(() => useRichText(undefined, undefined));
     expect(result.current.editorRef).toBeDefined();
     expect(result.current.formatState).toBeDefined();
     expect(typeof result.current.execFormat).toBe('function');
     expect(typeof result.current.handleInput).toBe('function');
+    expect(typeof result.current.handleCompositionStart).toBe('function');
+    expect(typeof result.current.handleCompositionEnd).toBe('function');
   });
 
   it('initial formatState has all false values', () => {
@@ -47,6 +65,7 @@ describe('useRichText', () => {
 
   it('execFormat calls document.execCommand with command and value', () => {
     const { result } = renderHook(() => useRichText(undefined, undefined));
+    attachEditor(result);
     act(() => {
       result.current.execFormat('bold');
     });
@@ -56,12 +75,8 @@ describe('useRichText', () => {
   it('execFormat calls onChange with current innerHTML', () => {
     const onChange = vi.fn();
     const { result } = renderHook(() => useRichText(undefined, onChange));
-
-    // Simulate editor div content
-    Object.defineProperty(result.current.editorRef, 'current', {
-      value: { innerHTML: '<p>hello</p>', focus: vi.fn() },
-      writable: true,
-    });
+    const el = attachEditor(result);
+    el.innerHTML = '<p>hello</p>';
 
     act(() => {
       result.current.execFormat('bold');
@@ -72,11 +87,8 @@ describe('useRichText', () => {
   it('handleInput calls onChange with innerHTML', () => {
     const onChange = vi.fn();
     const { result } = renderHook(() => useRichText(undefined, onChange));
-
-    Object.defineProperty(result.current.editorRef, 'current', {
-      value: { innerHTML: '<p>world</p>', focus: vi.fn() },
-      writable: true,
-    });
+    const el = attachEditor(result);
+    el.innerHTML = '<p>world</p>';
 
     act(() => {
       result.current.handleInput();
@@ -88,11 +100,7 @@ describe('useRichText', () => {
     vi.spyOn(document, 'queryCommandState').mockImplementation((cmd) => cmd === 'bold');
     const onChange = vi.fn();
     const { result } = renderHook(() => useRichText(undefined, onChange));
-
-    Object.defineProperty(result.current.editorRef, 'current', {
-      value: { innerHTML: '', focus: vi.fn() },
-      writable: true,
-    });
+    attachEditor(result);
 
     act(() => {
       result.current.execFormat('bold');

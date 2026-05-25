@@ -86,7 +86,8 @@
   word-break: break-word;
 }
 
-.bme-content:empty::before {
+.bme-content:empty::before,
+.bme-content[data-empty="true"]::before {
   content: attr(data-placeholder);
   color: var(--bme-placeholder-color);
   pointer-events: none;
