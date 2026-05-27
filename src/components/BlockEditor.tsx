@@ -296,6 +296,14 @@ export function BlockEditor(props: BlockEditorProps) {
     ? config.blocks.filter((def) => !def.cats || def.cats.includes(category))
     : config.blocks;
 
+  if (availableBlocks.length === 0 && config.blocks.length > 0) {
+    // eslint-disable-next-line no-console
+    console.warn(
+      `[BlockEditor] category "${category}"에 매칭되는 블록이 없습니다. ` +
+      `config.blocks의 cats 설정을 확인하세요.`
+    );
+  }
+
   // Block label lookup
   const blockLabel = (type: string): string => {
     return config.blocks.find((d) => d.type === type)?.label || type;
