@@ -60,6 +60,7 @@ The library is published as an ESM-only package with subpath exports, enabling g
 **src/components/** - React components
 - **BlockEditor.tsx**: Main editor component (supports both serialized and raw modes)
 - **BlockRenderer.tsx**: Read-only renderer for preview/published content
+- **BlockPreviewTheme.tsx**: Drop-in `<style>` injector for preview.css using React 19 `precedence` deduplication. Imports CSS as text via tsup's `text` loader (see `src/css.d.ts` for the module declaration). Requires React 19+.
 - **ImageUploadField.tsx**: Image upload UI with drag-drop support
 - **ArtistEditor.tsx**: Specialized editor for artist bio pages (main image + gallery)
 
@@ -143,6 +144,8 @@ New features must include tests. Use the factories in `__tests__/__mocks__/facto
 | src/core/serializer.ts | HTML ↔ block array conversion |
 | src/core/html-renderer.ts | Block → HTML rendering |
 | src/components/BlockEditor.tsx | Main editor component |
+| src/components/BlockPreviewTheme.tsx | React 19 `<style precedence>` injector for preview.css |
+| src/css.d.ts | Module declaration for `*.css` text imports (tsup `text` loader) |
 | src/mini-editor/MiniEditor.tsx | Lightweight rich text editor component |
 | src/mini-editor/useRichText.ts | execCommand formatting hook |
 | src/mini-editor/toolbar-config.ts | Toolbar button group definitions |
@@ -165,5 +168,6 @@ The dist/ and styles/ directories are published to npm. Source files (src/, __te
 - React 18+ is required (peer dependency)
 - ESM only (no CommonJS)
 - TypeScript strict mode enabled
-- CSS is provided separately (editor.css, preview.css, artist.css)
+- CSS is provided separately (editor.css, preview.css, artist.css, mini-editor.css)
+- For React 19 consumers, `BlockPreviewTheme` can replace the manual `preview.css` import
 - The library uses JSX (React 18+ jsx-transform syntax)

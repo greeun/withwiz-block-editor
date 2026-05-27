@@ -11,6 +11,7 @@ Block-based content editor for web publishing. A React component library providi
 - Image upload with resize support
 - Artist/bio editor component
 - **MiniEditor** — lightweight rich text editor (B/I/S · H1–H3 · lists · blockquote)
+- **BlockPreviewTheme** — zero-config preview style injection via React 19 `<style precedence>`
 - HTML renderer for preview and server-side rendering
 - TypeScript support with full type definitions
 - CSS themes included
@@ -126,6 +127,28 @@ import { BlockRenderer } from "@withwiz/block-editor/components/BlockRenderer";
 <BlockRenderer blocks={blocks} config={config} />
 ```
 
+### `<BlockPreviewTheme />`
+
+Drop-in component that injects the default block preview styles using React 19's `<style precedence>` deduplication. Render it once anywhere in your tree — duplicate renders are deduplicated by React, so it is safe to mount alongside individual blocks.
+
+```tsx
+// app/layout.tsx
+import { BlockPreviewTheme } from "@withwiz/block-editor";
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html>
+      <body>
+        <BlockPreviewTheme />
+        {children}
+      </body>
+    </html>
+  );
+}
+```
+
+> **Requires React 19+.** On React 18, prefer the explicit `import "@withwiz/block-editor/styles/preview.css"` approach instead.
+
 ### `<ArtistEditor />`
 
 Specialized editor for artist bio pages with main image and gallery.
@@ -239,6 +262,8 @@ import "@withwiz/block-editor/styles/preview.css";     // Published content styl
 import "@withwiz/block-editor/styles/artist.css";      // Artist editor styles
 import "@withwiz/block-editor/styles/mini-editor.css"; // MiniEditor styles
 ```
+
+On React 19, you can skip the `preview.css` import and use the [`<BlockPreviewTheme />`](#blockpreviewtheme-) component instead — it injects the stylesheet via React's built-in style deduplication.
 
 ## Custom Block Types
 

@@ -30,6 +30,7 @@ export { BlockEditor } from "./components/BlockEditor";
 export { BlockRenderer } from "./components/BlockRenderer";
 export { ImageUploadField } from "./components/ImageUploadField";
 export { ArtistEditor } from "./components/ArtistEditor";
+export { BlockPreviewTheme } from "./components/BlockPreviewTheme";
 
 /* --- Hooks --- */
 export { useImageDropZone } from "./hooks/useImageDropZone";
