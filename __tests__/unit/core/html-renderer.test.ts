@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { h, nl2br, hAttr, sanitizeUrl, sanitizeImageSrc } from '../../../src/core/html-renderer';
+import { h, nl2br, hAttr, linkify, sanitizeUrl, sanitizeImageSrc } from '../../../src/core/html-renderer';
 
 describe('html-renderer 헬퍼 함수들', () => {
   describe('h() - HTML 이스케이핑', () => {
@@ -11,8 +11,16 @@ describe('html-renderer 헬퍼 함수들', () => {
       expect(h('<script>')).toBe('&lt;script&gt;');
     });
 
-    it('큰따옴표는 이스케이핑하지 않음 (nl2br에서 처리)', () => {
-      expect(h('안녕 "하세요"')).toBe('안녕 "하세요"');
+    it('큰따옴표를 &quot;로 변환 (속성 주입 방어)', () => {
+      expect(h('안녕 "하세요"')).toBe('안녕 &quot;하세요&quot;');
+    });
+
+    it('작은따옴표를 &#39;로 변환 (속성 주입 방어)', () => {
+      expect(h("it's")).toBe('it&#39;s');
+    });
+
+    it('앰퍼샌드를 먼저 처리해 따옴표 엔티티를 이중 이스케이프하지 않음', () => {
+      expect(h(`"&'`)).toBe('&quot;&amp;&#39;');
     });
 
     it('빈 문자열 반환', () => {
@@ -53,6 +61,38 @@ describe('html-renderer 헬퍼 함수들', () => {
     it('빈 문자열 반환', () => {
       expect(nl2br('')).toBe('');
     });
+
+    it('URL 뒤의 따옴표는 엔티티로 바뀌어 href 속성을 끊지 못함', () => {
+      expect(nl2br('see https://x.com/"onmouseover="alert(1) now')).toBe(
+        'see <a href="https://x.com/&quot;onmouseover=&quot;alert(1)" target="_blank" rel="noopener noreferrer">https://x.com/&quot;onmouseover=&quot;alert(1)</a> now',
+      );
+    });
+  });
+
+  describe('linkify() - URL 링크 변환', () => {
+    it('http(s) URL을 a 요소로 감쌈', () => {
+      expect(linkify('go https://example.com/path now')).toBe(
+        'go <a href="https://example.com/path" target="_blank" rel="noopener noreferrer">https://example.com/path</a> now',
+      );
+    });
+
+    it('href 값의 큰따옴표를 &quot;로 이스케이프 (링크 텍스트는 그대로)', () => {
+      expect(linkify('see https://x.com/"onmouseover="alert(1) now')).toBe(
+        'see <a href="https://x.com/&quot;onmouseover=&quot;alert(1)" target="_blank" rel="noopener noreferrer">https://x.com/"onmouseover="alert(1)</a> now',
+      );
+    });
+
+    it("href 값의 작은따옴표를 &#39;로 이스케이프 (링크 텍스트는 그대로)", () => {
+      expect(linkify("see https://x.com/'onmouseover='alert(1) now")).toBe(
+        "see <a href=\"https://x.com/&#39;onmouseover=&#39;alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">https://x.com/'onmouseover='alert(1)</a> now",
+      );
+    });
+
+    it('이미 인코딩된 &amp; 는 이중 이스케이프하지 않음', () => {
+      expect(linkify('https://x.com/?a=1&amp;b=2')).toBe(
+        '<a href="https://x.com/?a=1&amp;b=2" target="_blank" rel="noopener noreferrer">https://x.com/?a=1&amp;b=2</a>',
+      );
+    });
   });
 
   describe('hAttr() - 속성값 이스케이핑', () => {
@@ -66,6 +106,17 @@ describe('html-renderer 헬퍼 함수들', () => {
 
     it('앰퍼샌드와 큰따옴표 모두', () => {
       expect(hAttr('a & "b"')).toBe('a &amp; &quot;b&quot;');
+    });
+
+    it('작은따옴표를 &#39;로 변환', () => {
+      expect(hAttr("it's")).toBe('it&#39;s');
+    });
+
+    it('따옴표 엔티티를 이중 이스케이프하지 않음 (&amp;quot; 가 생기지 않음)', () => {
+      const out = hAttr(`a "b" 'c' &`);
+      expect(out).toBe('a &quot;b&quot; &#39;c&#39; &amp;');
+      expect(out).not.toContain('&amp;quot;');
+      expect(out).not.toContain('&amp;#39;');
     });
 
     it('빈 문자열 반환', () => {

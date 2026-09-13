@@ -2,19 +2,31 @@ import type { BlockData } from "../types";
 
 /* === HTML Helpers === */
 
+/**
+ * Escapes a string for HTML text and attribute contexts.
+ * `&` is replaced first so the entities produced below are never double-escaped.
+ * Quotes are escaped as well, so the result is safe inside quoted attributes.
+ */
 export function h(s: string): string {
-  return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  return (s || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 /**
  * Converts URLs in HTML-escaped text into clickable anchor tags.
  * Only matches http(s) URLs not already inside HTML tags.
+ * Quotes in the href value are escaped so the URL cannot break out of the
+ * attribute; `&` is left as-is because the input is already HTML-escaped.
  */
 export function linkify(html: string): string {
-  return html.replace(
-    /https?:\/\/[^\s<]+/g,
-    (url) => `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`,
-  );
+  return html.replace(/https?:\/\/[^\s<]+/g, (url) => {
+    const href = url.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+  });
 }
 
 export function nl2br(s: string): string {
@@ -24,9 +36,11 @@ export function nl2br(s: string): string {
 /**
  * Escapes a string for use in HTML attributes.
  * Handles quotes to prevent attribute injection attacks.
+ * `h()` already escapes both quote types; this alias is kept for call-site intent
+ * and must not escape again (that would produce `&amp;quot;`).
  */
 export function hAttr(s: string): string {
-  return h(s).replace(/"/g, "&quot;");
+  return h(s);
 }
 
 /**
