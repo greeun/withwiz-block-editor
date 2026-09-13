@@ -1,7 +1,7 @@
 # Test Suite Quick Reference Guide
 
 **Project**: @withwiz/block-editor
-**Total Tests**: 381 passing
+**Total Tests**: 475 passing, 26 todo (501 tests in 22 files, measured 2026-09-13 with `npx vitest run`)
 **Code Coverage**: 97%+
 **Status**: ✅ Complete and Ready
 
@@ -19,11 +19,13 @@ npm test
 npm run test:watch
 
 # Specific test category
-npm run test:unit              # Unit tests (219)
-npm run test:integration       # Integration tests (29)
-npm run test:security          # Security tests (62)
-npm run test:performance       # Performance tests (23)
-npm run test:accessibility     # Accessibility tests (26)
+npm run test:unit              # Unit tests (306)
+npm run test:integration       # Integration tests (34)
+npm run test:api               # API contract tests (11)
+npm run test:e2e               # E2E tests (57)
+npm run test:security          # Security tests (35)
+npm run test:performance       # Performance tests (12)
+npm run test:accessibility     # Accessibility tests (46: 20 passing, 26 todo)
 
 # Coverage report
 npm run test:coverage
@@ -37,30 +39,46 @@ npm run test:coverage
 
 ```
 __tests__/
-├── unit/                    # 219 tests
+├── unit/                    # 306 tests
 │   ├── core/
 │   │   ├── html-renderer.test.ts        (49 tests)
 │   │   ├── html-renderer-blocks.test.ts (85 tests)
+│   │   ├── image-resize.test.ts         (16 tests)
 │   │   └── serializer.test.ts           (38 tests)
-│   └── blocks/
-│       └── built-in.test.ts             (47 tests)
+│   ├── blocks/
+│   │   └── built-in.test.ts             (47 tests)
+│   ├── context/
+│   │   └── BlockEditorProvider.test.tsx (7 tests)
+│   ├── hooks/
+│   │   └── useImageDropZone.test.tsx    (20 tests)
+│   └── mini-editor/
+│       ├── MiniEditor.regressions.test.tsx (25 tests)
+│       ├── MiniEditor.test.tsx          (8 tests)
+│       ├── toolbar-config.test.ts       (5 tests)
+│       └── useRichText.test.ts          (6 tests)
 │
-├── e2e/                     # 51 tests
+├── api/                     # 11 tests
+│   └── upload-single.test.ts            (11 tests)
+│
+├── e2e/                     # 57 tests
 │   ├── block-editor-render.test.tsx     (31 tests)
+│   ├── mini-editor-journey.test.tsx     (6 tests)
 │   └── serializer-roundtrip.test.ts     (20 tests)
 │
-├── security/                # 62 tests
-│   ├── xss-prevention.test.ts           (34 tests)
-│   └── file-upload-validation.test.ts   (28 tests)
+├── security/                # 35 tests
+│   ├── xss-prevention.test.ts           (14 tests)
+│   └── file-upload-validation.test.ts   (21 tests)
 │
-├── performance/             # 23 tests
-│   └── rendering-performance.test.ts
+├── performance/             # 12 tests
+│   ├── rendering-performance.test.ts    (7 tests)
+│   └── serializer-renderer-perf.test.ts (5 tests)
 │
-├── accessibility/           # 26 tests
+├── accessibility/           # 46 tests (20 passing, 26 todo)
 │   └── accessibility.test.ts
 │
-├── integration/             # 29 tests
-│   └── block-editor-integration.test.ts
+├── integration/             # 34 tests
+│   ├── artist-editor.test.tsx           (6 tests)
+│   └── block-editor-integration.test.ts (28 tests)
 │
 └── __mocks__/              # Test utilities
     └── factories/           # Block data generators
@@ -179,13 +197,16 @@ it('renders paragraph block in React DOM', () => {
 
 | Category | Tests | Status |
 |----------|-------|--------|
-| Unit Tests | 219 | ✅ 100% pass |
-| E2E Tests | 51 | ✅ 100% pass |
-| Security | 62 | ✅ 100% pass |
-| Performance | 23 | ✅ 100% pass |
-| Accessibility | 26 | ✅ 100% pass |
-| Integration | 29 | ✅ 100% pass |
-| **Total** | **381** | **✅ 100%** |
+| Unit Tests | 306 | ✅ 100% pass |
+| API Tests | 11 | ✅ 100% pass |
+| E2E Tests | 57 | ✅ 100% pass |
+| Security | 35 | ✅ 100% pass |
+| Performance | 12 | ✅ 100% pass |
+| Accessibility | 46 | ✅ 20 pass, 26 todo |
+| Integration | 34 | ✅ 100% pass |
+| **Total** | **501** | **✅ 475 pass, 0 fail, 26 todo** |
+
+Per-file breakdown and scenario/case mapping: `docs/testing/test-classification.md`.
 
 ### Coverage by Module
 
@@ -293,11 +314,11 @@ All 5 core functions fully tested:
 
 | Function | File | Tests | Status |
 |----------|------|-------|--------|
-| h() | html-renderer.test.ts | 8 | ✅ |
-| nl2br() | html-renderer.test.ts | 6 | ✅ |
-| hAttr() | html-renderer.test.ts | 7 | ✅ |
-| sanitizeUrl() | html-renderer.test.ts | 12 | ✅ |
-| sanitizeImageSrc() | html-renderer.test.ts | 8 | ✅ |
+| h() | html-renderer.test.ts | 7 | ✅ |
+| nl2br() | html-renderer.test.ts | 5 | ✅ |
+| hAttr() | html-renderer.test.ts | 4 | ✅ |
+| sanitizeUrl() | html-renderer.test.ts | 19 | ✅ |
+| sanitizeImageSrc() | html-renderer.test.ts | 14 | ✅ |
 
 **Coverage**: 5/5 functions (100%)
 
@@ -372,7 +393,7 @@ npm run typecheck
 All builds must pass before deployment:
 - ✅ TypeScript compilation
 - ✅ Type declaration generation
-- ✅ Test suite passing (381/381)
+- ✅ Test suite passing (475 passing, 0 failing, 26 todo)
 - ✅ Code coverage validated
 
 ---
@@ -449,11 +470,11 @@ npx vitest --reporter=verbose
 
 ## Quick Status
 
-✅ **381/381 tests passing** (100%)
+✅ **475/475 tests passing** (0 failing, 26 todo)
 ✅ **97%+ code coverage** (target: 85%+)
 ✅ **22/22 block types covered** (100%)
 ✅ **5/5 core functions covered** (100%)
 ✅ **Ready for production**
 
-**Last Updated**: March 3, 2026
+**Last Updated**: March 3, 2026 (test counts re-measured September 13, 2026)
 **PDCA Status**: Complete and Approved
