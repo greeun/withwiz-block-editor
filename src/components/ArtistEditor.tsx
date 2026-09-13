@@ -3,7 +3,7 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { useBlockEditorContext } from "../context/BlockEditorProvider";
 import { createSerializer } from "../core/serializer";
-import { h, nl2br } from "../core/html-renderer";
+import { hAttr, nl2br, sanitizeImageSrc } from "../core/html-renderer";
 import type { ArtistBioData } from "../types";
 
 /* ═══ Serialization ═══ */
@@ -12,8 +12,10 @@ const DEFAULT_MARKER = "abe-blocks:";
 
 function generateHtml(data: ArtistBioData): string {
   const hasText = !!data.text.trim();
-  const hasMain = !!data.mainImage;
-  const galleryImages = data.gallery.filter(Boolean);
+  // Disallowed image addresses sanitize to "" and are not rendered at all.
+  const mainImage = sanitizeImageSrc(data.mainImage);
+  const hasMain = !!mainImage;
+  const galleryImages = data.gallery.map(sanitizeImageSrc).filter(Boolean);
   const hasGallery = galleryImages.length > 0;
 
   if (!hasText && !hasMain && !hasGallery) {
@@ -26,12 +28,12 @@ function generateHtml(data: ArtistBioData): string {
     if (hasText && hasMain) {
       html += '<div class="abe-pv-intro">';
       html += `<div class="abe-pv-bio">${nl2br(data.text)}</div>`;
-      html += `<div class="abe-pv-main-img"><img src="${data.mainImage}" alt=""></div>`;
+      html += `<div class="abe-pv-main-img"><img src="${hAttr(mainImage)}" alt=""></div>`;
       html += "</div>";
     } else if (hasText) {
       html += `<div class="abe-pv-bio" style="margin-bottom:20px">${nl2br(data.text)}</div>`;
     } else {
-      html += `<div class="abe-pv-main-img" style="max-width:200px;margin-bottom:20px"><img src="${data.mainImage}" alt=""></div>`;
+      html += `<div class="abe-pv-main-img" style="max-width:200px;margin-bottom:20px"><img src="${hAttr(mainImage)}" alt=""></div>`;
     }
   }
 
@@ -41,7 +43,7 @@ function generateHtml(data: ArtistBioData): string {
     html += '<div class="abe-pv-gallery-label">Gallery</div>';
     html += `<div class="abe-pv-gallery-grid layout-${n}">`;
     galleryImages.forEach((src, i) => {
-      html += `<img src="${h(src)}" alt="" class="abe-gi abe-gi-${i}">`;
+      html += `<img src="${hAttr(src)}" alt="" class="abe-gi abe-gi-${i}">`;
     });
     html += "</div></div>";
   }
