@@ -4,14 +4,14 @@
 
 | 항목 | 내용 |
 |------|------|
-| 대상 | `@withwiz/block-editor` 0.3.0 React 컴포넌트 라이브러리 |
+| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 |
 | 범위 | src/ 전체 (core/, blocks/, components/, context/, hooks/, mini-editor/) |
-| 기준 커밋 | `5bd6210` (chore(release): 0.3.0) |
+| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영 |
 | 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 |
 | 전역 설정 | `__tests__/setup.ts`: jest-dom, matchMedia·IntersectionObserver·ResizeObserver mock, `vi.useFakeTimers({ shouldAdvanceTime: true })` 전역 적용 |
-| 실측 결과 (2026-09-13) | `npm ci` 후 `npx vitest run` 실행: 파일 22개, 테스트 501개 (통과 475, 실패 0, 스킵 0, todo 26), 소요 1.87s |
+| 실측 결과 (2026-09-15) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 23개, 테스트 525개 (통과 499, 실패 0, 스킵 0, todo 26), 소요 1.94s. 같은 날 첫 실행(JSON 리포터)에서는 PERF-002 1건이 측정 편차로 실패했고 단독·전체 재실행에서 통과했다 (TC-P-003 비고) |
 | 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (측정 불가 사유는 "테스트 커버리지 목표" 절 참조) |
-| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신 |
+| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신 |
 
 **버전별 변경 반영 범위**
 
@@ -22,6 +22,7 @@
 | 0.2.0 | `ebdd83c`, `ebacfd0` | 렌더러 시맨틱 HTML 개선 (subheading → `h2`, 이미지·영상 → `figure`/`figcaption`, 인용 → `blockquote`, 캡션 → `alt`) |
 | 0.2.0 | `5c037cc`, `cec4b9e` | useImageDropZone maxFiles 안내 수정, Provider·image-resize·ArtistEditor·MiniEditor 여정·PERF-002 테스트 추가 |
 | 0.3.0 | `709f130` | BlockPreviewTheme 추가 (테스트 없음) |
+| 0.3.1 | `977be3f`, `a483153` | `h()` 가 `"`·`'` 도 이스케이프 (`hAttr()` 는 `h()` 를 그대로 반환), `linkify()` href 값 따옴표 이스케이프, ArtistEditor 미리보기·onChange HTML 이미지 src 에 `sanitizeImageSrc()` + `hAttr()` 적용. `__tests__/security/attribute-injection.test.tsx` (SEC-007~009, 15건) 추가, `html-renderer.test.ts` 기대값 1건 변경·9건 추가 |
 
 ### 표기 규칙
 
@@ -31,7 +32,7 @@
 | 케이스 ID | `TC-{도메인}-{3자리 번호}`. 각 TC 속성 표의 **시나리오** 행에 상위 SC 를 명시한다 |
 | 도메인 약어 | Unit `U`, Integration `I`, API `A`, E2E `E`, Security `S`, Performance `P`, Accessibility `AC`, Smoke `SM`, Load/Stress `L`, Chaos `C` |
 | 상태 | ✅ 완료: 테스트가 존재하고 통과한다. 🔲 계획: 실제 단언을 가진 테스트가 없다 |
-| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 2026-09-13 실측 JSON 리포트 기준으로 기재한다 |
+| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 2026-09-15 실측 JSON 리포트 기준으로 기재한다 |
 | 단계 표 근거 | ✅ 완료 TC 는 실제 테스트 이름과 단언에서 대표 항목을 뽑는다. 🔲 계획 TC 는 소스 코드 동작에 근거한다 |
 
 ---
@@ -58,6 +59,7 @@
 | SC-U-016 | MiniEditor 접근성 속성·서식 단축키 회귀 방지 | Unit | High | ✅ 완료 |
 | SC-U-017 | ImageUploadField 업로드 필드 동작 | Unit | High | 🔲 계획 |
 | SC-U-018 | BlockPreviewTheme 스타일 주입 | Unit | Medium | 🔲 계획 |
+| SC-U-019 | URL 자동 링크 변환 (linkify) href 따옴표 이스케이프 | Unit | Critical | ✅ 완료 |
 | SC-I-001 | 블록 렌더러 → HTML 출력 파이프라인 | Integration | Critical | ✅ 완료 |
 | SC-I-002 | 이미지 처리 파이프라인 | Integration | High | ✅ 완료 |
 | SC-I-003 | 멀티 블록 타입 혼합 렌더링 | Integration | High | ✅ 완료 |
@@ -78,8 +80,8 @@
 | SC-E-003 | MiniEditor 사용자 편집 여정 | E2E | High | ✅ 완료 |
 | SC-S-001 | XSS 공격 방어 (텍스트 콘텐츠) | Security | Critical | ✅ 완료 |
 | SC-S-002 | 파일 업로드 보안 검증 | Security | Critical | ✅ 완료 |
-| SC-S-003 | 본문 URL 자동 링크 변환 속성 주입 차단 | Security | Critical | 🔲 계획 |
-| SC-S-004 | ArtistEditor 이미지 URL 속성 이스케이핑 | Security | Critical | 🔲 계획 |
+| SC-S-003 | 본문 URL 자동 링크 변환 속성 주입 차단 | Security | Critical | ✅ 완료 |
+| SC-S-004 | ArtistEditor 이미지 src 속성 주입 차단 | Security | Critical | ✅ 완료 |
 | SC-S-005 | ArtistEditor 업로드 파일 클라이언트 검증 | Security | High | 🔲 계획 |
 | SC-S-006 | MiniEditor sanitize 미지정 시 HTML 주입 계약 | Security | Medium | 🔲 계획 |
 | SC-P-001 | 대량 블록 렌더링 성능 | Performance | High | ✅ 완료 |
@@ -118,19 +120,22 @@
 | **대상** | `src/core/html-renderer.ts`: `h()`, `nl2br()`, `hAttr()` |
 | **우선순위** | Critical |
 | **전제조건** | 없음 (순수 함수) |
-| **테스트 데이터** | `'Tom & Jerry'`, `'<script>'`, `'안녕 "하세요"'`, `'첫 줄\r\n둘째 줄'` |
+| **테스트 데이터** | `'Tom & Jerry'`, `'<script>'`, `'안녕 "하세요"'`, `"it's"`, `'첫 줄\r\n둘째 줄'`, `'see https://x.com/"onmouseover="alert(1) now'` |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
 | 1 | `h('Tom & Jerry')` 호출 | `'Tom &amp; Jerry'` 반환 |
 | 2 | `h('<script>')` 호출 | `'&lt;script&gt;'` 반환 |
-| 3 | `h('안녕 "하세요"')` 호출 | 큰따옴표를 변환하지 않고 `'안녕 "하세요"'` 반환 |
-| 4 | `h(null)`, `h(undefined)` 호출 | `''` 반환 |
-| 5 | `nl2br('첫 줄\r\n둘째 줄')` 호출 | `'첫 줄<br>둘째 줄'` 반환 |
-| 6 | `hAttr('<img src="test" />')` 호출 | `'&lt;img src=&quot;test&quot; /&gt;'` 반환 |
+| 3 | `h('안녕 "하세요"')` / `h("it's")` 호출 | `'안녕 &quot;하세요&quot;'` / `'it&#39;s'` 반환 |
+| 4 | `` h(`"&'`) `` 호출 | `'&quot;&amp;&#39;'` 반환 (`&` 를 먼저 처리하므로 따옴표 엔티티가 이중 이스케이프되지 않음) |
+| 5 | `h(null)`, `h(undefined)` 호출 | `''` 반환 |
+| 6 | `nl2br('첫 줄\r\n둘째 줄')` 호출 | `'첫 줄<br>둘째 줄'` 반환 |
+| 7 | `nl2br('see https://x.com/"onmouseover="alert(1) now')` 호출 | `href` 값과 링크 텍스트가 모두 `https://x.com/&quot;onmouseover=&quot;alert(1)` 인 `<a ... target="_blank" rel="noopener noreferrer">` 1개로 변환 (따옴표가 href 를 끊지 못함) |
+| 8 | `hAttr('<img src="test" />')` 호출 | `'&lt;img src=&quot;test&quot; /&gt;'` 반환 |
+| 9 | `` hAttr(`a "b" 'c' &`) `` 호출 | `'a &quot;b&quot; &#39;c&#39; &amp;'` 반환, `&amp;quot;`·`&amp;#39;` 미포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 16개 (2026-09-13 실측: h 7, nl2br 5, hAttr 4)
-- **비고:** `nl2br()` 는 내부에서 `linkify()` 를 호출하지만 http(s) URL 이 포함된 입력은 이 파일에서 검증하지 않는다. 해당 경로는 TC-S-003 에서 다룬다.
+- **자동화:** 가능 ✅ | **테스트 수:** 21개 (2026-09-15 실측: h 9, nl2br 6, hAttr 6)
+- **비고:** 0.3.1 (`977be3f`) 에서 `h()` 가 큰따옴표·작은따옴표도 이스케이프하도록 바뀌었다. 3단계 기대값이 `'안녕 "하세요"'` 에서 `'안녕 &quot;하세요&quot;'` 로 바뀌었고 테스트 이름도 `큰따옴표는 이스케이핑하지 않음 (nl2br에서 처리)` 에서 `큰따옴표를 &quot;로 변환 (속성 주입 방어)` 로 바뀌었다. `hAttr()` 는 이제 `h()` 를 그대로 반환하므로 두 함수 출력이 같다. 같은 버전에서 h 2건(3단계 작은따옴표, 4단계), nl2br 1건(7단계), hAttr 2건(작은따옴표 변환, 9단계)이 추가되었다. `linkify()` 단독 검증은 TC-U-020, 블록 경유 속성 주입 검증은 TC-S-003 에서 다룬다.
 
 ---
 
@@ -152,7 +157,7 @@
 | 5 | `sanitizeUrl('  https://example.com  ')` | `'https://example.com'` 반환 (앞뒤 공백 제거) |
 | 6 | `sanitizeImageSrc('test<svg>alert</svg>.jpg')`, `sanitizeImageSrc('images/photo.png')` | `''` 반환 / 원본 상대 경로 반환 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 33개 (2026-09-13 실측: sanitizeUrl 19, sanitizeImageSrc 14)
+- **자동화:** 가능 ✅ | **테스트 수:** 33개 (2026-09-15 실측: sanitizeUrl 19, sanitizeImageSrc 14)
 
 ---
 
@@ -175,7 +180,7 @@
 | 5 | 다른 마커(`OTHER_MARKER`) 뒤에 올바른 마커가 있는 HTML | 올바른 마커 데이터만 복원 |
 | 6 | 100개 블록 라운드트립 | 길이 100, 원본과 동일 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 38개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 38개 (2026-09-15 실측)
 
 ---
 
@@ -197,7 +202,7 @@
 | 5 | `createEmptyBlock('unknown-type', 1)` 호출 | 키가 `['type', 'id']` 뿐 |
 | 6 | `createEmptyBlock('quote', 100)` 과 `getBlockDef('quote').createEmpty(100)` 비교 | 동일 객체 구조 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 47개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 47개 (2026-09-15 실측)
 
 ---
 
@@ -220,7 +225,7 @@
 | 5 | 0 bytes 파일 / 11MB 파일 검증 | `비어` 포함 / `MB` 포함 문자열 반환 |
 | 6 | `../evil.jpg` / `photo\0.jpg` 검증 | `경로` 포함 / `올바르지` 포함 문자열 반환 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서가 계획한 신규 파일 `image-resize-validate.test.ts` 는 만들어지지 않았고 `image-resize.test.ts` 에 구현되었다. 이중 확장자와 `hasMetadata` 는 TC-S-002 가 담당한다. GIF 입력 시 `hasMetadata: false` 분기는 어느 테스트도 검증하지 않는다.
 
 ---
@@ -245,7 +250,7 @@
 | 5 | SVG 파일 | sync 거부 결과를 그대로 반환 (error 에 `SVG` 포함) |
 | 6 | `file.slice().arrayBuffer()` 가 reject 하도록 재정의 | `valid: false`, error 정의됨 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
 - **비고:** JPEG·PNG 시그니처 일치/불일치는 TC-S-002 가 담당한다. 계획 파일명 `image-resize-async.test.ts` 대신 `image-resize.test.ts` 에 구현되었다.
 
 ---
@@ -295,7 +300,7 @@
 | 5 | 컨텍스트 `onError('업로드 실패')` 호출 | 소비자 콜백이 같은 메시지로 1회 호출 |
 | 6 | `autoResize={false}`, `maxSizeMB={5}` 전달 | 컨텍스트에 `false`, `5` 반영 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 7개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 7개 (2026-09-15 실측)
 
 ---
 
@@ -343,7 +348,7 @@
 | 5 | PDF 만 drop | 업로드 0회, error 에 `이미지` 포함 |
 | 6 | `uploadImage` 가 `Error('서버가 거부함')` throw | error·Provider `onError` 모두 `서버가 거부함`, `isUploading=false` |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 20개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 20개 (2026-09-15 실측)
 - **비고:** 파일 머리 주석에 명시된 대로 리사이즈 단계(`isResizing`, 크기 초과 메시지)는 실행하지 않는다. 해당 분기는 TC-A-003 에서 다룬다.
 
 ---
@@ -367,7 +372,7 @@
 | 5 | `video` 블록 url `javascript:alert(1)` | `<figure class="test-vid"><div class="test-vw"><iframe src="" allowfullscreen></iframe></div></figure>` |
 | 6 | `cta` 블록 label 만 있고 url 빈 값 / `createHtmlRenderer('test', 'featured')` | `href="#"` 포함 / `test-cta featured` 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 85개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 85개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서는 이 파일을 Unit 테스트 수(219)에 합산했지만 TC 로 기술하지 않았다.
 
 ---
@@ -387,7 +392,7 @@
 | 2 | 1KB JPEG 결과 크기 확인 | `originalSize`·`newSize` 모두 `file.size` |
 | 3 | `size` 를 15MB 로 재정의한 GIF 입력 | `wasResized: false`, 원본 참조, `originalSize`·`newSize` 모두 15MB |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측, 전체 단언 기재)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측, 전체 단언 기재)
 
 ---
 
@@ -408,7 +413,7 @@
 | 4 | 그룹 2 구성 | `insertUnorderedList`, `insertOrderedList`, `formatBlock` 포함, 세 번째 `value` 는 `blockquote` |
 | 5 | 모든 버튼 | `label`·`title` 존재 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
 - **비고:** `ariaLabel` 필드 값은 이 파일에서 단언하지 않는다. 렌더링된 `aria-label` 은 TC-U-017 이 검증한다.
 
 ---
@@ -432,7 +437,7 @@
 | 5 | innerHTML `<p>world</p>` 지정 후 `handleInput()` | `onChange('<p>world</p>')` |
 | 6 | `queryCommandState('bold')` 가 true 인 상태에서 `execFormat('bold')` | `formatState.bold === true` |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
 
 ---
 
@@ -455,7 +460,7 @@
 | 5 | `굵게` 버튼 mouseDown | `execCommand('bold', false, undefined)` 호출 |
 | 6 | 에디터 focus 후 bold 활성 상태에서 `굵게` mouseDown | 버튼에 `bme-btn--active` 클래스 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-15 실측)
 - **비고:** 테스트 이름 `calls onChange when toolbar button is clicked` 는 onChange 호출을 언급하지만 단언은 `execCommand` 호출만 확인한다.
 
 ---
@@ -479,7 +484,7 @@
 | 5 | 빈 마운트 / `<p><br></p>` 입력 / 이미지만 입력 | `data-empty="true"` / `data-empty="true"` / 속성 제거 |
 | 6 | `ref.clear()` / `ref.focus()` / `ref.getEditorElement()` | innerHTML `''`·onChange(`''`)·`data-empty="true"` / activeElement 가 편집 영역 / contenteditable div 반환 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 16개 (2026-09-13 실측: #1 2, #2 3, #3 2, #5 1, #6 4, #7 4)
+- **자동화:** 가능 ✅ | **테스트 수:** 16개 (2026-09-15 실측: #1 2, #2 3, #3 2, #5 1, #6 4, #7 4)
 
 ---
 
@@ -502,7 +507,7 @@
 | 5 | Ctrl+b / Ctrl+i / Ctrl+s keyDown | `execCommand` 가 `bold` / `italic` / `strikeThrough` 로 호출 |
 | 6 | Cmd+B (metaKey) / Ctrl+Alt+B keyDown | bold 실행 / `execCommand` 미호출 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 9개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 9개 (2026-09-15 실측)
 - **비고:** 파일 위치에 따라 Unit 으로 집계한다. 7절 Accessibility 에서 교차 참조한다.
 
 ---
@@ -532,7 +537,7 @@
 | 10 | `<form>` 안에서 × 버튼 클릭 | 현재 소스: 버튼에 `type` 속성이 없어 `button.type === 'submit'` 이다. 기대: form 이 제출되지 않아야 한다 (MiniEditor Regression #1 과 같은 기준) |
 
 - **자동화:** 가능 ✅
-- **비고:** 9단계와 10단계의 현재 소스 동작은 2026-09-13 워크트리 밖 임시 테스트로 확인했다 (`input.type='file'`, 레이블 없음, 영역 `role`·`tabindex` 없음, × 버튼 `type='submit'`·`aria-label` 없음·텍스트 `×`). 접근성 항목은 TC-AC-006~008 에서 다룬다. 우선순위 갭 3순위(사전 조사 6순위)에 해당한다.
+- **비고:** 9단계와 10단계의 현재 소스 동작은 2026-09-13 워크트리 밖 임시 테스트로 확인했다 (`input.type='file'`, 레이블 없음, 영역 `role`·`tabindex` 없음, × 버튼 `type='submit'`·`aria-label` 없음·텍스트 `×`). 접근성 항목은 TC-AC-006~008 에서 다룬다. 우선순위 갭 1순위(사전 조사 6순위)에 해당한다.
 
 ---
 
@@ -554,7 +559,30 @@
 | 4 | 컴포넌트 props 확인 | props 를 받지 않으며 `href`·`precedence` 값이 `@withwiz/block-editor/preview`·`default` 로 고정되어 있다 |
 
 - **자동화:** 가능 ✅
-- **비고:** 1~3단계 결과는 2026-09-13 워크트리 밖 임시 테스트(React 19.2.6)로 확인했다. `package.json` 의 `peerDependencies.react` 는 `>=18.0.0` 인데 `CLAUDE.md` 는 이 컴포넌트가 React 19 이상을 요구한다고 기재한다. React 18 환경 동작은 devDependencies 에 React 18 이 없어 확인하지 않았다. 우선순위 갭 3순위(사전 조사 6순위)에 해당한다.
+- **비고:** 1~3단계 결과는 2026-09-13 워크트리 밖 임시 테스트(React 19.2.6)로 확인했다. `package.json` 의 `peerDependencies.react` 는 `>=18.0.0` 인데 `CLAUDE.md` 는 이 컴포넌트가 React 19 이상을 요구한다고 기재한다. React 18 환경 동작은 devDependencies 에 React 18 이 없어 확인하지 않았다. 우선순위 갭 1순위(사전 조사 6순위)에 해당한다.
+
+---
+
+### TC-U-020: URL 자동 링크 변환 (linkify)
+
+| 항목 | 내용 |
+|------|------|
+| **시나리오** | SC-U-019 |
+| **파일** | `__tests__/unit/core/html-renderer.test.ts` (`linkify()` describe) |
+| **대상** | `src/core/html-renderer.ts`: `linkify()` (정규식 `https?:\/\/[^\s<]+` 에 일치한 URL 을 `<a>` 로 감싸고, href 값의 `"`·`'` 만 `&quot;`·`&#39;` 로 바꾼다. 링크 텍스트와 `&` 는 그대로 둔다) |
+| **우선순위** | Critical |
+| **전제조건** | 없음 (순수 함수). 소스 주석상 입력은 `h()` 로 이스케이프된 HTML 이다 |
+| **테스트 데이터** | `'go https://example.com/path now'`, `'see https://x.com/"onmouseover="alert(1) now'`, `"see https://x.com/'onmouseover='alert(1) now"`, `'https://x.com/?a=1&amp;b=2'` |
+
+| # | 단계 | 예상 결과 |
+|---|------|---------|
+| 1 | `linkify('go https://example.com/path now')` 호출 | `'go <a href="https://example.com/path" target="_blank" rel="noopener noreferrer">https://example.com/path</a> now'` 반환 |
+| 2 | 큰따옴표가 든 URL 입력 | `href="https://x.com/&quot;onmouseover=&quot;alert(1)"`, 링크 텍스트는 원문 `https://x.com/"onmouseover="alert(1)` 그대로 |
+| 3 | 작은따옴표가 든 URL 입력 | `href="https://x.com/&#39;onmouseover=&#39;alert(1)"`, 링크 텍스트는 원문 그대로 |
+| 4 | `linkify('https://x.com/?a=1&amp;b=2')` 호출 | href 와 링크 텍스트 모두 `https://x.com/?a=1&amp;b=2` (`&amp;amp;` 로 이중 이스케이프하지 않음) |
+
+- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-15 실측, 테스트 4개 전체 기재)
+- **비고:** 0.3.1 (`977be3f`) 에서 추가된 describe 이다. 2·3단계처럼 이스케이프되지 않은 입력이 들어오면 링크 텍스트에 원문 따옴표가 남지만 텍스트 노드이므로 속성을 만들지 않는다 (TC-S-003 1~3단계가 DOM 파싱으로 확인). 따옴표로 감싼 URL 은 테스트가 없다: `nl2br('링크 "https://example.com" 참조')` 는 `h()` 가 만든 `&quot;` 까지 정규식에 일치해 href 파싱 값이 `https://example.com"` 이 된다. 0.3.0 에서는 같은 입력의 href 파싱 값이 `https://example.com` 이었다 (속성이 끊겨 `"` 이름의 속성이 함께 생성됨). 닫는 괄호 `(https://example.com/a)` 는 두 버전 모두 href 에 `)` 가 포함된다. 세 결과는 2026-09-15 0.3.0·0.3.1 소스를 각각 번들링해 실행하고 jsdom 으로 파싱하여 확인했다. 우선순위 갭 6순위에 해당한다.
 
 ---
 
@@ -583,7 +611,7 @@
 | 4 | `<script>alert("xss")</script>` 포함 텍스트 렌더링 | `<script>` 미포함, `&lt;script&gt;` 포함 |
 | 5 | `한글 テスト 🚀 café` 렌더링 | 네 문자열 모두 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
 - **비고:** 3단계 단언은 빈 문자열 여부를 구분하지 않는다. 빈 배열이 `''` 를 반환한다는 사실은 TC-E-002 가 검증한다.
 
 ---
@@ -605,7 +633,7 @@
 | 4 | img-inline `/inline-image.jpg` 렌더링 | 경로 포함 |
 | 5 | img-text src·name·role·bio 렌더링 | `/image.jpg`, `Person Name` 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서가 이 TC 에 적었던 `data:image/svg+xml` 차단과 `onload` 속성 주입 차단은 INT-005 에 있으며 TC-I-004 로 옮겼다.
 
 ---
@@ -628,7 +656,7 @@
 | 5 | paragraph 2개 렌더링 | `/<\/p>\s*<p/` 일치 |
 | 6 | 블로그 구조 4개 블록 렌더링 | 4개 문자열 모두 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-13 실측: INT-003 5, INT-004 3)
+- **자동화:** 가능 ✅ | **테스트 수:** 8개 (2026-09-15 실측: INT-003 5, INT-004 3)
 - **비고:** 6단계 테스트 주석은 순서 보존을 언급하지만 단언은 포함 여부만 확인한다.
 
 ---
@@ -651,7 +679,7 @@
 | 5 | img-full src `data:image/svg+xml,<svg onload="alert(1)">` | `svg`, `onload` 미포함 |
 | 6 | img-full cap `Caption with "quotes"` | `Caption with`, `quotes` 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서는 SC-I-004 를 완료로 표기했지만 TC 가 없었다. 6단계 테스트 이름 `should escape quotes in attributes` 와 달리 단언은 `alt` 속성 이스케이프(`&quot;`)를 확인하지 않는다.
 
 ---
@@ -672,7 +700,7 @@
 | 3 | img-full src `/images/photo-2024-03-01.jpg?size=large&format=webp` | `photo-2024-03-01.jpg`, `size=large` 포함 |
 | 4 | img-full cap `He said "Hello" to me` | `Hello` 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-15 실측)
 
 ---
 
@@ -695,8 +723,8 @@
 | 5 | `maxGallery=2` 로 2장을 채운 상태 | `이미지 추가` 버튼 없음, upload·onError 미호출 |
 | 6 | upload 가 `Error('network down')` throw | `onError('이미지 업로드 중 오류 발생')`, 대표 이미지 영역 `has-image` 없음, onChange payload 의 `mainImage` 는 빈 값 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-13 실측)
-- **비고:** ArtistEditor 는 첫 커밋부터 있었지만 2026-03-04 문서에는 빠져 있었고, 이 테스트는 2026-05-25 (`cec4b9e`) 에 추가되었다. 5단계 테스트 이름은 onError 경고를 언급하지만 단언은 onError 미호출을 확인한다. 미리보기 HTML 이스케이핑과 업로드 파일 검증은 TC-S-004, TC-S-005 에서 다룬다.
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
+- **비고:** ArtistEditor 는 첫 커밋부터 있었지만 2026-03-04 문서에는 빠져 있었고, 이 테스트는 2026-05-25 (`cec4b9e`) 에 추가되었다. 5단계 테스트 이름은 onError 경고를 언급하지만 단언은 onError 미호출을 확인한다. 미리보기·onChange HTML 의 이미지 속성 주입 차단은 TC-S-004 가 검증하고, 업로드 파일 검증은 TC-S-005 계획에서 다룬다.
 
 ---
 
@@ -724,7 +752,7 @@
 | 9 | 블록 A dragStart → 블록 C dragOver(clientY 가 중앙보다 아래) → drop | A 가 C 뒤로 이동, `be-dragging`·`be-drag-over` 클래스 해제 |
 
 - **자동화:** 가능 ✅
-- **비고:** jsdom 의 `getBoundingClientRect()` 는 0 을 반환하므로 9단계 방향 판정은 `clientY > 0` 으로 제어한다. 우선순위 갭 4순위에 해당한다.
+- **비고:** jsdom 의 `getBoundingClientRect()` 는 0 을 반환하므로 9단계 방향 판정은 `clientY > 0` 으로 제어한다. 우선순위 갭 2순위에 해당한다.
 
 ---
 
@@ -784,7 +812,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 2 | 1단계 결과 확인 | `onUpload(결과 객체)`, `error === null`, `onError` 미호출 |
 | 3 | `uploadImage` 를 pending 으로 유지한 채 호출 → resolve | `isUploading` 이 true → false |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서 단계에 있던 HTTP 200 응답, CDN URL 형태, `block.src` 반영은 이 라이브러리 테스트 범위 밖이다. `block.src` 반영은 TC-U-018 5단계와 TC-U-009 에서 다룬다.
 
 ---
@@ -805,7 +833,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 2 | 1단계 콜백 확인 | `onError('401 Unauthorized')` 호출, `onUpload` 미호출 |
 | 3 | 실패 후 상태 확인 | `isUploading === false` |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측)
 - **비고:** 2026-03-04 문서 5단계 "Authorization 헤더 없는 요청" 은 라이브러리가 헤더를 다루지 않으므로 삭제했다.
 
 ---
@@ -831,7 +859,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 6 | `autoResize={false}`, `maxSizeMB={5}` 에서 7MB JPEG 입력 | 리사이즈 없이 `uploadImage` 1회 |
 
 - **자동화:** 가능 ✅
-- **비고:** 1·2단계 결과는 2026-09-13 워크트리 밖 임시 테스트로 확인했다. 소스 구조상 `validateImageFile` 이 10MB 초과 파일을 먼저 거부하고 `resizeImageIfNeeded` 는 10MB 이하 파일을 원본 그대로 반환하므로, `useImageDropZone` 경유로는 실제 축소가 일어나지 않는다. 2단계 메시지 "줄였지만" 도 실제 동작과 다르다. 2026-03-04 문서가 적은 "리사이즈 후 10MB 초과 → 업로드 전 차단" 은 이 구조를 반영하지 않았다. 우선순위 갭 5순위에 해당한다.
+- **비고:** 1·2단계 결과는 2026-09-13 워크트리 밖 임시 테스트로 확인했다. 소스 구조상 `validateImageFile` 이 10MB 초과 파일을 먼저 거부하고 `resizeImageIfNeeded` 는 10MB 이하 파일을 원본 그대로 반환하므로, `useImageDropZone` 경유로는 실제 축소가 일어나지 않는다. 2단계 메시지 "줄였지만" 도 실제 동작과 다르다. 2026-03-04 문서가 적은 "리사이즈 후 10MB 초과 → 업로드 전 차단" 은 이 구조를 반영하지 않았다. 우선순위 갭 3순위에 해당한다.
 
 ---
 
@@ -851,7 +879,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 2 | 1단계 상태 확인 | `error !== null` |
 | 3 | BMP 에 거부 메시지를 반환하도록 설정 후 BMP 입력 | `uploadImage` 미호출 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측)
 - **비고:** 이 파일은 검증 로직을 테스트 안의 mock 구현으로 대체하므로 실제 validator 연동을 확인하지 않는다. 실제 validator 경유 거부는 TC-U-010 4·5단계가 확인한다. 2026-03-04 문서 3단계 "onError 호출됨" 은 소스와 다르다: 검증 실패 시 `setError` 만 호출하고 `onError` 는 호출하지 않는다.
 
 ---
@@ -870,7 +898,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 1 | `{ url, key: 'track-key-99' }` resolve | `onKeyTracked('track-key-99')` 호출 |
 | 2 | `{ url }` resolve (key 없음) | `onKeyTracked` 미호출 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측, 테스트 2개 전체 기재)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측, 테스트 2개 전체 기재)
 - **비고:** 시나리오명을 "UploadResult url/key 필드 계약 검증" 에서 key 로 좁혔다. `url` 누락·빈 문자열 처리는 SC-A-008 로 분리했다.
 
 ---
@@ -889,7 +917,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 | 1 | `uploadImage` 가 `Error('Network Error')` reject | `error === 'Network Error'` |
 | 2 | `uploadImage` 가 문자열 `'알 수 없는 오류'` reject | `error === '업로드 중 오류 발생'` (기본 메시지) |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측, 테스트 2개 전체 기재)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측, 테스트 2개 전체 기재)
 - **비고:** 두 테스트는 error 만 단언한다. `isUploading=false` 복원은 TC-A-002 와 TC-U-010 6단계가 확인한다.
 
 ---
@@ -907,7 +935,7 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 |---|------|---------|
 | 1 | `disabled: true` 로 hook 생성 후 `handleFileInput([JPEG])` 호출 | `uploadImage` 미호출 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 1개 (2026-09-13 실측, 테스트 1개 전체 기재)
+- **자동화:** 가능 ✅ | **테스트 수:** 1개 (2026-09-15 실측, 테스트 1개 전체 기재)
 - **비고:** 이 파일은 drop 경로를 검증하지 않는다. disabled 상태에서 drop 을 무시하는 동작은 TC-U-010 이 확인한다.
 
 ---
@@ -994,7 +1022,7 @@ beforeEach(() => {
 | 5 | paragraph 50개 / 5종 타입 혼합 25개 라운드트립 | 길이 50 / 25, 각 블록 렌더링 결과 truthy |
 | 6 | 마커 없는 HTML / `INVALID_BASE64!!!` 역직렬화 | 모두 `null` |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 20개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 20개 (2026-09-15 실측)
 - **비고:** 사용하는 블록 타입은 paragraph, lead, img-full, divider, quote, stats, cta, timeline, spacer, subheading 10종이다. 2026-03-04 문서에 적힌 "22개 블록 타입 전체 라운드트립" 과 `renderBlocks(deserialized)` 호출은 실제 테스트에 없다. `BUILT_IN_BLOCKS`·`createEmptyBlock` 은 import 만 하고 사용하지 않는다.
 
 ---
@@ -1018,7 +1046,7 @@ beforeEach(() => {
 | 5 | press-list link `https://example.com` | `target="_blank"`, `rel="noopener noreferrer"` 포함 |
 | 6 | `renderBlocksWrapped([paragraph, divider])` 마운트 | `.test-body` 안에 `p` 와 `.test-hr` 존재 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 31개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 31개 (2026-09-15 실측)
 - **비고:** describe 이름은 `BlockRenderer E2E` 이지만 `src/components/BlockRenderer.tsx` 컴포넌트를 렌더링하지 않는다. 시나리오명을 실제 검증 내용에 맞게 정정했다. 사용 타입은 paragraph, lead, img-full, divider, quote, cta, press-list, img-pair, gallery, stats, callout, infobox 12종이며, 2026-03-04 문서의 "22개 블록 타입" 과 `nbe-pvb-p` vs `rm-bk-p` prefix 비교는 실제 테스트에 없다 (prefix 는 `custom` 을 사용한다).
 
 ---
@@ -1042,7 +1070,7 @@ beforeEach(() => {
 | 5 | `sanitize` 와 적대적 value(`onerror`, `javascript:`) → `<p onclick="steal()">` 입력 | img `onerror` 없음, a href 에 `javascript:` 없음, 출력 `<p>click me</p>` |
 | 6 | 빈 마운트 → 입력 → `<p><br></p>` → 재입력 | `data-empty` 가 `true` → 제거 → `true` → 제거 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
 
 ---
 
@@ -1073,9 +1101,9 @@ beforeEach(() => {
 | 5 | cta url `#" onclick="alert(1)" data-foo="` | `onclick`, `alert` 미포함 |
 | 6 | cta url `https://example.com`, `/page/article`, `#section` | 각 URL 이 출력에 유지 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 14개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 14개 (2026-09-15 실측)
 - **관련 요구사항:** OWASP A03:2021 Injection
-- **비고:** 본문 텍스트에 http(s) URL 이 포함된 경우(`linkify` 경로)는 검증하지 않는다. 이 경로의 속성 주입은 TC-S-003 에서 다룬다. 2026-03-04 문서 7단계 `file:///etc/passwd` 는 이 파일이 아니라 TC-U-002 에 있다.
+- **비고:** 이 파일은 본문 텍스트에 http(s) URL 이 포함된 경우(`linkify` 경로)를 검증하지 않는다. 이 경로의 속성 주입은 TC-S-003 (`attribute-injection.test.tsx`) 이 검증한다. 2026-03-04 문서 7단계 `file:///etc/passwd` 는 이 파일이 아니라 TC-U-002 에 있다.
 
 ---
 
@@ -1097,56 +1125,58 @@ beforeEach(() => {
 | 5 | `../../../etc/passwd.jpg`, `photo.jpg\0.exe`, `photo.jpg.exe` | 모두 `valid: false` |
 | 6 | PDF 시그니처 `25 50 44 46` + `image/jpeg` (`validateImageFileAsync`) | `valid: false`, error 에 `올바르지` 포함 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 21개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 21개 (2026-09-15 실측)
 - **관련 요구사항:** OWASP A04:2021 Insecure Design
 - **비고:** 업로드 크기 상한은 `MAX_UPLOAD_SIZE` 10MB 이다. 2026-03-04 문서 5단계 "50MB 초과 파일 거부" 는 실제 테스트와 다르다. `ABSOLUTE_MAX_SIZE`(50MB) 상수는 선언만 되어 있고 사용되지 않는다. `hasMetadata` 는 MIME 이 JPEG·PNG 이면 true 를 반환하는 휴리스틱이며 EXIF 를 파싱하지 않는다 (`checkPotentialMetadata`).
 
 ---
 
-### TC-S-003: 본문 URL 자동 링크 변환 속성 주입 차단 🔲 계획
+### TC-S-003: 본문 URL 자동 링크 변환 속성 주입 차단
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-S-003 |
-| **파일** | `__tests__/security/xss-prevention.test.ts` (추가 예정) |
-| **대상** | `src/core/html-renderer.ts`: `nl2br()` → `linkify()` (정규식 `https?:\/\/[^\s<]+` 결과를 `href="${url}"` 에 삽입) |
+| **파일** | `__tests__/security/attribute-injection.test.tsx` (SEC-007, SEC-008) |
+| **대상** | `src/core/html-renderer.ts`: `nl2br()` → `linkify()`, 그리고 `renderBlock()` 에서 `nl2br()` 를 사용하는 필드 7곳 (`lead`·`paragraph` text, `img-text` bio, `quote`·`quote-large`·`callout` text, `qa` a) |
 | **우선순위** | Critical |
-| **전제조건** | 렌더러 출력을 jsdom 으로 파싱해 속성 목록을 확인한다 |
-| **테스트 데이터** | `see https://x.com/"onmouseover="alert(1) now` |
+| **전제조건** | 출력 HTML 을 jsdom `<template>` 으로 파싱해 실제 생성된 요소의 속성 이름 목록을 검사한다 (`template.content` 는 비활성 문서라 스크립트 실행·이미지 요청이 일어나지 않는다) |
+| **테스트 데이터** | `LINK_PAYLOAD_DQ = 'see https://x.com/"onmouseover="alert(1) now'`, `LINK_PAYLOAD_SQ = "see https://x.com/'onmouseover='alert(1) now"` |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | paragraph text 에 테스트 데이터 지정 후 `renderBlock` | 현재 소스: `<a href="https://x.com/"onmouseover="alert(1)" target="_blank" rel="noopener noreferrer">` 출력. 기대: `on*` 속성이 생성되지 않아야 한다 |
-| 2 | 1단계 출력을 jsdom 으로 파싱 | 현재 소스: `a` 요소 속성이 `href`, `onmouseover`, `target`, `rel` 이다. 기대: `onmouseover` 없음 |
-| 3 | 같은 데이터를 `lead`·`quote`·`quote-large`·`callout` text, `qa` a, `img-text` bio 에 지정 | 모든 블록이 `nl2br()` 를 사용하므로 1·2단계와 같은 기대 결과를 적용한다 |
-| 4 | `go https://example.com/path?a=1&b=2 ok` | `href="https://example.com/path?a=1&amp;b=2"` 로 정상 링크 유지 (회귀 방지) |
-| 5 | ArtistEditor 미리보기 text 에 테스트 데이터 지정 | `generateHtml()` 도 `nl2br()` 를 사용하므로 같은 기대 결과를 적용한다 |
+| 1 | `nl2br(LINK_PAYLOAD_DQ)` 출력 파싱 | `a` 1개, 속성 이름 `['href', 'target', 'rel']`, 모든 요소에 `on*` 속성 없음, href 파싱 값 `https://x.com/"onmouseover="alert(1)` |
+| 2 | `linkify(LINK_PAYLOAD_DQ)` 단독 호출 (이스케이프되지 않은 큰따옴표 입력) 출력 파싱 | 1단계와 같은 속성 목록·href 파싱 값, `on*` 속성 없음 |
+| 3 | `linkify(LINK_PAYLOAD_SQ)` 단독 호출 | 출력 문자열에 `href="https://x.com/&#39;onmouseover=&#39;alert(1)"` 포함, `a` 1개, 속성 `['href', 'target', 'rel']`, `on*` 속성 없음 |
+| 4 | `createHtmlRenderer('test').renderBlock()` 에 `LINK_PAYLOAD_DQ` 를 7개 필드(`it.each`: lead, paragraph, img-text.bio, quote, quote-large, callout, qa.a)에 각각 지정 | 블록마다 `a` 1개, 속성 `['href', 'target', 'rel']`, `on*` 속성 없음 |
 
-- **자동화:** 가능 ✅
-- **비고:** 1·2·4단계 현재 출력은 2026-09-13 워크트리 밖에서 소스를 번들링해 실행하고 jsdom 으로 파싱하여 확인했다. `h()` 는 큰따옴표를 이스케이프하지 않고, `linkify()` 는 URL 을 속성값으로 이스케이프하지 않는다. `linkify` 는 2026-03-10 (`4e8e132`) 에 추가되었다. 우선순위 갭 1순위에 해당한다.
+- **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-15 실측: SEC-007 3, SEC-008 7)
+- **관련 요구사항:** OWASP A03:2021 Injection
+- **비고:** 0.3.0 에서는 1단계와 같은 입력이 `a` 요소에 `onmouseover` 속성을 만들었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 1순위). 0.3.1 (`977be3f`) 에서 `h()` 따옴표 이스케이프와 `linkify()` href 따옴표 이스케이프 두 겹으로 수정되었고 이 파일이 함께 추가되었다. 계획 당시에는 `xss-prevention.test.ts` 에 추가할 예정이었으나 새 파일로 구현되었다. 계획 4단계(`&` 가 포함된 정상 URL 회귀 방지)는 이 파일에 없고 `linkify('https://x.com/?a=1&amp;b=2')` 단위 테스트(TC-U-020 4단계)가 가깝다. 계획 5단계 ArtistEditor 약력 텍스트는 `generateHtml()` 이 같은 `nl2br()` 를 사용하므로 같은 방어가 적용되지만 링크 페이로드로 검증하는 테스트는 없다 (SEC-009 는 약력에 링크가 없는 문자열만 지정한다). 따옴표로 감싼 URL 의 링크 대상 변화는 TC-U-020 비고를 참조한다.
 
 ---
 
-### TC-S-004: ArtistEditor 이미지 URL 속성 이스케이핑 🔲 계획
+### TC-S-004: ArtistEditor 이미지 src 속성 주입 차단
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-S-004 |
-| **파일** | `__tests__/security/artist-editor-output.test.tsx` (신규) |
-| **대상** | `src/components/ArtistEditor.tsx`: `generateHtml()` (미리보기 `dangerouslySetInnerHTML` 과 onChange 출력에 모두 사용) |
+| **파일** | `__tests__/security/attribute-injection.test.tsx` (SEC-009) |
+| **대상** | `src/components/ArtistEditor.tsx`: `generateHtml()` (미리보기 `dangerouslySetInnerHTML` 과 onChange 출력에 모두 사용). 대표 이미지·갤러리 src 를 `sanitizeImageSrc()` 로 거른 뒤 `hAttr()` 로 출력하고, 빈 문자열이 된 주소는 img 를 출력하지 않는다 |
 | **우선순위** | Critical |
-| **전제조건** | `BlockEditorProvider` 로 감싸고, 직렬화 마커 `abe-blocks:` payload 로 마운트한다 |
-| **테스트 데이터** | `mainImage: 'x.png" onerror="alert(1)'`, `gallery: ['g.png" onload="alert(2)']`, `mainImage: 'javascript:alert(1)'` |
+| **전제조건** | `BlockEditorProvider`(`uploadImage` 는 `vi.fn()`) 로 감싸고 `createSerializer('abe-blocks:')` payload 로 마운트한다. onChange 출력은 `.abe-textarea` 값을 바꿔 발생시킨 마지막 호출 인자를 `<template>` 으로 파싱한다 |
+| **테스트 데이터** | `IMG_PAYLOAD = 'x.png" onerror="alert(1)'`, `"y.png' onerror='alert(2)"`, `'javascript:alert(1)'`, `'javascript:alert(3)'`, 허용 주소 `https://cdn.example.com/main.png?w=1&h=2`·`https://cdn.example.com/ok.png` |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | mainImage 테스트 데이터로 마운트 후 `.abe-pv-article img` 속성 확인 | 현재 소스: `src`, `onerror`, `alt` (mainImage 를 이스케이프 없이 삽입). 기대: `onerror` 없음 |
-| 2 | gallery 테스트 데이터로 마운트 후 갤러리 img 속성 확인 | 현재 소스: `src`, `onload`, `alt`, `class` (`h()` 는 큰따옴표를 처리하지 않는다). 기대: `onload` 없음 |
-| 3 | 텍스트를 수정해 onChange 발생 | onChange HTML 문자열에도 1·2단계와 같은 속성이 포함되는지 확인한다. 기대: 포함되지 않아야 한다 (호스트가 이 HTML 을 저장·출력한다) |
-| 4 | `mainImage: 'javascript:alert(1)'` | 현재 소스: `sanitizeImageSrc()` 를 적용하지 않는다. 기대: 렌더러와 같은 정책으로 `src=""` |
+| 1 | `{ text: '약력', mainImage: IMG_PAYLOAD, gallery: [] }` 로 마운트 후 textarea 를 `약력 수정` 으로 변경 | 미리보기 `.abe-pv-article` 에 `img` 0개·`on*` 속성 없음, onChange HTML 에도 `img` 0개·`on*` 속성 없음 |
+| 2 | `{ text: '', mainImage: IMG_PAYLOAD, gallery: [] }` (대표 이미지만) 로 마운트 | `.abe-pv-main-img` 없음, `img` 0개, `on*` 속성 없음 |
+| 3 | `mainImage: 'javascript:alert(1)'` 로 마운트 | `.abe-pv-main-img` 없음, `img` 0개 |
+| 4 | `mainImage: 'https://cdn.example.com/main.png?w=1&h=2'` 로 마운트 | `.abe-pv-main-img img` 1개, 속성 `['src', 'alt']`, src 파싱 값이 원래 주소와 같음 |
+| 5 | `gallery: [ok, IMG_PAYLOAD, "y.png' onerror='alert(2)", 'javascript:alert(3)']` 로 마운트 후 textarea 변경 | 미리보기와 onChange HTML 모두 `.abe-pv-gallery-grid img` 1개 (속성 `['src', 'alt', 'class']`, src 가 `ok`), 그리드 클래스 `layout-1` (허용된 항목 수 기준), `on*` 속성 없음 |
 
-- **자동화:** 가능 ✅
-- **비고:** 1·2단계 현재 속성 목록은 2026-09-13 워크트리 밖 임시 테스트로 확인했다. 우선순위 갭 2순위에 해당한다.
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
+- **관련 요구사항:** OWASP A03:2021 Injection
+- **비고:** 0.3.0 에서는 mainImage 를 이스케이프 없이, gallery 를 당시 따옴표를 처리하지 않던 `h()` 만 거쳐 삽입해 `onerror`·`onload` 속성이 생성되었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 2순위). 0.3.1 (`977be3f`) 에서 수정되었다. 계획 당시 파일명은 `artist-editor-output.test.tsx` 였다. 계획 4단계 기대값은 "렌더러와 같은 정책으로 `src=""`" 였으나 구현은 허용되지 않는 주소일 때 img 요소 자체를 출력하지 않는다. 렌더러 `img-full` 은 같은 입력에 `<img src="" alt="">` 를 출력하므로(TC-U-011 4단계) 두 출력 정책이 다르다. 편집 영역 썸네일 `<img src={data.mainImage}>`·`<img src={src}>` 는 JSX 이므로 React 가 속성값으로 설정해 속성 주입 대상이 아니며 `sanitizeImageSrc()` 를 적용하지 않는다. 따라서 허용되지 않는 mainImage 도 편집 영역에는 `has-image` 로 표시되고 미리보기에는 나타나지 않는다 (소스 확인, 테스트 없음).
 
 ---
 
@@ -1168,7 +1198,7 @@ beforeEach(() => {
 | 4 | 업로드 실패 시 onError 메시지 | 현재 소스: 원래 오류 메시지를 버리고 `이미지 업로드 중 오류 발생` 으로 고정한다 (TC-I-006 6단계에서 확인) |
 
 - **자동화:** 가능 ✅
-- **비고:** 1~3단계 현재 동작은 소스 코드 확인에 근거한다. 우선순위 갭 7순위에 해당한다.
+- **비고:** 1~3단계 현재 동작은 소스 코드 확인에 근거한다. 우선순위 갭 5순위에 해당한다.
 
 ---
 
@@ -1216,7 +1246,7 @@ beforeEach(() => {
 | 3 | paragraph·img-full·quote 각 50개 렌더링 | 결과 truthy, 150ms 미만 |
 | 4 | paragraph 50개를 10회 반복 렌더링 | 결과 10개, 첫 결과 truthy. `performance.memory` 가 없으면 메모리 증가 단언은 실행되지 않는다 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-13 실측)
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
 - **비고:** `__tests__/setup.ts` 가 `vi.useFakeTimers({ shouldAdvanceTime: true })` 를 전역 적용하며, Vitest 4.1.7 기본 설정은 `performance` 도 가짜로 대체한다. 워크트리 밖 임시 테스트에서 같은 설정으로 60ms 동기 작업을 측정한 결과 `performance.now()` 차이가 0 이었다. 따라서 이 TC 의 시간 단언은 현재 실패할 수 없다 (허위 양성). 교정은 SC-P-004 에서 다룬다. 2026-03-04 문서 4·5단계 "직렬화·역직렬화 100개 블록" 은 이 파일에 없고 TC-P-003 에 있다.
 
 ---
@@ -1235,7 +1265,7 @@ beforeEach(() => {
 | 1 | paragraph 100개(`Block ${i}`) 렌더링 | HTML 길이 20,000자 미만 |
 | 2 | paragraph 10개 렌더링 | `\n\n+` 연속 줄바꿈 발생 수 10 미만 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-13 실측, 테스트 2개 전체 기재)
+- **자동화:** 가능 ✅ | **테스트 수:** 2개 (2026-09-15 실측, 테스트 2개 전체 기재)
 - **비고:** 2026-03-04 문서는 이 TC 를 "(예정)" 으로 두고 단일 paragraph 50~200 bytes, divider 최소 크기를 적었지만 해당 단언은 없다. 실제 존재하는 크기 테스트 2개로 단계를 맞추고 완료로 변경했다.
 
 ---
@@ -1259,8 +1289,9 @@ beforeEach(() => {
 | 4 | 500블록 `renderBlocks` 30회 | 출력 길이 > 5000, p95 < 5ms, p99 < 15ms |
 | 5 | 50블록 `renderBlocks` 를 `Promise.resolve().then` 으로 100건 동시 실행 | 결과 100개 각 길이 > 100, 전체 < 50ms |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-13 실측)
-- **실측값 (2026-09-13 실행 로그):** SER p95 0.071ms, RT p95 0.081ms, REN500 p95 0.934ms, CONC100 total 3.334ms
+- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
+- **실측값 (2026-09-15 전체 실행 로그, `--silent=false`):** SER p95 0.038ms, RT p95 0.182ms, REN500 p95 1.484ms, CONC100 total 2.701ms
+- **비고:** 2026-09-15 `npm ci` 직후 첫 전체 실행(JSON 리포터)에서 4단계 `500블록 호출 x30회 — p95 < 5ms` 가 p95 8.457ms 로 실패했다. 이 파일 단독 재실행과 전체 재실행 2회에서는 통과했으므로 워커 병렬 실행 부하에 따른 측정 편차로 판단했다. 0.3.1 에서 `h()` 의 문자열 치환이 3회에서 5회로 늘었지만 재실행 REN500 p95(1.484ms)는 임계값 5ms 의 약 30% 이다. 2026-09-13 로그값(0.934ms)과의 차이가 코드 변경 때문인지는 반복 측정하지 않아 확인하지 않았다.
 
 ---
 
@@ -1313,7 +1344,7 @@ beforeEach(() => {
 | 5 | subheading → subheading-label 연속 렌더링 / subheading 단독 렌더링 | 연속 제목 레벨 차이 1 이하 / 빈 제목 요소 없음 |
 | 6 | RTL 텍스트 `عربي محتوى` | 원문 유지 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 12개 (2026-09-13 실측: 통과 10, todo 2)
+- **자동화:** 가능 ✅ | **테스트 수:** 12개 (2026-09-15 실측: 통과 10, todo 2)
 - **비고:** todo 2건은 툴바 아이콘 버튼 aria-label (TC-U-017 이 담당) 과 페이지당 h1 1개 (호스트 계층) 이다. 2026-03-04 문서 4단계 "video iframe title 속성 필요" 는 현재 렌더러가 title 을 출력하지 않으므로 SC-AC-009 계획으로 옮겼다.
 
 ---
@@ -1336,7 +1367,7 @@ beforeEach(() => {
 | 4 | cap 이 없는 img-full | 모든 `<img>` 태그에 `alt=` 속성 존재 |
 | 5 | todo 2건 확인 | 장식 이미지 `alt=""`, 복잡한 이미지 긴 설명: 향후 블록 타입 계층 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 7개 (2026-09-13 실측: 통과 5, todo 2)
+- **자동화:** 가능 ✅ | **테스트 수:** 7개 (2026-09-15 실측: 통과 5, todo 2)
 - **비고:** 2026-03-04 문서는 이 TC 에 파일과 상태를 적지 않았다. img-pair·gallery 의 alt 반영은 이 파일이 아니라 TC-U-011 이 검증한다.
 
 ---
@@ -1358,7 +1389,7 @@ beforeEach(() => {
 | 3 | label 이 없는 cta (TC-U-011 교차 확인) | `<a class="test-cta-btn"` 미출력, 빈 텍스트 링크가 생성되지 않는다 |
 | 4 | todo 3건 확인 | 링크 목적, 방문 표시, 동일 텍스트 구분: 콘텐츠 작성자·디자인 토큰 계층 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-13 실측: 통과 1, todo 3)
+- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-15 실측: 통과 1, todo 3)
 - **비고:** 1단계 입력에는 링크가 없으므로 단언이 실패할 수 없다. 2026-03-04 문서는 이 TC 에 파일과 상태를 적지 않았다.
 
 ---
@@ -1380,7 +1411,7 @@ beforeEach(() => {
 | 3 | paragraph 렌더링 | `outline: 0` 또는 `outline: none` 없음 |
 | 4 | todo 10건 확인 | 대비율 2건, 색상 단독 정보, 200% 확대, line-height, 줄 길이, 포커스 표시·초기 포커스·포커스 유지·모달 포커스 트랩: 디자인 토큰·호스트 계층 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 13개 (2026-09-13 실측: 통과 3, todo 10)
+- **자동화:** 가능 ✅ | **테스트 수:** 13개 (2026-09-15 실측: 통과 3, todo 10)
 - **비고:** 입력이 paragraph 1종이고 렌더러는 paragraph 에 style 속성을 출력하지 않는다 (inline style 은 spacer `height`, img-inline `width` 뿐이다). 단언은 향후 회귀를 막는 수준이다.
 
 ---
@@ -1401,7 +1432,7 @@ beforeEach(() => {
 | 3 | A11Y-005 todo 5건 | label-for-id, 오류 aria-describedby, aria-required, 안내 문구 연결, placeholder 전용 레이블 금지 (Layer Owner 가 "host app forms" 로 기재됨) |
 | 4 | A11Y-005 를 라이브러리 컴포넌트 테스트로 전환 | TC-AC-006~008, TC-AC-010 구현으로 대체한다 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-13 실측: 통과 1(sentinel), todo 9)
+- **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-15 실측: 통과 1(sentinel), todo 9)
 - **비고:** 실제 단언이 없으므로 계획으로 분류한다. 이 파일 머리 주석 "this library ships no form components" 는 사실과 달라 2026-09-13 에 정정했다. describe 이름 `A11Y-005: Form Accessibility — N/A (no form components shipped)` 는 테스트 식별자이므로 변경하지 않았다.
 
 ---
@@ -1571,17 +1602,18 @@ beforeEach(() => {
 
 | 유형 | 파일 수 | 테스트 수 (통과 / todo) | SC 수 (완료 / 계획) | TC 수 (완료 / 계획) |
 |------|--------|----------------------|-------------------|-------------------|
-| **Unit** | 11개 | 306개 (306 / 0) | 18개 (14 / 4) | 19개 (15 / 4) |
+| **Unit** | 11개 | 315개 (315 / 0) | 19개 (15 / 4) | 20개 (16 / 4) |
 | **Integration** | 2개 | 34개 (34 / 0) | 7개 (6 / 1) | 7개 (6 / 1) |
 | **API** | 1개 | 11개 (11 / 0) | 8개 (6 / 2) | 8개 (6 / 2) |
 | **E2E** | 3개 | 57개 (57 / 0) | 3개 (3 / 0) | 3개 (3 / 0) |
-| **Security** | 2개 | 35개 (35 / 0) | 6개 (2 / 4) | 6개 (2 / 4) |
+| **Security** | 3개 | 50개 (50 / 0) | 6개 (4 / 2) | 6개 (4 / 2) |
 | **Performance** | 2개 | 12개 (12 / 0) | 4개 (3 / 1) | 4개 (3 / 1) |
 | **Accessibility** | 1개 | 46개 (20 / 26) | 10개 (4 / 6) | 10개 (4 / 6) |
 | **Smoke (SM)** | 0개 | 0개 | 2개 (0 / 2) | 2개 (0 / 2) |
-| **합계** | **22개** | **501개 (475 / 26)** | **58개 (38 / 20)** | **59개 (39 / 20)** |
+| **합계** | **23개** | **525개 (499 / 26)** | **59개 (41 / 18)** | **60개 (42 / 18)** |
 
-- 실패 0개, 스킵 0개이다. todo 26개는 모두 `accessibility.test.ts` 에 있다.
+- 실패 0개, 스킵 0개이다 (첫 실행의 PERF-002 측정 편차 1건은 TC-P-003 비고 참조). todo 26개는 모두 `accessibility.test.ts` 에 있다.
+- 2026-09-13 (0.3.0, 파일 22개·테스트 501개) 대비 0.3.1 에서 파일 1개(`attribute-injection.test.tsx` 15건: TC-S-003 10, TC-S-004 5)와 `html-renderer.test.ts` 9건(TC-U-001 5, TC-U-020 4)이 늘었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 3단계 1건이다.
 - 2026-03-04 문서는 파일 11개, 테스트 381개를 집계했다. 이번에 새로 집계한 파일 11개는 API 1 (`upload-single.test.ts`: 2026-03-04 `8a99864` 로 이미 존재했으나 집계에서 빠짐), Unit 7 (Provider, image-resize, useImageDropZone, MiniEditor 4종), Integration 1 (ArtistEditor), E2E 1 (MiniEditor 여정), Performance 1 (PERF-002) 이다.
 - TC-AC-005 는 계획 상태이지만 파일에 테스트 10개(sentinel 1, todo 9)가 있으므로 테스트 수에는 포함한다.
 
@@ -1589,7 +1621,7 @@ beforeEach(() => {
 
 | 파일 | 도메인 | 테스트 수 | 통과 | todo | 관련 TC |
 |------|--------|---------|------|------|--------|
-| `__tests__/unit/core/html-renderer.test.ts` | Unit | 49 | 49 | 0 | TC-U-001, TC-U-002 |
+| `__tests__/unit/core/html-renderer.test.ts` | Unit | 58 | 58 | 0 | TC-U-001, TC-U-002, TC-U-020 |
 | `__tests__/unit/core/serializer.test.ts` | Unit | 38 | 38 | 0 | TC-U-003 |
 | `__tests__/unit/blocks/built-in.test.ts` | Unit | 47 | 47 | 0 | TC-U-004 |
 | `__tests__/unit/core/image-resize.test.ts` | Unit | 16 | 16 | 0 | TC-U-005, TC-U-006, TC-U-012 |
@@ -1608,22 +1640,23 @@ beforeEach(() => {
 | `__tests__/e2e/mini-editor-journey.test.tsx` | E2E | 6 | 6 | 0 | TC-E-003 |
 | `__tests__/security/xss-prevention.test.ts` | Security | 14 | 14 | 0 | TC-S-001 |
 | `__tests__/security/file-upload-validation.test.ts` | Security | 21 | 21 | 0 | TC-S-002 |
+| `__tests__/security/attribute-injection.test.tsx` | Security | 15 | 15 | 0 | TC-S-003, TC-S-004 |
 | `__tests__/performance/rendering-performance.test.ts` | Performance | 7 | 7 | 0 | TC-P-001, TC-P-002 |
 | `__tests__/performance/serializer-renderer-perf.test.ts` | Performance | 5 | 5 | 0 | TC-P-003 |
 | `__tests__/accessibility/accessibility.test.ts` | Accessibility | 46 | 20 | 26 | TC-AC-001~005 |
-| **합계 22개** | | **501** | **475** | **26** | 누락 파일 0개 |
+| **합계 23개** | | **525** | **499** | **26** | 누락 파일 0개 |
 
 ### 소스 모듈 대조
 
 | 소스 파일 | 추가 시점 | 테스트에서 import 하는 파일 | 관련 SC |
 |----------|---------|------------------------|--------|
-| `src/core/html-renderer.ts` | 0.1.0 | 9개 | SC-U-001, SC-U-004, SC-I-001~005, SC-E-001~002, SC-S-001, SC-S-003, SC-P-001~003, SC-AC-001~004, SC-AC-009 |
-| `src/core/serializer.ts` | 0.1.0 | 4개 | SC-U-002, SC-E-001, SC-P-003, SC-I-006 |
+| `src/core/html-renderer.ts` | 0.1.0 | 10개 | SC-U-001, SC-U-004, SC-U-019, SC-I-001~005, SC-E-001~002, SC-S-001, SC-S-003, SC-P-001~003, SC-AC-001~004, SC-AC-009 |
+| `src/core/serializer.ts` | 0.1.0 | 5개 | SC-U-002, SC-E-001, SC-P-003, SC-I-006, SC-S-004 |
 | `src/core/image-resize.ts` | 0.1.0 | 3개 (api 파일은 mock 대상으로만 참조) | SC-U-005~007, SC-U-011, SC-S-002, SC-A-003 |
 | `src/blocks/built-in.ts` | 0.1.0 | 3개 | SC-U-003, SC-E-001, SC-P-003 |
-| `src/context/BlockEditorProvider.tsx` | 0.1.0 | 4개 (api 파일은 mock 대상으로만 참조) | SC-U-008, SC-U-010, SC-I-006 |
+| `src/context/BlockEditorProvider.tsx` | 0.1.0 | 5개 (api 파일은 mock 대상으로만 참조) | SC-U-008, SC-U-010, SC-I-006, SC-S-004 |
 | `src/hooks/useImageDropZone.ts` | 0.1.0 | 2개 | SC-U-010, SC-A-001~008 |
-| `src/components/ArtistEditor.tsx` | 0.1.0 | 1개 | SC-I-006, SC-S-004, SC-S-005, SC-AC-010 |
+| `src/components/ArtistEditor.tsx` | 0.1.0 | 2개 | SC-I-006, SC-S-004, SC-S-005, SC-AC-010 |
 | `src/components/BlockEditor.tsx` | 0.1.0 | 0개 | SC-I-007, SC-AC-010 |
 | `src/components/BlockRenderer.tsx` | 0.1.0 | 0개 | SC-U-009, SC-AC-010 |
 | `src/components/ImageUploadField.tsx` | 0.1.0 | 0개 | SC-U-017, SC-AC-006~008 |
@@ -1641,7 +1674,7 @@ beforeEach(() => {
 
 | 도메인 | 사전 조사 판정 | 근거 (코드 확인) | 이 문서 반영 |
 |--------|--------------|----------------|------------|
-| Unit | 적용 | 순수 함수(core/, blocks/)와 hook·컴포넌트 단위 테스트 파일 11개가 있다 | SC-U-001~018 |
+| Unit | 적용 | 순수 함수(core/, blocks/)와 hook·컴포넌트 단위 테스트 파일 11개가 있다 | SC-U-001~019 |
 | API | 적용(재정의) | HTTP 서버가 없다. 호스트가 주입하는 `UploadFn` 과 `useImageDropZone` 사이 계약을 API 로 정의한다 | SC-A-001~008 |
 | Integration | 적용 | 렌더러 다중 블록 조합, ArtistEditor + Provider + serializer 연동이 있다 | SC-I-001~007 |
 | E2E | 적용(명칭 유의) | 브라우저 없이 jsdom 에서 실행한다. `block-editor-render.test.tsx` 는 이름과 달리 `BlockRenderer` 컴포넌트가 아니라 렌더러 출력 HTML 을 DOM 에 마운트한다 | SC-E-001~003 |
@@ -1658,22 +1691,28 @@ beforeEach(() => {
 
 | 순위 | 항목 | 근거 | 관련 SC |
 |------|------|------|--------|
-| 1 | 본문 URL 자동 링크 변환에서 속성 주입 발생 | `nl2br()` → `linkify()` 가 큰따옴표를 이스케이프하지 않은 URL 을 `href="..."` 에 넣는다. 렌더러 출력을 jsdom 으로 파싱해 `onmouseover` 속성이 생성됨을 확인했다 | SC-S-003 |
-| 2 | ArtistEditor 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `mainImage` 는 이스케이프 없이, `gallery` 는 `h()` 만 거쳐 `src="..."` 에 삽입된다. 렌더링 결과 `onerror`·`onload` 속성 생성을 확인했다 | SC-S-004 |
-| 3 | `ImageUploadField`·`BlockPreviewTheme` 테스트 0건 (사전 조사 6순위) | 두 컴포넌트를 import 하는 테스트 파일이 없다. ImageUploadField 는 레이블·키보드 조작·오류 안내가 없고, × 버튼은 `type` 이 지정되지 않았다 | SC-U-017, SC-U-018, SC-AC-006~008 |
-| 4 | `BlockEditor.tsx`(376줄)·`BlockRenderer.tsx`(314줄) 테스트 0건 | 두 컴포넌트를 import 하는 테스트 파일이 없다. 편집 버튼에 `type` 이 지정되지 않았다 | SC-I-007, SC-U-009, SC-AC-010 |
-| 5 | 자동 리사이즈가 `useImageDropZone` 경유로 실행되지 않음 | 10MB 고정 검증이 리사이즈보다 먼저 실행되고 `resizeImageIfNeeded` 는 10MB 이하 파일을 축소하지 않는다. ImageUploadField 안내 "10MB 초과시 자동 최적화" 와 실제 동작이 다르다 | SC-A-003, SC-U-007 |
-| 6 | PERF-001 시간 단언 허위 양성 | 전역 가짜 타이머 때문에 `performance.now()` 차이가 0 이다 | SC-P-004 |
-| 7 | ArtistEditor 업로드 파일 검증 부재 | 업로드 핸들러 2개가 `validateImageFile` 없이 `uploadImage` 를 호출한다 | SC-S-005 |
-| 8 | exports 18개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
-| 9 | 커버리지 측정 불가·임계값 미적용 | coverage provider 미설치, 임계값 키 위치가 Vitest 4 설정 형식과 다르다 | "테스트 커버리지 목표" 절 |
+| 1 | `ImageUploadField`·`BlockPreviewTheme` 테스트 0건 (사전 조사 6순위) | 두 컴포넌트를 import 하는 테스트 파일이 없다. ImageUploadField 는 레이블·키보드 조작·오류 안내가 없고, × 버튼은 `type` 이 지정되지 않았다 | SC-U-017, SC-U-018, SC-AC-006~008 |
+| 2 | `BlockEditor.tsx`(376줄)·`BlockRenderer.tsx`(314줄) 테스트 0건 | 두 컴포넌트를 import 하는 테스트 파일이 없다. 편집 버튼에 `type` 이 지정되지 않았다 | SC-I-007, SC-U-009, SC-AC-010 |
+| 3 | 자동 리사이즈가 `useImageDropZone` 경유로 실행되지 않음 | 10MB 고정 검증이 리사이즈보다 먼저 실행되고 `resizeImageIfNeeded` 는 10MB 이하 파일을 축소하지 않는다. ImageUploadField 안내 "10MB 초과시 자동 최적화" 와 실제 동작이 다르다 | SC-A-003, SC-U-007 |
+| 4 | PERF-001 시간 단언 허위 양성 | 전역 가짜 타이머 때문에 `performance.now()` 차이가 0 이다 | SC-P-004 |
+| 5 | ArtistEditor 업로드 파일 검증 부재 | 업로드 핸들러 2개가 `validateImageFile` 없이 `uploadImage` 를 호출한다 | SC-S-005 |
+| 6 | 따옴표로 감싼 URL 의 링크 대상에 닫는 따옴표가 포함됨 (0.3.1 동작 변화) | `h()` 가 만든 `&quot;` 까지 `linkify()` 정규식 `[^\s<]+` 에 일치해 `"https://example.com"` 의 href 파싱 값이 `https://example.com"` 이 된다. 0.3.0 에서는 속성이 끊기면서 href 파싱 값이 `https://example.com` 이었다. 속성 주입은 아니지만 링크 대상이 달라지며 검증 테스트와 기준(URL 끝 문장부호 제외 여부)이 없다 | SC-U-019 (TC-U-020 비고) |
+| 7 | exports 18개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
+| 8 | 커버리지 측정 불가·임계값 미적용 | coverage provider 미설치, 임계값 키 위치가 Vitest 4 설정 형식과 다르다 | "테스트 커버리지 목표" 절 |
+
+### 해소된 갭 (0.3.1)
+
+| 2026-09-13 순위 | 항목 | 해소 내용 | 관련 SC |
+|---------------|------|---------|--------|
+| 1 | 본문 URL 자동 링크 변환에서 속성 주입 발생 | `977be3f`: `h()` 가 `"`·`'` 를 이스케이프하고 `linkify()` 가 href 값의 따옴표를 이스케이프한다. `attribute-injection.test.tsx` SEC-007·SEC-008 과 `html-renderer.test.ts` 의 `h()`·`nl2br()`·`linkify()` 테스트가 회귀를 막는다 | SC-S-003, SC-U-001, SC-U-019 |
+| 2 | ArtistEditor 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않는다. `attribute-injection.test.tsx` SEC-009 가 회귀를 막는다 | SC-S-004 |
 
 ### 문서·명칭 불일치
 
 | 대상 | 내용 |
 |------|------|
-| `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목까지만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
-| `__tests__/docs/TEST-GUIDE.md` | 테스트 수는 2026-09-13 에 실측값으로 정정했다. 예시 코드 시그니처(`h(tag, attrs?, content?)`, `sanitizeUrl` 이 throw), 커버리지 `97%+` 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조는 실제와 다르며 수정하지 않았다 |
+| `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목까지만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
+| `__tests__/docs/TEST-GUIDE.md` | 테스트 수는 2026-09-13 에 0.3.0 실측값(파일 22개·테스트 501개, `html-renderer.test.ts` 49개, security 35개)으로 정정했으며, 0.3.1 병합 후 실측(파일 23개·테스트 525개, `html-renderer.test.ts` 58개, security 50개)과 다르다. `attribute-injection.test.tsx` 도 기재되어 있지 않다. 2026-09-15 갱신에서는 이 파일을 수정하지 않았다. 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), 커버리지 `97%+` 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조도 실제와 다르며 수정하지 않았다 |
 | `__tests__/docs/TEST-SCRIPTS.md`, `docs/04-report/*.md` | `381` 테스트 표기가 남아 있다 (수정하지 않음) |
 | `__tests__/accessibility/accessibility.test.ts` | 머리 주석 A11Y-005 설명은 2026-09-13 에 정정했다. describe 이름 `N/A (no form components shipped)` 와 SCOPE NOTE 의 "BlockEditor UI a11y → `__tests__/e2e/block-editor-render.test.tsx`" 는 사실과 다르며 수정하지 않았다 |
 | `__tests__/api/upload-single.test.ts` | describe 내부 TC 번호가 이 문서 ID 와 다르다. 3절 대응표를 참조한다 |
@@ -1696,7 +1735,7 @@ Funcs:    85%                  83.92%
 Branches: 80%                  81.67%
 ```
 
-- **2026-09-13 측정 불가:** `@vitest/coverage-v8` 가 devDependencies 와 `package-lock.json` 에 없어 lockfile 고정 설치 환경에서 `npm run test:coverage` 를 실행할 수 없다. 위 기록값과 `TEST-GUIDE.md` 의 `97%+` 표기는 서로 다르며 둘 다 현재 코드 기준으로 확인되지 않았다.
+- **2026-09-13·2026-09-15 측정 불가:** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않으므로, lockfile 고정 설치(`npm ci`) 환경에서 `npm run test:coverage` 를 실행할 수 없다. 위 기록값과 `TEST-GUIDE.md` 의 `97%+` 표기는 서로 다르며 둘 다 현재 코드 기준으로 확인되지 않았다.
 - **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 임계값은 `coverage.thresholds` 아래에 지정해야 한다.
 
 **개선 우선순위 (테스트 0건 모듈 기준):**
@@ -1712,15 +1751,16 @@ Branches: 80%                  81.67%
 
 - [x] 사전 조사 판정표에서 적용으로 판정된 7개 도메인(Unit, API, Integration, E2E, Security, Accessibility, Performance) 모두 포함
 - [x] Smoke 계획 SC 추가 (exports 18개), Load/Stress·Chaos 는 판정 근거와 함께 별도 SC 를 두지 않음
-- [x] 테스트 파일 22개가 모두 TC 에 연결됨 (누락 0개)
-- [x] TC 별 테스트 수 합계가 실측 501개 (통과 475, todo 26) 와 일치
+- [x] 테스트 파일 23개가 모두 TC 에 연결됨 (누락 0개)
+- [x] TC 별 테스트 수 합계가 2026-09-15 실측 525개 (통과 499, todo 26) 와 일치
 - [x] 완료 TC 단계 표를 실제 테스트 이름·단언 기준으로 작성
 - [x] 계획 TC 단계 표를 소스 동작 기준으로 작성 (현재 동작 일부는 워크트리 밖 임시 테스트로 확인)
 - [x] 보안·접근성 기준 명시 (OWASP, WCAG)
-- [ ] 확인된 결함 테스트 구현: SC-S-003, SC-S-004
+- [x] 확인된 결함 수정과 테스트 구현: SC-S-003, SC-S-004 (0.3.1, `977be3f`)
+- [ ] 따옴표로 감싼 URL 링크 대상 기준 결정과 테스트 추가 (우선순위 갭 6순위)
 - [ ] 테스트 0건 컴포넌트 테스트 구현: ImageUploadField, BlockPreviewTheme, BlockEditor, BlockRenderer
 - [ ] 자동 리사이즈 경로 기준 결정과 SC-A-003 구현
 - [ ] PERF-001 허위 양성 교정 (SC-P-004)
 - [ ] exports Smoke 구현과 실행 스크립트 추가
 - [ ] 커버리지 측정 환경 구성 (coverage provider 설치, `coverage.thresholds` 형식)
-- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
+- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-GUIDE.md 0.3.1 수치, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
