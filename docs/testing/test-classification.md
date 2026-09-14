@@ -1712,7 +1712,7 @@ beforeEach(() => {
 | 대상 | 내용 |
 |------|------|
 | `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목까지만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
-| `__tests__/docs/TEST-GUIDE.md` | 테스트 수는 2026-09-13 에 0.3.0 실측값(파일 22개·테스트 501개, `html-renderer.test.ts` 49개, security 35개)으로 정정했으며, 0.3.1 병합 후 실측(파일 23개·테스트 525개, `html-renderer.test.ts` 58개, security 50개)과 다르다. `attribute-injection.test.tsx` 도 기재되어 있지 않다. 2026-09-15 갱신에서는 이 파일을 수정하지 않았다. 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), 커버리지 `97%+` 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조도 실제와 다르며 수정하지 않았다 |
+| `__tests__/docs/TEST-GUIDE.md` | 테스트 수 불일치는 해소: 2026-09-15 에 0.3.1 실측값(파일 23개·테스트 525개, 통과 499·todo 26, Unit 315, Security 50, `html-renderer.test.ts` 58개, 함수별 h 9·nl2br 6·linkify 4·hAttr 6)으로 정정하고 `attribute-injection.test.tsx` (15개) 를 목록에 추가했다. 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), 커버리지 `97%+` 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조는 실제와 다르며 수정하지 않았다 |
 | `__tests__/docs/TEST-SCRIPTS.md`, `docs/04-report/*.md` | `381` 테스트 표기가 남아 있다 (수정하지 않음) |
 | `__tests__/accessibility/accessibility.test.ts` | 머리 주석 A11Y-005 설명은 2026-09-13 에 정정했다. describe 이름 `N/A (no form components shipped)` 와 SCOPE NOTE 의 "BlockEditor UI a11y → `__tests__/e2e/block-editor-render.test.tsx`" 는 사실과 다르며 수정하지 않았다 |
 | `__tests__/api/upload-single.test.ts` | describe 내부 TC 번호가 이 문서 ID 와 다르다. 3절 대응표를 참조한다 |
@@ -1763,4 +1763,5 @@ Branches: 80%                  81.67%
 - [ ] PERF-001 허위 양성 교정 (SC-P-004)
 - [ ] exports Smoke 구현과 실행 스크립트 추가
 - [ ] 커버리지 측정 환경 구성 (coverage provider 설치, `coverage.thresholds` 형식)
-- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-GUIDE.md 0.3.1 수치, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
+- [x] `TEST-GUIDE.md` 테스트 수를 0.3.1 실측값으로 정정 (2026-09-15)
+- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-GUIDE.md 예시 코드·커버리지 표기, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
