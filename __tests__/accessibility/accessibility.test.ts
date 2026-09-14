@@ -25,7 +25,9 @@ import { createHtmlRenderer } from '../../src/core/html-renderer';
  *   A11Y-002 Keyboard navigation  — host component responsibility
  *   A11Y-003 Color contrast       — design tokens / CSS responsibility
  *   A11Y-004 Image alt text       — renderer responsibility
- *   A11Y-005 Form a11y            — this library ships no form components
+ *   A11Y-005 Form a11y            — component responsibility; this library does ship form
+ *                                   controls (ImageUploadField renders an <input type="file">)
+ *                                   but has no component-level form a11y tests yet
  *   A11Y-006 Heading hierarchy    — renderer responsibility (in part)
  *   A11Y-007 Link text clarity    — content-author responsibility
  *   A11Y-008 Focus management     — host component responsibility
