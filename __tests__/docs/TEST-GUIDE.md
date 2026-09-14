@@ -1,7 +1,7 @@
 # Test Suite Quick Reference Guide
 
 **Project**: @withwiz/block-editor
-**Total Tests**: 475 passing, 26 todo (501 tests in 22 files, measured 2026-09-13 with `npx vitest run`)
+**Total Tests**: 499 passing, 26 todo (525 tests in 23 files, measured 2026-09-15 on v0.3.1 with `npm test`)
 **Code Coverage**: 97%+
 **Status**: ✅ Complete and Ready
 
@@ -19,11 +19,11 @@ npm test
 npm run test:watch
 
 # Specific test category
-npm run test:unit              # Unit tests (306)
+npm run test:unit              # Unit tests (315)
 npm run test:integration       # Integration tests (34)
 npm run test:api               # API contract tests (11)
 npm run test:e2e               # E2E tests (57)
-npm run test:security          # Security tests (35)
+npm run test:security          # Security tests (50)
 npm run test:performance       # Performance tests (12)
 npm run test:accessibility     # Accessibility tests (46: 20 passing, 26 todo)
 
@@ -39,9 +39,9 @@ npm run test:coverage
 
 ```
 __tests__/
-├── unit/                    # 306 tests
+├── unit/                    # 315 tests
 │   ├── core/
-│   │   ├── html-renderer.test.ts        (49 tests)
+│   │   ├── html-renderer.test.ts        (58 tests)
 │   │   ├── html-renderer-blocks.test.ts (85 tests)
 │   │   ├── image-resize.test.ts         (16 tests)
 │   │   └── serializer.test.ts           (38 tests)
@@ -65,7 +65,8 @@ __tests__/
 │   ├── mini-editor-journey.test.tsx     (6 tests)
 │   └── serializer-roundtrip.test.ts     (20 tests)
 │
-├── security/                # 35 tests
+├── security/                # 50 tests
+│   ├── attribute-injection.test.tsx     (15 tests)
 │   ├── xss-prevention.test.ts           (14 tests)
 │   └── file-upload-validation.test.ts   (21 tests)
 │
@@ -90,11 +91,12 @@ __tests__/
 
 ### Unit Tests
 
-#### 1. HTML Helper Functions (`html-renderer.test.ts`) - 49 tests
+#### 1. HTML Helper Functions (`html-renderer.test.ts`) - 58 tests
 
 **Functions tested**:
 - `h(tag, attrs?, content?)` - Create HTML tags
 - `nl2br(text)` - Convert newlines to `<br>`
+- `linkify(html)` - Wrap http(s) URLs in anchor tags
 - `hAttr(attrs)` - Build HTML attribute strings
 - `sanitizeUrl(url)` - Safe URL handling
 - `sanitizeImageSrc(src)` - Image source validation
@@ -197,14 +199,14 @@ it('renders paragraph block in React DOM', () => {
 
 | Category | Tests | Status |
 |----------|-------|--------|
-| Unit Tests | 306 | ✅ 100% pass |
+| Unit Tests | 315 | ✅ 100% pass |
 | API Tests | 11 | ✅ 100% pass |
 | E2E Tests | 57 | ✅ 100% pass |
-| Security | 35 | ✅ 100% pass |
+| Security | 50 | ✅ 100% pass |
 | Performance | 12 | ✅ 100% pass |
 | Accessibility | 46 | ✅ 20 pass, 26 todo |
 | Integration | 34 | ✅ 100% pass |
-| **Total** | **501** | **✅ 475 pass, 0 fail, 26 todo** |
+| **Total** | **525** | **✅ 499 pass, 0 fail, 26 todo** |
 
 Per-file breakdown and scenario/case mapping: `docs/testing/test-classification.md`.
 
@@ -310,17 +312,18 @@ All 22 block types verified:
 
 ## Core Function Coverage
 
-All 5 core functions fully tested:
+All 6 core functions fully tested:
 
 | Function | File | Tests | Status |
 |----------|------|-------|--------|
-| h() | html-renderer.test.ts | 7 | ✅ |
-| nl2br() | html-renderer.test.ts | 5 | ✅ |
-| hAttr() | html-renderer.test.ts | 4 | ✅ |
+| h() | html-renderer.test.ts | 9 | ✅ |
+| nl2br() | html-renderer.test.ts | 6 | ✅ |
+| linkify() | html-renderer.test.ts | 4 | ✅ |
+| hAttr() | html-renderer.test.ts | 6 | ✅ |
 | sanitizeUrl() | html-renderer.test.ts | 19 | ✅ |
 | sanitizeImageSrc() | html-renderer.test.ts | 14 | ✅ |
 
-**Coverage**: 5/5 functions (100%)
+**Coverage**: 6/6 functions (100%)
 
 ---
 
@@ -393,7 +396,7 @@ npm run typecheck
 All builds must pass before deployment:
 - ✅ TypeScript compilation
 - ✅ Type declaration generation
-- ✅ Test suite passing (475 passing, 0 failing, 26 todo)
+- ✅ Test suite passing (499 passing, 0 failing, 26 todo)
 - ✅ Code coverage validated
 
 ---
@@ -470,11 +473,11 @@ npx vitest --reporter=verbose
 
 ## Quick Status
 
-✅ **475/475 tests passing** (0 failing, 26 todo)
+✅ **499/499 tests passing** (0 failing, 26 todo)
 ✅ **97%+ code coverage** (target: 85%+)
 ✅ **22/22 block types covered** (100%)
-✅ **5/5 core functions covered** (100%)
+✅ **6/6 core functions covered** (100%)
 ✅ **Ready for production**
 
-**Last Updated**: March 3, 2026 (test counts re-measured September 13, 2026)
+**Last Updated**: March 3, 2026 (test counts re-measured September 15, 2026 on v0.3.1)
 **PDCA Status**: Complete and Approved
