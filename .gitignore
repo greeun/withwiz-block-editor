@@ -20,3 +20,6 @@ Thumbs.db
 docs/.pdca*
 docs/.bkit*
 docs/superpowers/
+
+# superpowers (auto-installed; do not track)
+.superpowers/
