@@ -36,6 +36,7 @@ function eventHandlerAttrs(root: ParentNode): string[] {
 }
 
 describe('SEC-007: linkify / nl2br 속성 주입 방지', () => {
+  // 링크는 따옴표(원문 또는 엔티티) 앞에서 끝나므로 페이로드의 나머지는 a 요소 밖 텍스트로 남는다.
   it('nl2br: URL 안의 큰따옴표로 a 요소에 이벤트 핸들러 속성을 만들 수 없음', () => {
     const frag = parseHtml(nl2br(LINK_PAYLOAD_DQ));
     const anchors = frag.querySelectorAll('a');
@@ -43,7 +44,8 @@ describe('SEC-007: linkify / nl2br 속성 주입 방지', () => {
     expect(anchors).toHaveLength(1);
     expect(attrNames(anchors[0])).toEqual(['href', 'target', 'rel']);
     expect(eventHandlerAttrs(frag)).toEqual([]);
-    expect(anchors[0].getAttribute('href')).toBe('https://x.com/"onmouseover="alert(1)');
+    expect(anchors[0].getAttribute('href')).toBe('https://x.com/');
+    expect(anchors[0].nextSibling?.textContent).toBe('"onmouseover="alert(1) now');
   });
 
   it('linkify 단독 사용: 이스케이프되지 않은 큰따옴표가 들어와도 href 를 끊지 못함', () => {
@@ -53,18 +55,21 @@ describe('SEC-007: linkify / nl2br 속성 주입 방지', () => {
     expect(anchors).toHaveLength(1);
     expect(attrNames(anchors[0])).toEqual(['href', 'target', 'rel']);
     expect(eventHandlerAttrs(frag)).toEqual([]);
-    expect(anchors[0].getAttribute('href')).toBe('https://x.com/"onmouseover="alert(1)');
+    expect(anchors[0].getAttribute('href')).toBe('https://x.com/');
+    expect(anchors[0].nextSibling?.textContent).toBe('"onmouseover="alert(1) now');
   });
 
-  it('linkify 단독 사용: 작은따옴표는 href 에 &#39; 로 출력됨', () => {
+  it('linkify 단독 사용: 이스케이프되지 않은 작은따옴표가 들어와도 href 를 끊지 못함', () => {
     const html = linkify(LINK_PAYLOAD_SQ);
     const frag = parseHtml(html);
     const anchors = frag.querySelectorAll('a');
 
-    expect(html).toContain('href="https://x.com/&#39;onmouseover=&#39;alert(1)"');
+    expect(html).toContain('href="https://x.com/"');
     expect(anchors).toHaveLength(1);
     expect(attrNames(anchors[0])).toEqual(['href', 'target', 'rel']);
     expect(eventHandlerAttrs(frag)).toEqual([]);
+    expect(anchors[0].getAttribute('href')).toBe('https://x.com/');
+    expect(anchors[0].nextSibling?.textContent).toBe("'onmouseover='alert(1) now");
   });
 });
 
