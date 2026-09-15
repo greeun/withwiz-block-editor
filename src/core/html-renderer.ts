@@ -17,13 +17,22 @@ export function h(s: string): string {
 }
 
 /**
+ * Matches an http(s) URL in HTML-escaped text.
+ * The match stops at whitespace, `<`, a raw quote (`"` or `'`), or a quote entity
+ * (`&quot;`, `&#39;`, `&#x27;`, `&apos;`), so a quote wrapping the URL stays
+ * outside the link. Other entities such as `&amp;` remain part of the URL.
+ */
+const LINK_URL_RE = /https?:\/\/(?:(?!&(?:quot|#39|#x27|apos);)[^\s<"'])+/g;
+
+/**
  * Converts URLs in HTML-escaped text into clickable anchor tags.
  * Only matches http(s) URLs not already inside HTML tags.
- * Quotes in the href value are escaped so the URL cannot break out of the
- * attribute; `&` is left as-is because the input is already HTML-escaped.
+ * Quotes in the href value are escaped as a defensive measure so the URL cannot
+ * break out of the attribute even if the pattern changes; `&` is left as-is
+ * because the input is already HTML-escaped.
  */
 export function linkify(html: string): string {
-  return html.replace(/https?:\/\/[^\s<]+/g, (url) => {
+  return html.replace(LINK_URL_RE, (url) => {
     const href = url.replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     return `<a href="${href}" target="_blank" rel="noopener noreferrer">${url}</a>`;
   });

@@ -1,6 +1,13 @@
 import { describe, it, expect } from 'vitest';
 import { h, nl2br, hAttr, linkify, sanitizeUrl, sanitizeImageSrc } from '../../../src/core/html-renderer';
 
+/** 출력 HTML 을 jsdom <template> 으로 파싱 (비활성 문서라 스크립트 실행·리소스 요청이 없다) */
+function parseHtml(html: string): DocumentFragment {
+  const tpl = document.createElement('template');
+  tpl.innerHTML = html;
+  return tpl.content;
+}
+
 describe('html-renderer 헬퍼 함수들', () => {
   describe('h() - HTML 이스케이핑', () => {
     it('앰퍼샌드를 &amp;로 변환', () => {
@@ -62,9 +69,9 @@ describe('html-renderer 헬퍼 함수들', () => {
       expect(nl2br('')).toBe('');
     });
 
-    it('URL 뒤의 따옴표는 엔티티로 바뀌어 href 속성을 끊지 못함', () => {
+    it('URL 뒤의 따옴표는 엔티티로 바뀌고 링크는 그 앞에서 끝나 href 속성을 끊지 못함', () => {
       expect(nl2br('see https://x.com/"onmouseover="alert(1) now')).toBe(
-        'see <a href="https://x.com/&quot;onmouseover=&quot;alert(1)" target="_blank" rel="noopener noreferrer">https://x.com/&quot;onmouseover=&quot;alert(1)</a> now',
+        'see <a href="https://x.com/" target="_blank" rel="noopener noreferrer">https://x.com/</a>&quot;onmouseover=&quot;alert(1) now',
       );
     });
   });
@@ -76,15 +83,15 @@ describe('html-renderer 헬퍼 함수들', () => {
       );
     });
 
-    it('href 값의 큰따옴표를 &quot;로 이스케이프 (링크 텍스트는 그대로)', () => {
+    it('원문 큰따옴표 앞에서 링크가 끝나 따옴표는 링크 밖 텍스트로 남음', () => {
       expect(linkify('see https://x.com/"onmouseover="alert(1) now')).toBe(
-        'see <a href="https://x.com/&quot;onmouseover=&quot;alert(1)" target="_blank" rel="noopener noreferrer">https://x.com/"onmouseover="alert(1)</a> now',
+        'see <a href="https://x.com/" target="_blank" rel="noopener noreferrer">https://x.com/</a>"onmouseover="alert(1) now',
       );
     });
 
-    it("href 값의 작은따옴표를 &#39;로 이스케이프 (링크 텍스트는 그대로)", () => {
+    it('원문 작은따옴표 앞에서 링크가 끝나 따옴표는 링크 밖 텍스트로 남음', () => {
       expect(linkify("see https://x.com/'onmouseover='alert(1) now")).toBe(
-        "see <a href=\"https://x.com/&#39;onmouseover=&#39;alert(1)\" target=\"_blank\" rel=\"noopener noreferrer\">https://x.com/'onmouseover='alert(1)</a> now",
+        "see <a href=\"https://x.com/\" target=\"_blank\" rel=\"noopener noreferrer\">https://x.com/</a>'onmouseover='alert(1) now",
       );
     });
 
@@ -92,6 +99,84 @@ describe('html-renderer 헬퍼 함수들', () => {
       expect(linkify('https://x.com/?a=1&amp;b=2')).toBe(
         '<a href="https://x.com/?a=1&amp;b=2" target="_blank" rel="noopener noreferrer">https://x.com/?a=1&amp;b=2</a>',
       );
+    });
+  });
+
+  describe('linkify() - 따옴표로 감싼 URL (따옴표 앞에서 URL 일치가 끝남)', () => {
+    /** 파싱 결과에서 a 요소가 1개인지 확인하고, 링크와 앞뒤 텍스트 노드를 돌려준다 */
+    function parseSingleLink(html: string) {
+      const frag = parseHtml(html);
+      const anchors = frag.querySelectorAll('a');
+      expect(anchors).toHaveLength(1);
+      const a = anchors[0];
+      return {
+        frag,
+        href: a.getAttribute('href'),
+        linkText: a.textContent,
+        before: a.previousSibling?.textContent ?? '',
+        after: a.nextSibling?.textContent ?? '',
+      };
+    }
+
+    it('nl2br: 큰따옴표로 감싼 URL 의 href 에 끝 따옴표가 포함되지 않음', () => {
+      const r = parseSingleLink(nl2br('링크 "https://example.com" 참조'));
+
+      expect(r.href).toBe('https://example.com');
+      expect(r.linkText).toBe('https://example.com');
+      expect(r.before).toBe('링크 "');
+      expect(r.after).toBe('" 참조');
+      expect(r.frag.textContent).toBe('링크 "https://example.com" 참조');
+    });
+
+    it('nl2br: 작은따옴표로 감싼 URL 의 href 에 끝 따옴표가 포함되지 않음', () => {
+      const r = parseSingleLink(nl2br("링크 'https://example.com' 참조"));
+
+      expect(r.href).toBe('https://example.com');
+      expect(r.linkText).toBe('https://example.com');
+      expect(r.before).toBe("링크 '");
+      expect(r.after).toBe("' 참조");
+    });
+
+    it('linkify: 원문 큰따옴표로 감싼 URL', () => {
+      const r = parseSingleLink(linkify('"https://example.com"'));
+
+      expect(r.href).toBe('https://example.com');
+      expect(r.linkText).toBe('https://example.com');
+      expect(r.before).toBe('"');
+      expect(r.after).toBe('"');
+    });
+
+    it('linkify: 원문 작은따옴표로 감싼 URL', () => {
+      const r = parseSingleLink(linkify("'https://example.com'"));
+
+      expect(r.href).toBe('https://example.com');
+      expect(r.linkText).toBe('https://example.com');
+      expect(r.before).toBe("'");
+      expect(r.after).toBe("'");
+    });
+
+    it.each([
+      ['&quot;', '"'],
+      ['&#39;', "'"],
+      ['&#x27;', "'"],
+      ['&apos;', "'"],
+    ])('linkify: 따옴표 엔티티 %s 앞에서 링크가 끝남', (entity, quote) => {
+      const html = linkify(`https://example.com${entity}`);
+      const r = parseSingleLink(html);
+
+      expect(html.endsWith(`</a>${entity}`)).toBe(true);
+      expect(r.href).toBe('https://example.com');
+      expect(r.linkText).toBe('https://example.com');
+      expect(r.after).toBe(quote);
+    });
+
+    it('linkify: &amp; 같은 다른 엔티티는 URL 에 계속 포함됨', () => {
+      const r = parseSingleLink(linkify('https://x.com/?a=1&amp;b=2'));
+
+      expect(r.href).toBe('https://x.com/?a=1&b=2');
+      expect(r.linkText).toBe('https://x.com/?a=1&b=2');
+      expect(r.before).toBe('');
+      expect(r.after).toBe('');
     });
   });
 
