@@ -4,14 +4,14 @@
 
 | 항목 | 내용 |
 |------|------|
-| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 |
+| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 (2026-09-16 갱신분은 미릴리스 `fix/residual-defects` 브랜치 기준) |
 | 범위 | src/ 전체 (core/, blocks/, components/, context/, hooks/, mini-editor/) |
-| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영 |
+| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영. 2026-09-16 갱신은 develop `1fa7aea` 에서 분기한 `fix/residual-defects` 의 `b68d5e1` 기준 |
 | 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 |
 | 전역 설정 | `__tests__/setup.ts`: jest-dom, matchMedia·IntersectionObserver·ResizeObserver mock, `vi.useFakeTimers({ shouldAdvanceTime: true })` 전역 적용 |
-| 실측 결과 (2026-09-15) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 23개, 테스트 525개 (통과 499, 실패 0, 스킵 0, todo 26), 소요 1.94s. 같은 날 첫 실행(JSON 리포터)에서는 PERF-002 1건이 측정 편차로 실패했고 단독·전체 재실행에서 통과했다 (TC-P-003 비고) |
-| 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (측정 불가 사유는 "테스트 커버리지 목표" 절 참조) |
-| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신 |
+| 실측 결과 (2026-09-16) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 23개, 테스트 534개 (통과 508, 실패 0, 스킵 0, todo 26). 같은 날 수정 전 기준 실행(`1fa7aea`)은 파일 23개, 테스트 525개 (통과 499, todo 26) 였다. 2026-09-15 첫 실행과 2026-09-16 커버리지 실행에서 PERF-002 1건씩 측정 편차로 실패한 기록은 TC-P-003 비고에 있다 |
+| 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (적용되지 않는 사유와 2026-09-16 임시 설치 측정값은 "테스트 커버리지 목표" 절 참조) |
+| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신. 2026-09-16 `linkify()` 따옴표 앞 URL 종료 수정(`b68d5e1`, 테스트 9건 추가·기존 기대값 6건 변경)과 TEST-GUIDE.md 정정(`9474f71`), 커버리지 임시 설치 측정 결과를 반영 |
 
 **버전별 변경 반영 범위**
 
@@ -23,6 +23,7 @@
 | 0.2.0 | `5c037cc`, `cec4b9e` | useImageDropZone maxFiles 안내 수정, Provider·image-resize·ArtistEditor·MiniEditor 여정·PERF-002 테스트 추가 |
 | 0.3.0 | `709f130` | BlockPreviewTheme 추가 (테스트 없음) |
 | 0.3.1 | `977be3f`, `a483153` | `h()` 가 `"`·`'` 도 이스케이프 (`hAttr()` 는 `h()` 를 그대로 반환), `linkify()` href 값 따옴표 이스케이프, ArtistEditor 미리보기·onChange HTML 이미지 src 에 `sanitizeImageSrc()` + `hAttr()` 적용. `__tests__/security/attribute-injection.test.tsx` (SEC-007~009, 15건) 추가, `html-renderer.test.ts` 기대값 1건 변경·9건 추가 |
+| 미릴리스 (`fix/residual-defects`) | `b68d5e1` | `linkify()` URL 일치가 원문 따옴표(`"`·`'`)와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 에 따옴표로 감싼 URL describe 9건 추가, 기존 기대값 3건(nl2br 1, linkify 2) 변경, `attribute-injection.test.tsx` SEC-007 3건 기대값 변경 |
 
 ### 표기 규칙
 
@@ -32,7 +33,7 @@
 | 케이스 ID | `TC-{도메인}-{3자리 번호}`. 각 TC 속성 표의 **시나리오** 행에 상위 SC 를 명시한다 |
 | 도메인 약어 | Unit `U`, Integration `I`, API `A`, E2E `E`, Security `S`, Performance `P`, Accessibility `AC`, Smoke `SM`, Load/Stress `L`, Chaos `C` |
 | 상태 | ✅ 완료: 테스트가 존재하고 통과한다. 🔲 계획: 실제 단언을 가진 테스트가 없다 |
-| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 2026-09-15 실측 JSON 리포트 기준으로 기재한다 |
+| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 실측 JSON 리포트 기준으로 기재한다. 2026-09-16 재측정에서 수치나 내용이 바뀐 TC(TC-U-020, TC-S-003)는 2026-09-16 으로 표기하고, 2026-09-15 로 표기된 나머지 TC 수치는 2026-09-16 재측정 값과 같다 |
 | 단계 표 근거 | ✅ 완료 TC 는 실제 테스트 이름과 단언에서 대표 항목을 뽑는다. 🔲 계획 TC 는 소스 코드 동작에 근거한다 |
 
 ---
@@ -59,7 +60,7 @@
 | SC-U-016 | MiniEditor 접근성 속성·서식 단축키 회귀 방지 | Unit | High | ✅ 완료 |
 | SC-U-017 | ImageUploadField 업로드 필드 동작 | Unit | High | 🔲 계획 |
 | SC-U-018 | BlockPreviewTheme 스타일 주입 | Unit | Medium | 🔲 계획 |
-| SC-U-019 | URL 자동 링크 변환 (linkify) href 따옴표 이스케이프 | Unit | Critical | ✅ 완료 |
+| SC-U-019 | URL 자동 링크 변환 (linkify) href 따옴표 이스케이프·따옴표 앞 URL 종료 | Unit | Critical | ✅ 완료 |
 | SC-I-001 | 블록 렌더러 → HTML 출력 파이프라인 | Integration | Critical | ✅ 완료 |
 | SC-I-002 | 이미지 처리 파이프라인 | Integration | High | ✅ 완료 |
 | SC-I-003 | 멀티 블록 타입 혼합 렌더링 | Integration | High | ✅ 완료 |
@@ -130,12 +131,12 @@
 | 4 | `` h(`"&'`) `` 호출 | `'&quot;&amp;&#39;'` 반환 (`&` 를 먼저 처리하므로 따옴표 엔티티가 이중 이스케이프되지 않음) |
 | 5 | `h(null)`, `h(undefined)` 호출 | `''` 반환 |
 | 6 | `nl2br('첫 줄\r\n둘째 줄')` 호출 | `'첫 줄<br>둘째 줄'` 반환 |
-| 7 | `nl2br('see https://x.com/"onmouseover="alert(1) now')` 호출 | `href` 값과 링크 텍스트가 모두 `https://x.com/&quot;onmouseover=&quot;alert(1)` 인 `<a ... target="_blank" rel="noopener noreferrer">` 1개로 변환 (따옴표가 href 를 끊지 못함) |
+| 7 | `nl2br('see https://x.com/"onmouseover="alert(1) now')` 호출 | `h()` 가 따옴표를 `&quot;` 로 바꾸고 링크는 그 앞에서 끝난다: `'see <a href="https://x.com/" target="_blank" rel="noopener noreferrer">https://x.com/</a>&quot;onmouseover=&quot;alert(1) now'` 반환 (따옴표가 href 를 끊지 못함) |
 | 8 | `hAttr('<img src="test" />')` 호출 | `'&lt;img src=&quot;test&quot; /&gt;'` 반환 |
 | 9 | `` hAttr(`a "b" 'c' &`) `` 호출 | `'a &quot;b&quot; &#39;c&#39; &amp;'` 반환, `&amp;quot;`·`&amp;#39;` 미포함 |
 
 - **자동화:** 가능 ✅ | **테스트 수:** 21개 (2026-09-15 실측: h 9, nl2br 6, hAttr 6)
-- **비고:** 0.3.1 (`977be3f`) 에서 `h()` 가 큰따옴표·작은따옴표도 이스케이프하도록 바뀌었다. 3단계 기대값이 `'안녕 "하세요"'` 에서 `'안녕 &quot;하세요&quot;'` 로 바뀌었고 테스트 이름도 `큰따옴표는 이스케이핑하지 않음 (nl2br에서 처리)` 에서 `큰따옴표를 &quot;로 변환 (속성 주입 방어)` 로 바뀌었다. `hAttr()` 는 이제 `h()` 를 그대로 반환하므로 두 함수 출력이 같다. 같은 버전에서 h 2건(3단계 작은따옴표, 4단계), nl2br 1건(7단계), hAttr 2건(작은따옴표 변환, 9단계)이 추가되었다. `linkify()` 단독 검증은 TC-U-020, 블록 경유 속성 주입 검증은 TC-S-003 에서 다룬다.
+- **비고:** 0.3.1 (`977be3f`) 에서 `h()` 가 큰따옴표·작은따옴표도 이스케이프하도록 바뀌었다. 3단계 기대값이 `'안녕 "하세요"'` 에서 `'안녕 &quot;하세요&quot;'` 로 바뀌었고 테스트 이름도 `큰따옴표는 이스케이핑하지 않음 (nl2br에서 처리)` 에서 `큰따옴표를 &quot;로 변환 (속성 주입 방어)` 로 바뀌었다. `hAttr()` 는 이제 `h()` 를 그대로 반환하므로 두 함수 출력이 같다. 같은 버전에서 h 2건(3단계 작은따옴표, 4단계), nl2br 1건(7단계), hAttr 2건(작은따옴표 변환, 9단계)이 추가되었다. `linkify()` 단독 검증은 TC-U-020, 블록 경유 속성 주입 검증은 TC-S-003 에서 다룬다. 2026-09-16 (`b68d5e1`) 에서 7단계 기대값이 "href 값과 링크 텍스트가 모두 `https://x.com/&quot;onmouseover=&quot;alert(1)` 인 링크" 에서 위 값으로 바뀌었고, 테스트 이름도 `URL 뒤의 따옴표는 엔티티로 바뀌어 href 속성을 끊지 못함` 에서 `URL 뒤의 따옴표는 엔티티로 바뀌고 링크는 그 앞에서 끝나 href 속성을 끊지 못함` 으로 바뀌었다.
 
 ---
 
@@ -568,21 +569,27 @@
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-U-019 |
-| **파일** | `__tests__/unit/core/html-renderer.test.ts` (`linkify()` describe) |
-| **대상** | `src/core/html-renderer.ts`: `linkify()` (정규식 `https?:\/\/[^\s<]+` 에 일치한 URL 을 `<a>` 로 감싸고, href 값의 `"`·`'` 만 `&quot;`·`&#39;` 로 바꾼다. 링크 텍스트와 `&` 는 그대로 둔다) |
+| **파일** | `__tests__/unit/core/html-renderer.test.ts` (`linkify() - URL 링크 변환`, `linkify() - 따옴표로 감싼 URL (따옴표 앞에서 URL 일치가 끝남)` describe) |
+| **대상** | `src/core/html-renderer.ts`: `linkify()` (정규식 `LINK_URL_RE` = `https?:\/\/(?:(?!&(?:quot\|#39\|#x27\|apos);)[^\s<"'])+` 에 일치한 URL 을 `<a>` 로 감싼다. URL 일치는 공백, `<`, 원문 따옴표 `"`·`'`, 따옴표 엔티티 `&quot;`·`&#39;`·`&#x27;`·`&apos;` 앞에서 끝나고 따옴표는 링크 밖 텍스트로 남는다. `&amp;` 같은 다른 엔티티는 URL 에 포함된다. href 값의 `"`·`'` 를 `&quot;`·`&#39;` 로 바꾸는 처리는 방어 목적으로 유지하며, 링크 텍스트와 `&` 는 그대로 둔다) |
 | **우선순위** | Critical |
-| **전제조건** | 없음 (순수 함수). 소스 주석상 입력은 `h()` 로 이스케이프된 HTML 이다 |
-| **테스트 데이터** | `'go https://example.com/path now'`, `'see https://x.com/"onmouseover="alert(1) now'`, `"see https://x.com/'onmouseover='alert(1) now"`, `'https://x.com/?a=1&amp;b=2'` |
+| **전제조건** | 없음 (순수 함수). 소스 주석상 입력은 `h()` 로 이스케이프된 HTML 이다. 5~9단계는 출력을 jsdom `<template>` 으로 파싱해 링크와 앞뒤 텍스트 노드를 확인한다 |
+| **테스트 데이터** | `'go https://example.com/path now'`, `'see https://x.com/"onmouseover="alert(1) now'`, `"see https://x.com/'onmouseover='alert(1) now"`, `'https://x.com/?a=1&amp;b=2'`, `'링크 "https://example.com" 참조'`, `"링크 'https://example.com' 참조"`, `'"https://example.com"'`, `"'https://example.com'"`, `'https://example.com'` + 따옴표 엔티티 4종 |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
 | 1 | `linkify('go https://example.com/path now')` 호출 | `'go <a href="https://example.com/path" target="_blank" rel="noopener noreferrer">https://example.com/path</a> now'` 반환 |
-| 2 | 큰따옴표가 든 URL 입력 | `href="https://x.com/&quot;onmouseover=&quot;alert(1)"`, 링크 텍스트는 원문 `https://x.com/"onmouseover="alert(1)` 그대로 |
-| 3 | 작은따옴표가 든 URL 입력 | `href="https://x.com/&#39;onmouseover=&#39;alert(1)"`, 링크 텍스트는 원문 그대로 |
+| 2 | 원문 큰따옴표가 든 URL 입력 `linkify('see https://x.com/"onmouseover="alert(1) now')` | `'see <a href="https://x.com/" target="_blank" rel="noopener noreferrer">https://x.com/</a>"onmouseover="alert(1) now'` 반환 (따옴표 앞에서 링크가 끝나고 나머지는 링크 밖 텍스트) |
+| 3 | 원문 작은따옴표가 든 URL 입력 | href 와 링크 텍스트 모두 `https://x.com/`, `'onmouseover='alert(1) now` 는 링크 밖 텍스트 |
 | 4 | `linkify('https://x.com/?a=1&amp;b=2')` 호출 | href 와 링크 텍스트 모두 `https://x.com/?a=1&amp;b=2` (`&amp;amp;` 로 이중 이스케이프하지 않음) |
+| 5 | `nl2br('링크 "https://example.com" 참조')` 출력 파싱 | `a` 1개, href 파싱 값과 링크 텍스트 `https://example.com`, 링크 앞 텍스트 `링크 "`, 뒤 텍스트 `" 참조`, 전체 텍스트 `링크 "https://example.com" 참조` |
+| 6 | `nl2br("링크 'https://example.com' 참조")` 출력 파싱 | href 파싱 값과 링크 텍스트 `https://example.com`, 링크 앞 텍스트 `링크 '`, 뒤 텍스트 `' 참조` |
+| 7 | `linkify('"https://example.com"')`, `linkify("'https://example.com'")` 출력 파싱 (2건) | href 파싱 값과 링크 텍스트 `https://example.com`, 링크 앞뒤 텍스트가 각각 원문 따옴표 |
+| 8 | `` linkify(`https://example.com${entity}`) `` 출력 파싱 (`it.each` 4건: `&quot;`, `&#39;`, `&#x27;`, `&apos;`) | 출력이 `</a>` + 엔티티로 끝나고, href 파싱 값과 링크 텍스트 `https://example.com`, 링크 뒤 텍스트 파싱 값 `"` 또는 `'` |
+| 9 | `linkify('https://x.com/?a=1&amp;b=2')` 출력 파싱 | href 파싱 값과 링크 텍스트 `https://x.com/?a=1&b=2`, 링크 앞뒤 텍스트 없음 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 4개 (2026-09-15 실측, 테스트 4개 전체 기재)
-- **비고:** 0.3.1 (`977be3f`) 에서 추가된 describe 이다. 2·3단계처럼 이스케이프되지 않은 입력이 들어오면 링크 텍스트에 원문 따옴표가 남지만 텍스트 노드이므로 속성을 만들지 않는다 (TC-S-003 1~3단계가 DOM 파싱으로 확인). 따옴표로 감싼 URL 은 테스트가 없다: `nl2br('링크 "https://example.com" 참조')` 는 `h()` 가 만든 `&quot;` 까지 정규식에 일치해 href 파싱 값이 `https://example.com"` 이 된다. 0.3.0 에서는 같은 입력의 href 파싱 값이 `https://example.com` 이었다 (속성이 끊겨 `"` 이름의 속성이 함께 생성됨). 닫는 괄호 `(https://example.com/a)` 는 두 버전 모두 href 에 `)` 가 포함된다. 세 결과는 2026-09-15 0.3.0·0.3.1 소스를 각각 번들링해 실행하고 jsdom 으로 파싱하여 확인했다. 우선순위 갭 6순위에 해당한다.
+- **자동화:** 가능 ✅ | **테스트 수:** 13개 (2026-09-16 실측: `linkify() - URL 링크 변환` 4, 따옴표로 감싼 URL describe 9. 테스트 13개 전체 기재)
+- **비고 (결함 이력):** 0.3.1 (`977be3f`) 에서 1~4단계 describe 가 추가되었다. 당시 정규식 `https?:\/\/[^\s<]+` 는 `h()` 가 만든 `&quot;` 까지 URL 로 일치시켜, `nl2br('링크 "https://example.com" 참조')` 의 href 파싱 값이 `https://example.com"` 이었다. 0.3.0 에서는 같은 입력의 href 파싱 값이 `https://example.com` 이었다 (속성이 끊겨 `"` 이름의 속성이 함께 생성됨). 두 결과는 2026-09-15 0.3.0·0.3.1 소스를 각각 번들링해 실행하고 jsdom 으로 파싱하여 확인했으며, 당시에는 따옴표로 감싼 URL 테스트가 없었다 (당시 우선순위 갭 6순위). 속성 주입은 아니었다. 2026-09-16 (`b68d5e1`) 에서 URL 일치가 따옴표 앞에서 끝나도록 수정하고 5~9단계 테스트 9건을 추가했다. 수정 전 실행에서 5~8단계 8건이 실패했고, 9단계는 기존 동작을 유지하는지 확인하는 테스트라 통과했다. 같은 커밋에서 2·3단계 기대값과 테스트 이름이 바뀌었다: `href 값의 큰따옴표를 &quot;로 이스케이프 (링크 텍스트는 그대로)` 는 `원문 큰따옴표 앞에서 링크가 끝나 따옴표는 링크 밖 텍스트로 남음` 으로, `href 값의 작은따옴표를 &#39;로 이스케이프 (링크 텍스트는 그대로)` 는 `원문 작은따옴표 앞에서 링크가 끝나 따옴표는 링크 밖 텍스트로 남음` 으로 바뀌었다. 정규식이 따옴표를 일치시키지 않으므로 href 따옴표 치환은 현재 출력에 영향을 주지 않으며 방어 목적으로만 남아 있다.
+- **범위 밖 동작 (2026-09-16 수정 후 정규식을 실행해 확인, 테스트 없음):** 닫는 괄호 `(https://example.com/a)` 는 여전히 href 에 `)` 가 포함된다. 명세에 없는 따옴표 표기 `&#34;`·`&#039;`·`&QUOT;`·`&#X27;` 는 URL 일치를 끝내지 않는다. `h()` 는 이 표기를 만들지 않으므로 `nl2br()` 경로에는 영향이 없고 `linkify()` 단독 호출에만 해당한다. URL 안의 작은따옴표(예: `https://x.com/?q=it's`)도 따옴표 앞에서 링크가 끝난다.
 
 ---
 
@@ -1144,14 +1151,14 @@ beforeEach(() => {
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | `nl2br(LINK_PAYLOAD_DQ)` 출력 파싱 | `a` 1개, 속성 이름 `['href', 'target', 'rel']`, 모든 요소에 `on*` 속성 없음, href 파싱 값 `https://x.com/"onmouseover="alert(1)` |
-| 2 | `linkify(LINK_PAYLOAD_DQ)` 단독 호출 (이스케이프되지 않은 큰따옴표 입력) 출력 파싱 | 1단계와 같은 속성 목록·href 파싱 값, `on*` 속성 없음 |
-| 3 | `linkify(LINK_PAYLOAD_SQ)` 단독 호출 | 출력 문자열에 `href="https://x.com/&#39;onmouseover=&#39;alert(1)"` 포함, `a` 1개, 속성 `['href', 'target', 'rel']`, `on*` 속성 없음 |
+| 1 | `nl2br(LINK_PAYLOAD_DQ)` 출력 파싱 | `a` 1개, 속성 이름 `['href', 'target', 'rel']`, 모든 요소에 `on*` 속성 없음, href 파싱 값 `https://x.com/`, 링크 다음 텍스트 `"onmouseover="alert(1) now` |
+| 2 | `linkify(LINK_PAYLOAD_DQ)` 단독 호출 (이스케이프되지 않은 큰따옴표 입력) 출력 파싱 | 1단계와 같은 속성 목록·href 파싱 값·링크 다음 텍스트, `on*` 속성 없음 |
+| 3 | `linkify(LINK_PAYLOAD_SQ)` 단독 호출 | 출력 문자열에 `href="https://x.com/"` 포함, `a` 1개, 속성 `['href', 'target', 'rel']`, `on*` 속성 없음, href 파싱 값 `https://x.com/`, 링크 다음 텍스트 `'onmouseover='alert(1) now` |
 | 4 | `createHtmlRenderer('test').renderBlock()` 에 `LINK_PAYLOAD_DQ` 를 7개 필드(`it.each`: lead, paragraph, img-text.bio, quote, quote-large, callout, qa.a)에 각각 지정 | 블록마다 `a` 1개, 속성 `['href', 'target', 'rel']`, `on*` 속성 없음 |
 
-- **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-15 실측: SEC-007 3, SEC-008 7)
+- **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-16 실측: SEC-007 3, SEC-008 7)
 - **관련 요구사항:** OWASP A03:2021 Injection
-- **비고:** 0.3.0 에서는 1단계와 같은 입력이 `a` 요소에 `onmouseover` 속성을 만들었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 1순위). 0.3.1 (`977be3f`) 에서 `h()` 따옴표 이스케이프와 `linkify()` href 따옴표 이스케이프 두 겹으로 수정되었고 이 파일이 함께 추가되었다. 계획 당시에는 `xss-prevention.test.ts` 에 추가할 예정이었으나 새 파일로 구현되었다. 계획 4단계(`&` 가 포함된 정상 URL 회귀 방지)는 이 파일에 없고 `linkify('https://x.com/?a=1&amp;b=2')` 단위 테스트(TC-U-020 4단계)가 가깝다. 계획 5단계 ArtistEditor 약력 텍스트는 `generateHtml()` 이 같은 `nl2br()` 를 사용하므로 같은 방어가 적용되지만 링크 페이로드로 검증하는 테스트는 없다 (SEC-009 는 약력에 링크가 없는 문자열만 지정한다). 따옴표로 감싼 URL 의 링크 대상 변화는 TC-U-020 비고를 참조한다.
+- **비고:** 0.3.0 에서는 1단계와 같은 입력이 `a` 요소에 `onmouseover` 속성을 만들었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 1순위). 0.3.1 (`977be3f`) 에서 `h()` 따옴표 이스케이프와 `linkify()` href 따옴표 이스케이프 두 겹으로 수정되었고 이 파일이 함께 추가되었다. 계획 당시에는 `xss-prevention.test.ts` 에 추가할 예정이었으나 새 파일로 구현되었다. 계획 4단계(`&` 가 포함된 정상 URL 회귀 방지)는 이 파일에 없고 `linkify('https://x.com/?a=1&amp;b=2')` 단위 테스트(TC-U-020 4·9단계)가 가깝다. 계획 5단계 ArtistEditor 약력 텍스트는 `generateHtml()` 이 같은 `nl2br()` 를 사용하므로 같은 방어가 적용되지만 링크 페이로드로 검증하는 테스트는 없다 (SEC-009 는 약력에 링크가 없는 문자열만 지정한다). 2026-09-16 (`b68d5e1`) 에서 `linkify()` URL 일치가 따옴표 앞에서 끝나도록 바뀌어, 1·2단계 href 기대값이 `https://x.com/"onmouseover="alert(1)` 에서 `https://x.com/` 로 바뀌고 링크 다음 텍스트 단언이 추가되었다. 3단계는 테스트 이름이 `linkify 단독 사용: 작은따옴표는 href 에 &#39; 로 출력됨` 에서 `linkify 단독 사용: 이스케이프되지 않은 작은따옴표가 들어와도 href 를 끊지 못함` 으로 바뀌었고, 출력 문자열 단언이 `href="https://x.com/&#39;onmouseover=&#39;alert(1)"` 포함에서 `href="https://x.com/"` 포함으로 바뀌었으며, href 파싱 값과 링크 다음 텍스트 단언이 추가되었다. 속성 목록과 `on*` 속성 부재 단언은 그대로 유지된다. 결함 이력은 TC-U-020 비고를 참조한다.
 
 ---
 
@@ -1291,7 +1298,7 @@ beforeEach(() => {
 
 - **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
 - **실측값 (2026-09-15 전체 실행 로그, `--silent=false`):** SER p95 0.038ms, RT p95 0.182ms, REN500 p95 1.484ms, CONC100 total 2.701ms
-- **비고:** 2026-09-15 `npm ci` 직후 첫 전체 실행(JSON 리포터)에서 4단계 `500블록 호출 x30회 — p95 < 5ms` 가 p95 8.457ms 로 실패했다. 이 파일 단독 재실행과 전체 재실행 2회에서는 통과했으므로 워커 병렬 실행 부하에 따른 측정 편차로 판단했다. 0.3.1 에서 `h()` 의 문자열 치환이 3회에서 5회로 늘었지만 재실행 REN500 p95(1.484ms)는 임계값 5ms 의 약 30% 이다. 2026-09-13 로그값(0.934ms)과의 차이가 코드 변경 때문인지는 반복 측정하지 않아 확인하지 않았다.
+- **비고:** 2026-09-15 `npm ci` 직후 첫 전체 실행(JSON 리포터)에서 4단계 `500블록 호출 x30회 — p95 < 5ms` 가 p95 8.457ms 로 실패했다. 이 파일 단독 재실행과 전체 재실행 2회에서는 통과했으므로 워커 병렬 실행 부하에 따른 측정 편차로 판단했다. 0.3.1 에서 `h()` 의 문자열 치환이 3회에서 5회로 늘었지만 재실행 REN500 p95(1.484ms)는 임계값 5ms 의 약 30% 이다. 2026-09-13 로그값(0.934ms)과의 차이가 코드 변경 때문인지는 반복 측정하지 않아 확인하지 않았다. 2026-09-16 `@vitest/coverage-v8` 임시 설치 후 커버리지 실행 1회에서도 같은 4단계가 p95 7.57ms 로 실패했고, 이어진 커버리지 실행 2회와 일반 `npm test` 실행에서는 통과했다. PERF-002 입력은 `nl2br()` 를 거치는 필드에 URL 이 없고, 같은 날 바뀐 `linkify()` 정규식은 `https?://` 로 시작하는 앞부분이 변경 전과 같으므로 이 실패는 정규식 변경과 관련이 없다고 판단했다.
 
 ---
 
@@ -1602,7 +1609,7 @@ beforeEach(() => {
 
 | 유형 | 파일 수 | 테스트 수 (통과 / todo) | SC 수 (완료 / 계획) | TC 수 (완료 / 계획) |
 |------|--------|----------------------|-------------------|-------------------|
-| **Unit** | 11개 | 315개 (315 / 0) | 19개 (15 / 4) | 20개 (16 / 4) |
+| **Unit** | 11개 | 324개 (324 / 0) | 19개 (15 / 4) | 20개 (16 / 4) |
 | **Integration** | 2개 | 34개 (34 / 0) | 7개 (6 / 1) | 7개 (6 / 1) |
 | **API** | 1개 | 11개 (11 / 0) | 8개 (6 / 2) | 8개 (6 / 2) |
 | **E2E** | 3개 | 57개 (57 / 0) | 3개 (3 / 0) | 3개 (3 / 0) |
@@ -1610,9 +1617,10 @@ beforeEach(() => {
 | **Performance** | 2개 | 12개 (12 / 0) | 4개 (3 / 1) | 4개 (3 / 1) |
 | **Accessibility** | 1개 | 46개 (20 / 26) | 10개 (4 / 6) | 10개 (4 / 6) |
 | **Smoke (SM)** | 0개 | 0개 | 2개 (0 / 2) | 2개 (0 / 2) |
-| **합계** | **23개** | **525개 (499 / 26)** | **59개 (41 / 18)** | **60개 (42 / 18)** |
+| **합계** | **23개** | **534개 (508 / 26)** | **59개 (41 / 18)** | **60개 (42 / 18)** |
 
-- 실패 0개, 스킵 0개이다 (첫 실행의 PERF-002 측정 편차 1건은 TC-P-003 비고 참조). todo 26개는 모두 `accessibility.test.ts` 에 있다.
+- 실패 0개, 스킵 0개이다 (2026-09-15 첫 실행과 2026-09-16 커버리지 실행의 PERF-002 측정 편차 각 1건은 TC-P-003 비고 참조). todo 26개는 모두 `accessibility.test.ts` 에 있다.
+- 2026-09-16 (`b68d5e1`, 미릴리스) 에서 `html-renderer.test.ts` 9건(TC-U-020 5~9단계)이 늘어 525개에서 534개가 되었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 7단계 1건, TC-U-020 2·3단계 2건, TC-S-003 1~3단계 3건으로 모두 6건이다.
 - 2026-09-13 (0.3.0, 파일 22개·테스트 501개) 대비 0.3.1 에서 파일 1개(`attribute-injection.test.tsx` 15건: TC-S-003 10, TC-S-004 5)와 `html-renderer.test.ts` 9건(TC-U-001 5, TC-U-020 4)이 늘었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 3단계 1건이다.
 - 2026-03-04 문서는 파일 11개, 테스트 381개를 집계했다. 이번에 새로 집계한 파일 11개는 API 1 (`upload-single.test.ts`: 2026-03-04 `8a99864` 로 이미 존재했으나 집계에서 빠짐), Unit 7 (Provider, image-resize, useImageDropZone, MiniEditor 4종), Integration 1 (ArtistEditor), E2E 1 (MiniEditor 여정), Performance 1 (PERF-002) 이다.
 - TC-AC-005 는 계획 상태이지만 파일에 테스트 10개(sentinel 1, todo 9)가 있으므로 테스트 수에는 포함한다.
@@ -1621,7 +1629,7 @@ beforeEach(() => {
 
 | 파일 | 도메인 | 테스트 수 | 통과 | todo | 관련 TC |
 |------|--------|---------|------|------|--------|
-| `__tests__/unit/core/html-renderer.test.ts` | Unit | 58 | 58 | 0 | TC-U-001, TC-U-002, TC-U-020 |
+| `__tests__/unit/core/html-renderer.test.ts` | Unit | 67 | 67 | 0 | TC-U-001, TC-U-002, TC-U-020 |
 | `__tests__/unit/core/serializer.test.ts` | Unit | 38 | 38 | 0 | TC-U-003 |
 | `__tests__/unit/blocks/built-in.test.ts` | Unit | 47 | 47 | 0 | TC-U-004 |
 | `__tests__/unit/core/image-resize.test.ts` | Unit | 16 | 16 | 0 | TC-U-005, TC-U-006, TC-U-012 |
@@ -1644,7 +1652,7 @@ beforeEach(() => {
 | `__tests__/performance/rendering-performance.test.ts` | Performance | 7 | 7 | 0 | TC-P-001, TC-P-002 |
 | `__tests__/performance/serializer-renderer-perf.test.ts` | Performance | 5 | 5 | 0 | TC-P-003 |
 | `__tests__/accessibility/accessibility.test.ts` | Accessibility | 46 | 20 | 26 | TC-AC-001~005 |
-| **합계 23개** | | **525** | **499** | **26** | 누락 파일 0개 |
+| **합계 23개** | | **534** | **508** | **26** | 누락 파일 0개 |
 
 ### 소스 모듈 대조
 
@@ -1696,23 +1704,23 @@ beforeEach(() => {
 | 3 | 자동 리사이즈가 `useImageDropZone` 경유로 실행되지 않음 | 10MB 고정 검증이 리사이즈보다 먼저 실행되고 `resizeImageIfNeeded` 는 10MB 이하 파일을 축소하지 않는다. ImageUploadField 안내 "10MB 초과시 자동 최적화" 와 실제 동작이 다르다 | SC-A-003, SC-U-007 |
 | 4 | PERF-001 시간 단언 허위 양성 | 전역 가짜 타이머 때문에 `performance.now()` 차이가 0 이다 | SC-P-004 |
 | 5 | ArtistEditor 업로드 파일 검증 부재 | 업로드 핸들러 2개가 `validateImageFile` 없이 `uploadImage` 를 호출한다 | SC-S-005 |
-| 6 | 따옴표로 감싼 URL 의 링크 대상에 닫는 따옴표가 포함됨 (0.3.1 동작 변화) | `h()` 가 만든 `&quot;` 까지 `linkify()` 정규식 `[^\s<]+` 에 일치해 `"https://example.com"` 의 href 파싱 값이 `https://example.com"` 이 된다. 0.3.0 에서는 속성이 끊기면서 href 파싱 값이 `https://example.com` 이었다. 속성 주입은 아니지만 링크 대상이 달라지며 검증 테스트와 기준(URL 끝 문장부호 제외 여부)이 없다 | SC-U-019 (TC-U-020 비고) |
-| 7 | exports 18개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
-| 8 | 커버리지 측정 불가·임계값 미적용 | coverage provider 미설치, 임계값 키 위치가 Vitest 4 설정 형식과 다르다 | "테스트 커버리지 목표" 절 |
+| 6 | exports 18개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
+| 7 | 커버리지 측정 환경 미구성·임계값 미적용 | coverage provider 가 devDependencies 에 없어 `npm ci` 환경에서 `npm run test:coverage` 가 실패한다 (2026-09-16 에는 `--no-save` 임시 설치로 측정). 임계값 키 위치가 Vitest 4 설정 형식과 달라 적용되지 않는다 | "테스트 커버리지 목표" 절 |
 
-### 해소된 갭 (0.3.1)
+### 해소된 갭
 
-| 2026-09-13 순위 | 항목 | 해소 내용 | 관련 SC |
+| 당시 순위 | 항목 | 해소 내용 | 관련 SC |
 |---------------|------|---------|--------|
-| 1 | 본문 URL 자동 링크 변환에서 속성 주입 발생 | `977be3f`: `h()` 가 `"`·`'` 를 이스케이프하고 `linkify()` 가 href 값의 따옴표를 이스케이프한다. `attribute-injection.test.tsx` SEC-007·SEC-008 과 `html-renderer.test.ts` 의 `h()`·`nl2br()`·`linkify()` 테스트가 회귀를 막는다 | SC-S-003, SC-U-001, SC-U-019 |
-| 2 | ArtistEditor 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않는다. `attribute-injection.test.tsx` SEC-009 가 회귀를 막는다 | SC-S-004 |
+| 2026-09-13 1순위 (0.3.1) | 본문 URL 자동 링크 변환에서 속성 주입 발생 | `977be3f`: `h()` 가 `"`·`'` 를 이스케이프하고 `linkify()` 가 href 값의 따옴표를 이스케이프한다. `attribute-injection.test.tsx` SEC-007·SEC-008 과 `html-renderer.test.ts` 의 `h()`·`nl2br()`·`linkify()` 테스트가 회귀를 막는다 | SC-S-003, SC-U-001, SC-U-019 |
+| 2026-09-13 2순위 (0.3.1) | ArtistEditor 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않는다. `attribute-injection.test.tsx` SEC-009 가 회귀를 막는다 | SC-S-004 |
+| 2026-09-15 6순위 (미릴리스) | 따옴표로 감싼 URL 의 링크 대상에 닫는 따옴표가 포함됨 | `b68d5e1`: `linkify()` URL 일치가 원문 따옴표와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 의 따옴표로 감싼 URL describe 9건이 회귀를 막는다 (TC-U-020 5~9단계) | SC-U-019 |
 
 ### 문서·명칭 불일치
 
 | 대상 | 내용 |
 |------|------|
 | `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목까지만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
-| `__tests__/docs/TEST-GUIDE.md` | 테스트 수 불일치는 해소: 2026-09-15 에 0.3.1 실측값(파일 23개·테스트 525개, 통과 499·todo 26, Unit 315, Security 50, `html-renderer.test.ts` 58개, 함수별 h 9·nl2br 6·linkify 4·hAttr 6)으로 정정하고 `attribute-injection.test.tsx` (15개) 를 목록에 추가했다. 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), 커버리지 `97%+` 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조는 실제와 다르며 수정하지 않았다 |
+| `__tests__/docs/TEST-GUIDE.md` | 해소: 2026-09-15 에 테스트 수를 정정했고, 2026-09-16 (`9474f71`) 에 나머지 불일치를 정정했다. 정정 항목은 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), gallery 예시 필드·클래스, 커버리지 `97%+` 표기(2026-09-16 실측값으로 교체), 적용되지 않는 임계값을 "Enforced" 로 적은 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조, `__tests__/docs` 기준으로 깨진 문서 링크, E2E 렌더링 테스트의 접근성 속성 검증 표기이다 |
 | `__tests__/docs/TEST-SCRIPTS.md`, `docs/04-report/*.md` | `381` 테스트 표기가 남아 있다 (수정하지 않음) |
 | `__tests__/accessibility/accessibility.test.ts` | 머리 주석 A11Y-005 설명은 2026-09-13 에 정정했다. describe 이름 `N/A (no form components shipped)` 와 SCOPE NOTE 의 "BlockEditor UI a11y → `__tests__/e2e/block-editor-render.test.tsx`" 는 사실과 다르며 수정하지 않았다 |
 | `__tests__/api/upload-single.test.ts` | describe 내부 TC 번호가 이 문서 ID 와 다르다. 3절 대응표를 참조한다 |
@@ -1726,17 +1734,16 @@ beforeEach(() => {
 
 ## 테스트 커버리지 목표
 
-```
-vitest.config.ts 기재값        2026-03-04 기록값 (재측정 안 됨)
-─────────────────────────      ─────────────────────────
-Stmts:    85%                  76.84%
-Lines:    85%                  72.04%
-Funcs:    85%                  83.92%
-Branches: 80%                  81.67%
-```
+| 지표 | `vitest.config.ts` 기재값 | 2026-03-04 기록값 | 2026-09-16 실측: 테스트가 불러온 파일 | 2026-09-16 실측: `src/**` 전체 |
+|------|------|------|------|------|
+| Stmts | 85% | 76.84% | 86.69% | 58.68% |
+| Lines | 85% | 72.04% | 86.43% | 58.93% |
+| Funcs | 85% | 83.92% | 89.91% | 48.41% |
+| Branches | 80% | 81.67% | 88.04% | 58.93% |
 
-- **2026-09-13·2026-09-15 측정 불가:** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않으므로, lockfile 고정 설치(`npm ci`) 환경에서 `npm run test:coverage` 를 실행할 수 없다. 위 기록값과 `TEST-GUIDE.md` 의 `97%+` 표기는 서로 다르며 둘 다 현재 코드 기준으로 확인되지 않았다.
-- **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 임계값은 `coverage.thresholds` 아래에 지정해야 한다.
+- **측정 환경:** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않는다. 그래서 `npm ci` 환경에서 `npm run test:coverage` 는 `MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'` 를 출력하고 종료 코드 1 을 반환한다 (2026-09-13·2026-09-15·2026-09-16 확인). 2026-09-16 에는 `npm install --no-save @vitest/coverage-v8@4.1.7` 로 임시 설치해 측정했다 (`package.json`·`package-lock.json` 변경 없음, 측정 대상 `b68d5e1`).
+- **측정 범위:** 기본 실행은 테스트가 불러온 파일만 보고서에 포함한다. 테스트가 import 하지 않는 `BlockEditor.tsx`·`BlockRenderer.tsx`·`ImageUploadField.tsx`·`BlockPreviewTheme.tsx` 는 기본 보고서에서 빠지며, `--coverage.include='src/**'` 로 측정하면 네 파일 모두 0% 이다. 파일별 수치는 `__tests__/docs/TEST-GUIDE.md` "Coverage by Module" 표에 적었다. 2026-03-04 기록값과 이전 `TEST-GUIDE.md` 의 `97%+` 표기는 모두 2026-09-16 실측값과 다르다.
+- **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 커버리지 설정 해석 코드도 `coverage.thresholds` 만 읽는다. 따라서 현재 값은 적용되지 않으며, 2026-09-16 `src/**` 전체 수치가 기재값보다 낮아도 실행은 실패하지 않는다.
 
 **개선 우선순위 (테스트 0건 모듈 기준):**
 1. `ImageUploadField.tsx`: TC-U-018, TC-AC-006~008
@@ -1752,16 +1759,17 @@ Branches: 80%                  81.67%
 - [x] 사전 조사 판정표에서 적용으로 판정된 7개 도메인(Unit, API, Integration, E2E, Security, Accessibility, Performance) 모두 포함
 - [x] Smoke 계획 SC 추가 (exports 18개), Load/Stress·Chaos 는 판정 근거와 함께 별도 SC 를 두지 않음
 - [x] 테스트 파일 23개가 모두 TC 에 연결됨 (누락 0개)
-- [x] TC 별 테스트 수 합계가 2026-09-15 실측 525개 (통과 499, todo 26) 와 일치
+- [x] TC 별 테스트 수 합계가 2026-09-16 실측 534개 (통과 508, todo 26) 와 일치
 - [x] 완료 TC 단계 표를 실제 테스트 이름·단언 기준으로 작성
 - [x] 계획 TC 단계 표를 소스 동작 기준으로 작성 (현재 동작 일부는 워크트리 밖 임시 테스트로 확인)
 - [x] 보안·접근성 기준 명시 (OWASP, WCAG)
 - [x] 확인된 결함 수정과 테스트 구현: SC-S-003, SC-S-004 (0.3.1, `977be3f`)
-- [ ] 따옴표로 감싼 URL 링크 대상 기준 결정과 테스트 추가 (우선순위 갭 6순위)
+- [x] 따옴표로 감싼 URL 링크 대상 기준 결정과 테스트 추가 (2026-09-16, `b68d5e1`)
 - [ ] 테스트 0건 컴포넌트 테스트 구현: ImageUploadField, BlockPreviewTheme, BlockEditor, BlockRenderer
 - [ ] 자동 리사이즈 경로 기준 결정과 SC-A-003 구현
 - [ ] PERF-001 허위 양성 교정 (SC-P-004)
 - [ ] exports Smoke 구현과 실행 스크립트 추가
 - [ ] 커버리지 측정 환경 구성 (coverage provider 설치, `coverage.thresholds` 형식)
 - [x] `TEST-GUIDE.md` 테스트 수를 0.3.1 실측값으로 정정 (2026-09-15)
-- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-GUIDE.md 예시 코드·커버리지 표기, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
+- [x] `TEST-GUIDE.md` 예시 코드·커버리지 표기·문서 참조 정정 (2026-09-16, `9474f71`)
+- [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
