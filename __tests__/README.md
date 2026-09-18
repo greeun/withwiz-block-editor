@@ -1,113 +1,113 @@
 # Test Suite Documentation
 
-모든 테스트 및 테스트 설정이 `__tests__` 디렉토리 아래에 중앙화되어 있습니다.
+All tests and test configuration are centralized under the `__tests__` directory.
 
-## 디렉토리 구조
+## Directory Structure
 
 ```
 __tests__/
-├── config/                                 # 테스트 설정 파일들
-│   ├── vitest.config.ts                   # Vitest 설정
-│   ├── ci.yml                             # GitHub Actions CI/CD 파이프라인
-│   ├── pre-commit                         # Husky pre-commit 훅
-│   ├── .lintstagedrc.json                 # Lint-staged 설정
-│   └── .codeclimate.yml                   # CodeClimate 설정
+├── config/                                 # Test configuration files
+│   ├── vitest.config.ts                   # Vitest config
+│   ├── ci.yml                             # GitHub Actions CI/CD pipeline
+│   ├── pre-commit                         # Husky pre-commit hook
+│   ├── .lintstagedrc.json                 # Lint-staged config
+│   └── .codeclimate.yml                   # CodeClimate config
 │
-├── setup.ts                                # 테스트 환경 설정
+├── setup.ts                                # Test environment setup
 │
-├── security/                               # 보안 테스트
-│   ├── xss-prevention.test.ts             # XSS 방지 (14 tests)
-│   └── file-upload-validation.test.ts     # 파일 업로드 검증 (21 tests)
+├── security/                               # Security tests
+│   ├── xss-prevention.test.ts             # XSS prevention (14 tests)
+│   └── file-upload-validation.test.ts     # File upload validation (21 tests)
 │
-├── performance/                            # 성능 테스트
-│   └── rendering-performance.test.ts      # 렌더링 성능 (7 tests)
+├── performance/                            # Performance tests
+│   └── rendering-performance.test.ts      # Rendering performance (7 tests)
 │
-├── accessibility/                          # 접근성 테스트
-│   └── accessibility.test.ts              # WCAG 2.1 AA 준수 (41 tests)
+├── accessibility/                          # Accessibility tests
+│   └── accessibility.test.ts              # WCAG 2.1 AA compliance (41 tests)
 │
-├── integration/                            # 통합 테스트
-│   └── block-editor-integration.test.ts   # 블록 에디터 통합 (28 tests)
+├── integration/                            # Integration tests
+│   └── block-editor-integration.test.ts   # Block editor integration (28 tests)
 │
-└── e2e/                                   # E2E 테스트 (향후 추가)
+└── e2e/                                   # E2E tests (to be added)
 ```
 
-## 테스트 실행
+## Running Tests
 
-### 모든 테스트 실행
+### Run all tests
 ```bash
 npm test
 ```
 
-### 카테고리별 테스트 실행
+### Run tests by category
 ```bash
-npm run test:security       # 보안 테스트 (35 tests)
-npm run test:performance    # 성능 테스트 (7 tests)
-npm run test:accessibility  # 접근성 테스트 (41 tests)
-npm run test:integration    # 통합 테스트 (28 tests)
-npm run test:unit          # 단위 테스트
+npm run test:security       # Security tests (35 tests)
+npm run test:performance    # Performance tests (7 tests)
+npm run test:accessibility  # Accessibility tests (41 tests)
+npm run test:integration    # Integration tests (28 tests)
+npm run test:unit          # Unit tests
 ```
 
-### 커버리지 리포트 생성
+### Generate coverage report
 ```bash
 npm run test:coverage
 ```
 
-## 테스트 패턴
+## Test Patterns
 
 ### TDD (Test-Driven Development)
 
-모든 테스트는 TDD 방법론(RED → GREEN → REFACTOR)을 따릅니다:
+All tests follow the TDD methodology (RED → GREEN → REFACTOR):
 
-1. **RED**: 실패하는 테스트 작성
-2. **GREEN**: 최소 코드로 통과
-3. **REFACTOR**: 코드 정리 및 최적화
+1. **RED**: Write a failing test
+2. **GREEN**: Make it pass with minimal code
+3. **REFACTOR**: Clean up and optimize the code
 
-## 테스트 카테고리
+## Test Categories
 
-### Security (보안)
-- XSS (Cross-Site Scripting) 방지
-- 파일 업로드 검증
-- URL 새니타이제이션
-- HTML 이스케이핑
+### Security
+- XSS (Cross-Site Scripting) prevention
+- File upload validation
+- URL sanitization
+- HTML escaping
 
-### Performance (성능)
-- 블록 렌더링 속도
-- 메모리 효율성
-- 출력 크기 최적화
+### Performance
+- Block rendering speed
+- Memory efficiency
+- Output size optimization
 
-### Accessibility (접근성)
-- WCAG 2.1 AA 준수
-- 시맨틱 HTML
-- 키보드 네비게이션
-- 스크린 리더 호환성
+### Accessibility
+- WCAG 2.1 AA compliance
+- Semantic HTML
+- Keyboard navigation
+- Screen reader compatibility
 
-### Integration (통합)
-- 컴포넌트 상호작용
-- 렌더링 파이프라인
-- 워크플로우 검증
+### Integration
+- Component interaction
+- Rendering pipeline
+- Workflow validation
 
-## CI/CD 파이프라인
+## CI/CD Pipeline
 
-GitHub Actions를 통한 자동화된 테스트:
-- Node.js 18.x, 20.x에서 테스트 실행
-- ESLint 린팅
-- TypeScript 타입 검사
-- 보안 스캔 (Snyk)
-- 커버리지 리포트 (Codecov)
-- NPM 자동 배포 (main 브랜치)
+Automated testing via GitHub Actions:
+- Run tests on Node.js 18.x, 20.x
+- ESLint linting
+- TypeScript type checking
+- Security scan (Snyk)
+- Coverage report (Codecov)
+- Automated NPM publish (main branch)
 
-## 설정 파일 위치
+## Configuration File Locations
 
-모든 테스트 관련 설정이 `__tests__/config/`에 있습니다:
-- `vitest.config.ts`: Vitest 설정
-- `ci.yml`: GitHub Actions 워크플로우
-- `pre-commit`: Git pre-commit 훅
-- `.lintstagedrc.json`: Staged 파일 린팅 설정
-- `.codeclimate.yml`: 코드 품질 모니터링
+All test-related configuration lives in `__tests__/config/`:
+- `vitest.config.ts`: Vitest config
+- `ci.yml`: GitHub Actions workflow
+- `pre-commit`: Git pre-commit hook
+- `.lintstagedrc.json`: Staged file linting config
+- `.codeclimate.yml`: Code quality monitoring
 
-## 테스트 통계
+## Test Statistics
 
-| 카테고리 | 테스트 수 | 상태 |
+| Category | Test Count | Status |
 |---------|---------|------|
 | Security | 35 | ✅ Pass |
 | Performance | 7 | ✅ Pass |
@@ -115,10 +115,10 @@ GitHub Actions를 통한 자동화된 테스트:
 | Integration | 28 | ✅ Pass |
 | **Total** | **111** | **✅ Pass** |
 
-## 다음 단계
+## Next Steps
 
-- [ ] GitHub Secrets 설정 (NPM_TOKEN, SNYK_TOKEN)
-- [ ] Husky 초기화 (`npm install`)
-- [ ] ESLint & Prettier 규칙 설정
-- [ ] E2E 테스트 추가
-- [ ] 배지 추가 (README)
+- [ ] Configure GitHub Secrets (NPM_TOKEN, SNYK_TOKEN)
+- [ ] Initialize Husky (`npm install`)
+- [ ] Configure ESLint & Prettier rules
+- [ ] Add E2E tests
+- [ ] Add badges (README)
