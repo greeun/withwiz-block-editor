@@ -28,3 +28,6 @@ docs/superpowers/
 pnpm-lock.yaml
 pnpm-workspace.yaml
 yarn.lock
+
+# Claude Code worktrees live here; they are checkouts of this same repo
+.claude/worktrees/
