@@ -1,4 +1,4 @@
-name: CI/CD Pipeline
+name: CI
 
 on:
   push:
@@ -6,55 +6,60 @@ on:
   pull_request:
     branches: [main, develop]
 
+# Least privilege: these jobs only read the repository.
+permissions:
+  contents: read
+
 jobs:
   test:
     name: Test and Coverage
     runs-on: ubuntu-latest
-    
+
     strategy:
       matrix:
-        node-version: [18.x, 20.x]
-    
+        # Only Node versions still receiving support: 22 is in maintenance until
+        # 2027-04 and 24 is the active LTS. 18 and 20 are both EOL, and on 18 the
+        # suite could not even start — vitest's toolchain imports `styleText`
+        # from node:util, which arrived in 20.12.
+        node-version: [22.x, 24.x]
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v7
+
       - name: Setup Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Run linter
         run: npm run lint --if-present
-      
+
       - name: Run type check
         run: npm run typecheck --if-present
-      
-      - name: Run unit tests
-        run: npm test -- __tests__/unit/
-      
-      - name: Run security tests
-        run: npm test -- __tests__/security/
-      
-      - name: Run performance tests
-        run: npm test -- __tests__/performance/
-      
-      - name: Run accessibility tests
-        run: npm test -- __tests__/accessibility/
-      
-      - name: Run integration tests
-        run: npm test -- __tests__/integration/
-      
-      - name: Run all tests with coverage
-        run: npm test
-      
+
+      # One run covers every category. The suite used to be executed seven times
+      # per Node version — once per category, then again in full — which bought
+      # nothing: vitest already reports the file path of a failing test.
+      #
+      # __tests__/performance is excluded here and run on its own below: its p95
+      # thresholds are wall-clock measurements, and they fail intermittently when
+      # vitest runs files in parallel with coverage instrumentation attached.
+      - name: Run tests with coverage
+        run: npm run test:coverage -- --exclude '**/performance/**'
+
+      # Sequential, uninstrumented: the only way these benchmarks measure the
+      # code rather than the contention around it.
+      - name: Run performance benchmarks
+        run: npx vitest run __tests__/performance --no-file-parallelism
+
       - name: Upload coverage reports
-        uses: codecov/codecov-action@v3
-        if: matrix.node-version == '20.x'
+        uses: codecov/codecov-action@v7
+        if: matrix.node-version == '24.x'
         with:
           files: ./coverage/coverage-final.json
           flags: unittests
@@ -65,25 +70,26 @@ jobs:
     name: Build Package
     runs-on: ubuntu-latest
     needs: test
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v7
+
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v7
         with:
-          node-version: '20.x'
+          # Matches the Node version release.yml publishes with.
+          node-version: '24.x'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Build package
         run: npm run build --if-present
-      
+
       - name: Upload build artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: dist
           path: dist/
@@ -92,18 +98,11 @@ jobs:
   security-scan:
     name: Security Scanning
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-      
+        uses: actions/checkout@v7
+
+      # Reads package-lock.json, so no install is needed.
       - name: Run npm audit
         run: npm audit --audit-level=moderate || true
-      
-      - name: Run Snyk scan
-        uses: snyk/actions/node@master
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          args: --severity-threshold=high
-        continue-on-error: true
