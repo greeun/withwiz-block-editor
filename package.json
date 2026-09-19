@@ -63,5 +63,16 @@
     "tsup": "^8.0.0",
     "typescript": "^5",
     "vitest": "^4.1.7"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greeun/withwiz-block-editor.git"
+  },
+  "homepage": "https://github.com/greeun/withwiz-block-editor#readme",
+  "bugs": {
+    "url": "https://github.com/greeun/withwiz-block-editor/issues"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
