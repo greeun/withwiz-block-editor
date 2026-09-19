@@ -155,11 +155,31 @@ New features must include tests. Use the factories in `__tests__/__mocks__/facto
 
 ## Deployment & Publishing
 
-Before merging to main:
-1. Ensure `npm run build` passes without errors
-2. Check `npm run test:coverage` meets thresholds (85%+ for new code)
-3. Update version in package.json following semver
-4. npm publish (CI/CD handles this from main branch)
+Publishing happens on GitHub Actions through npm Trusted Publishing (OIDC).
+Pushing a `v*` tag runs `.github/workflows/release.yml`, which installs, builds,
+tests and publishes. No npm login, no 2FA prompt and no `NPM_TOKEN` secret is
+involved — npm verifies the workflow's own GitHub identity. Pushing to `main`
+does **not** publish; only a tag does.
+
+Release flow:
+1. On `develop`, make sure `npm run build` passes and `npm run test:coverage`
+   meets its thresholds (85%+ for new code)
+2. Bump the version in package.json following semver, as `chore(release): <version>`
+3. Merge `develop` into `main` and push both branches
+4. Tag that commit and push the tag:
+   ```bash
+   git tag -a v0.5.0 main -m "chore(release): 0.5.0"
+   git push origin v0.5.0
+   ```
+
+The workflow refuses to publish when the tag and the `package.json` version
+disagree. Do not run `npm publish` locally: npm revoked classic tokens, so a
+local publish now needs an interactive login for every release.
+
+Two fields in package.json are required for this to work and must not be
+removed: `publishConfig.access` (a scoped package without it is published as
+private and fails with E404) and `repository.url` (npm matches it against the
+provenance signature; an empty value fails with E422).
 
 The dist/ and styles/ directories are published to npm. Source files (src/, __tests__/, tsup.config.ts) are not included in the package.
 
