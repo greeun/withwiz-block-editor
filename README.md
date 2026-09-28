@@ -9,7 +9,6 @@ Block-based content editor for web publishing. A React component library providi
 - Category-based block filtering
 - Two operation modes: serialized (HTML string) or raw (block array)
 - Image upload with resize support
-- Artist/bio editor component
 - **MiniEditor** — lightweight rich text editor (B/I/S · H1–H3 · lists · blockquote)
 - **BlockPreviewTheme** — zero-config preview style injection via React 19 `<style precedence>`
 - HTML renderer for preview and server-side rendering
@@ -149,17 +148,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
 > **Requires React 19+.** On React 18, prefer the explicit `import "@withwiz/block-editor/styles/preview.css"` approach instead.
 
-### `<ArtistEditor />`
-
-Specialized editor for artist bio pages with main image and gallery.
-
-```tsx
-import { ArtistEditor } from "@withwiz/block-editor/components/ArtistEditor";
-import "@withwiz/block-editor/styles/artist.css";
-
-<ArtistEditor value={bioData} onChange={setBioData} />
-```
-
 ### `<BlockEditorProvider />`
 
 Context provider for image upload and error handling.
@@ -254,12 +242,11 @@ function MyForm() {
 
 ## Styles
 
-Four CSS files are included:
+Three CSS files are included:
 
 ```ts
 import "@withwiz/block-editor/styles/editor.css";      // Editor UI styles
 import "@withwiz/block-editor/styles/preview.css";     // Published content styles
-import "@withwiz/block-editor/styles/artist.css";      // Artist editor styles
 import "@withwiz/block-editor/styles/mini-editor.css"; // MiniEditor styles
 ```
 

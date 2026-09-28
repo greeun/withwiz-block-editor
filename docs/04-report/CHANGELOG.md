@@ -2,6 +2,14 @@
 
 All notable changes to the @withwiz/block-editor project are documented here.
 
+## [Unreleased]
+
+### Removed
+
+- **BREAKING**: `ArtistEditor`·`ArtistBioData`·`styles/artist.css` 제거. 필요한 소비 프로젝트는 자체 컴포넌트로 옮긴다.
+  - `package.json` `exports` 에서 `./components/ArtistEditor`, `./styles/artist.css` 서브패스 삭제
+  - 루트 진입점(`@withwiz/block-editor`)의 `ArtistEditor`·`ArtistBioData` export 삭제
+
 ## [0.1.0] - 2026-03-03
 
 ### Added - Test Implementation Phase Completion

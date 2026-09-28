@@ -75,11 +75,3 @@ export interface BlockEditorConfig {
   /** Category-keyed sample content */
   samples?: Record<string, Omit<BlockData, "id">[]>;
 }
-
-/* ═══ Artist Editor ═══ */
-
-export interface ArtistBioData {
-  text: string;
-  mainImage: string;
-  gallery: string[];
-}

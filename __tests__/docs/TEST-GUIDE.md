@@ -1,8 +1,8 @@
 # Test Suite Quick Reference Guide
 
 **Project**: @withwiz/block-editor
-**Total Tests**: 508 passing, 26 todo (534 tests in 23 files, measured 2026-09-16 with `npm test` on v0.3.1 plus the unreleased linkify quote fix on `fix/residual-defects`)
-**Code Coverage**: Statements 86.69%, Branches 88.04%, Functions 89.91%, Lines 86.43% for source files loaded by tests (measured 2026-09-16, see [Coverage Requirements](#coverage-requirements))
+**Total Tests**: 497 passing, 26 todo (523 tests in 22 files, measured 2026-09-29 with `npm test` after the bio editor component was removed)
+**Code Coverage**: Statements 86.2%, Branches 88.98%, Functions 90.52%, Lines 85.2% for source files loaded by tests (measured 2026-09-29, see [Coverage Requirements](#coverage-requirements))
 **Status**: ✅ 0 failing. The 26 todo tests are `it.todo` placeholders in `accessibility.test.ts`
 
 ---
@@ -20,14 +20,14 @@ npm run test:watch
 
 # Specific test category
 npm run test:unit              # Unit tests (324)
-npm run test:integration       # Integration tests (34)
+npm run test:integration       # Integration tests (28)
 npm run test:api               # API contract tests (11)
 npm run test:e2e               # E2E tests (57)
-npm run test:security          # Security tests (50)
+npm run test:security          # Security tests (45)
 npm run test:performance       # Performance tests (12)
 npm run test:accessibility     # Accessibility tests (46: 20 passing, 26 todo)
 
-# Coverage report (requires @vitest/coverage-v8, which is not installed by npm ci)
+# Coverage report (uses the @vitest/coverage-v8 devDependency)
 npm run test:coverage
 ```
 
@@ -65,8 +65,8 @@ __tests__/
 │   ├── mini-editor-journey.test.tsx     (6 tests)
 │   └── serializer-roundtrip.test.ts     (20 tests)
 │
-├── security/                # 50 tests
-│   ├── attribute-injection.test.tsx     (15 tests)
+├── security/                # 45 tests
+│   ├── attribute-injection.test.tsx     (10 tests)
 │   ├── xss-prevention.test.ts           (14 tests)
 │   └── file-upload-validation.test.ts   (21 tests)
 │
@@ -77,8 +77,7 @@ __tests__/
 ├── accessibility/           # 46 tests (20 passing, 26 todo)
 │   └── accessibility.test.ts
 │
-├── integration/             # 34 tests
-│   ├── artist-editor.test.tsx           (6 tests)
+├── integration/             # 28 tests
 │   └── block-editor-integration.test.ts (28 tests)
 │
 ├── __mocks__/               # README.md only (no mock or factory files)
@@ -215,17 +214,17 @@ it('단락 블록이 <p> 태그로 렌더링됨', () => {
 | Unit Tests | 324 | ✅ 100% pass |
 | API Tests | 11 | ✅ 100% pass |
 | E2E Tests | 57 | ✅ 100% pass |
-| Security | 50 | ✅ 100% pass |
+| Security | 45 | ✅ 100% pass |
 | Performance | 12 | ✅ 100% pass |
 | Accessibility | 46 | ✅ 20 pass, 26 todo |
-| Integration | 34 | ✅ 100% pass |
-| **Total** | **534** | **✅ 508 pass, 0 fail, 26 todo** |
+| Integration | 28 | ✅ 100% pass |
+| **Total** | **523** | **✅ 497 pass, 0 fail, 26 todo** |
 
 Per-file breakdown and scenario/case mapping: `docs/testing/test-classification.md`.
 
 ### Coverage by Module
 
-Measured 2026-09-16 with `@vitest/coverage-v8@4.1.7` installed temporarily (`npm install --no-save`) and `--coverage.include='src/**'`.
+Measured 2026-09-29 with `@vitest/coverage-v8@4.1.11` (devDependency) and `--coverage.include='src/**'`.
 
 | Module | Stmts | Branch | Funcs | Lines |
 |--------|-------|--------|-------|-------|
@@ -236,12 +235,11 @@ Measured 2026-09-16 with `@vitest/coverage-v8@4.1.7` installed temporarily (`npm
 | src/core/html-renderer.ts | 98.98% | 95.41% | 100% | 98.76% |
 | src/mini-editor/useRichText.ts | 96.72% | 91.42% | 100% | 100% |
 | src/mini-editor/MiniEditor.tsx | 93.1% | 88% | 100% | 100% |
-| src/components/ArtistEditor.tsx | 88.88% | 80.7% | 87.5% | 91.58% |
 | src/hooks/useImageDropZone.ts | 84.15% | 82.6% | 92.3% | 84.37% |
 | src/core/image-resize.ts | 58.19% | 73.33% | 50% | 58.67% |
 | src/components/BlockEditor.tsx, BlockRenderer.tsx, ImageUploadField.tsx, BlockPreviewTheme.tsx | 0% | 0% | 0% | 0% |
-| **Overall, files loaded by tests** (`npm run test:coverage` default) | **86.69%** | **88.04%** | **89.91%** | **86.43%** |
-| **Overall, all `src/**`** | **58.68%** | **58.93%** | **48.41%** | **58.93%** |
+| **Overall, files loaded by tests** (`npm run test:coverage` default) | **86.2%** | **88.98%** | **90.52%** | **85.2%** |
+| **Overall, all `src/**`** | **54.41%** | **57.14%** | **43.65%** | **53.97%** |
 
 No test imports the four component files in the 0% row. Without `--coverage.include`, Vitest 4 leaves them out of the report, so the default overall figure only covers the other files.
 
@@ -394,16 +392,9 @@ npx vitest --ui
 
 ### Running Coverage
 
-`@vitest/coverage-v8` is not a devDependency. After `npm ci`, `npm run test:coverage` exits with code 1:
-
-```
-MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'
-```
-
-To measure coverage without changing `package.json`, install the provider that matches the installed Vitest version:
+`@vitest/coverage-v8` is a devDependency, so `npm ci` installs it:
 
 ```bash
-npm install --no-save @vitest/coverage-v8@4.1.7
 npm run test:coverage
 ```
 
@@ -421,12 +412,12 @@ When Vitest detects an AI agent environment, the text reporter hides files with 
 
 Vitest 4 reads thresholds only from `coverage.thresholds`, so these values are ignored and a coverage run never fails because of them. `thresholdAutoUpdate` is not a Vitest 4 option either.
 
-### Actual Coverage (2026-09-16)
+### Actual Coverage (2026-09-29)
 
 | Scope | Stmts | Branch | Funcs | Lines |
 |-------|-------|--------|-------|-------|
-| Files loaded by tests (default report) | 86.69% | 88.04% | 89.91% | 86.43% |
-| All `src/**` | 58.68% | 58.93% | 48.41% | 58.93% |
+| Files loaded by tests (default report) | 86.2% | 88.98% | 90.52% | 85.2% |
+| All `src/**` | 54.41% | 57.14% | 43.65% | 53.97% |
 
 The default report is above the configured values. The all-`src/**` figure is below them.
 
@@ -454,10 +445,10 @@ npm run typecheck
 
 `package.json` has no `prepublishOnly` script, so `npm publish` does not build or test automatically. Run these before publishing.
 
-Results on 2026-09-16 (`fix/residual-defects`):
+Results on 2026-09-29 (`chore/remove-consumer-mentions`):
 - ✅ `npm run typecheck` (TypeScript compilation, no errors)
 - ✅ `npm run build` (tsup bundle + type declaration generation)
-- ✅ `npm test` (508 passing, 0 failing, 26 todo)
+- ✅ `npm test` (497 passing, 0 failing, 26 todo)
 - Coverage is not a gate. The configured thresholds are not enforced (see [Coverage Requirements](#coverage-requirements))
 
 ---
@@ -534,10 +525,10 @@ npx vitest run --reporter=verbose
 
 ## Quick Status
 
-✅ **508 passing, 0 failing, 26 todo** (534 tests in 23 files)
-✅ **86.43% line coverage** for files loaded by tests (58.93% across all `src/**`)
+✅ **497 passing, 0 failing, 26 todo** (523 tests in 22 files)
+✅ **85.2% line coverage** for files loaded by tests (53.97% across all `src/**`)
 ✅ **22/22 block types** have render tests
 ✅ **6/6 html-renderer helper functions** have unit tests
 
-**Last Updated**: September 16, 2026 (test counts, coverage, and build status measured on `fix/residual-defects`, v0.3.1 plus the linkify quote fix)
+**Last Updated**: September 29, 2026 (test counts, coverage, and build status measured on `chore/remove-consumer-mentions` after the bio editor component was removed)
 **PDCA Report Status**: Approved (report dated 2026-03-03)
