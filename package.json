@@ -18,7 +18,6 @@
   "exports": {
     ".": "./dist/index.js",
     "./blocks/built-in": "./dist/blocks/built-in.js",
-    "./components/ArtistEditor": "./dist/components/ArtistEditor.js",
     "./components/BlockEditor": "./dist/components/BlockEditor.js",
     "./components/BlockPreviewTheme": "./dist/components/BlockPreviewTheme.js",
     "./components/BlockRenderer": "./dist/components/BlockRenderer.js",
@@ -29,7 +28,6 @@
     "./core/serializer": "./dist/core/serializer.js",
     "./hooks/useImageDropZone": "./dist/hooks/useImageDropZone.js",
     "./mini-editor/MiniEditor": "./dist/mini-editor/MiniEditor.js",
-    "./styles/artist.css": "./styles/artist.css",
     "./styles/editor.css": "./styles/editor.css",
     "./styles/mini-editor.css": "./styles/mini-editor.css",
     "./styles/preview.css": "./styles/preview.css",
