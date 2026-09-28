@@ -2,7 +2,9 @@
 
 > **For Claude:** REQUIRED SUB-SKILL: Use superpowers:executing-plans to implement this plan task-by-task.
 
-**Goal:** `UploadFn`이 호출되는 모든 진입점(useImageDropZone, ArtistEditor)에 대해 JWT 인증 포함 API 테스트를 완성한다.
+> **2026-09-29 갱신:** 약력(bio) 편집기 컴포넌트가 패키지에서 제거되어(기능 제거) 해당 진입점의 Task·시나리오·테스트 케이스를 이 계획에서 삭제했다.
+
+**Goal:** `UploadFn`이 호출되는 모든 진입점(useImageDropZone)에 대해 JWT 인증 포함 API 테스트를 완성한다.
 
 **Architecture:** 실제 fetch를 발생시키지 않고 `vi.fn()`으로 `uploadImage`를 모킹하여 라이브러리 코드의 API 연동 계약을 검증한다. `vi.mock`으로 `useBlockEditorContext`를 가로채고 `renderHook` / `render`로 컴포넌트를 실행한다.
 
@@ -17,9 +19,7 @@
 | `useImageDropZone → uploadImage` | BlockEditor / ImageUploadField 단일 업로드 | 5개 |
 | `useImageDropZone → uploadImage` (multiple) | ImageUploadField 다중 업로드 + maxFiles | 3개 |
 | `useImageDropZone → resize → uploadImage` | 자동 리사이즈 후 업로드 | 2개 |
-| `ArtistEditor → uploadImage` (메인) | 대표 이미지 단일 업로드 | 3개 |
-| `ArtistEditor → uploadImage` (갤러리) | 갤러리 다중 업로드 + 제한 | 4개 |
-| **합계** | | **17개** |
+| **합계** | | **10개** |
 
 ---
 
@@ -613,314 +613,7 @@ git commit -m "test(api): add auto-resize before upload API tests"
 
 ---
 
-## Task 4: ArtistEditor — 메인 이미지 업로드 API 테스트
-
-**Files:**
-- Create: `__tests__/api/artist-upload-main.test.tsx`
-
-**Step 1: 실패 테스트 작성**
-
-```typescript
-// __tests__/api/artist-upload-main.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, fireEvent, waitFor } from '@testing-library/react';
-import React from 'react';
-
-vi.mock('../../src/context/BlockEditorProvider', () => ({
-  useBlockEditorContext: vi.fn(),
-}));
-
-import { ArtistEditor } from '../../src/components/ArtistEditor';
-import { useBlockEditorContext } from '../../src/context/BlockEditorProvider';
-
-const mockUploadImage = vi.fn();
-const mockOnError = vi.fn();
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  (useBlockEditorContext as ReturnType<typeof vi.fn>).mockReturnValue({
-    uploadImage: mockUploadImage,
-    onError: mockOnError,
-  });
-});
-
-// ────────────────────────────────────────────────────────
-describe('TC-A-011: ArtistEditor 메인 이미지 업로드 성공', () => {
-  it('uploadImage 호출 후 결과 URL이 미리보기에 반영됨', async () => {
-    const imageUrl = 'https://cdn.example.com/artist-main.jpg';
-    mockUploadImage.mockResolvedValue({ url: imageUrl, key: 'main-key-1' });
-
-    const onChange = vi.fn();
-    const onImageUploaded = vi.fn();
-
-    const { container } = render(
-      <ArtistEditor
-        content=""
-        onChange={onChange}
-        onImageUploaded={onImageUploaded}
-      />
-    );
-
-    // 대표 이미지 업로드 영역 클릭 → input[file] 트리거 모킹
-    const uploadDiv = container.querySelector('.abe-main-img-upload') as HTMLElement;
-    expect(uploadDiv).not.toBeNull();
-
-    // 파일 input 직접 접근하여 change 이벤트 발생
-    // ArtistEditor는 document.createElement('input')을 직접 사용하므로
-    // uploadImage를 직접 호출하는 방식으로 테스트
-    await waitFor(async () => {
-      // uploadImage 직접 호출 시뮬레이션
-      const result = await mockUploadImage(
-        new File([new Uint8Array(512)], 'artist.jpg', { type: 'image/jpeg' })
-      );
-      expect(result.url).toBe(imageUrl);
-    });
-
-    expect(mockUploadImage).toHaveBeenCalled();
-  });
-
-  it('result.url이 있을 때만 onChange 호출 (ArtistEditor:136)', async () => {
-    mockUploadImage.mockResolvedValue({ url: 'https://cdn.example.com/img.jpg', key: 'k1' });
-
-    // uploadImage가 url 반환 시 onChange 트리거 검증
-    const result = await mockUploadImage(
-      new File([new Uint8Array(512)], 'photo.jpg', { type: 'image/jpeg' })
-    );
-    expect(result.url).toBeTruthy();
-  });
-
-  it('result.key 있을 때 onImageUploaded 호출 (ArtistEditor:142)', async () => {
-    mockUploadImage.mockResolvedValue({ url: 'https://cdn.example.com/img.jpg', key: 'tracked-key' });
-    const onImageUploaded = vi.fn();
-
-    // ArtistEditor의 handleImageUpload 내부 동작 검증
-    const result = await mockUploadImage(
-      new File([new Uint8Array(512)], 'photo.jpg', { type: 'image/jpeg' })
-    );
-    if (result.key) onImageUploaded(result.key);
-
-    expect(onImageUploaded).toHaveBeenCalledWith('tracked-key');
-  });
-});
-
-// ────────────────────────────────────────────────────────
-describe('TC-A-012: ArtistEditor 메인 이미지 업로드 실패', () => {
-  it('uploadImage throw → onError("이미지 업로드 중 오류 발생") 호출', async () => {
-    mockUploadImage.mockRejectedValue(new Error('Server Error'));
-
-    const onChange = vi.fn();
-    render(
-      <ArtistEditor content="" onChange={onChange} />
-    );
-
-    // uploadImage reject 시 catch 블록의 onError 호출 검증 (ArtistEditor:145)
-    await expect(mockUploadImage(
-      new File([new Uint8Array(512)], 'photo.jpg', { type: 'image/jpeg' })
-    )).rejects.toThrow('Server Error');
-  });
-
-  it('result.url이 없으면 mainImage 업데이트 안 함 (ArtistEditor:136)', async () => {
-    // url이 빈 문자열인 경우
-    mockUploadImage.mockResolvedValue({ url: '', key: 'k1' });
-
-    const result = await mockUploadImage(
-      new File([new Uint8Array(512)], 'photo.jpg', { type: 'image/jpeg' })
-    );
-
-    // url이 falsy → if(result.url) 조건 미충족
-    expect(!!result.url).toBe(false);
-  });
-});
-```
-
-**Step 2: 실행**
-
-Run: `npm run test:api -- artist-upload-main`
-Expected: 5개 PASS
-
-**Step 3: Commit**
-
-```bash
-git add __tests__/api/artist-upload-main.test.tsx
-git commit -m "test(api): add ArtistEditor main image upload API tests"
-```
-
----
-
-## Task 5: ArtistEditor — 갤러리 다중 업로드 API 테스트
-
-**Files:**
-- Create: `__tests__/api/artist-upload-gallery.test.tsx`
-
-**Step 1: 실패 테스트 작성**
-
-```typescript
-// __tests__/api/artist-upload-gallery.test.tsx
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-
-vi.mock('../../src/context/BlockEditorProvider', () => ({
-  useBlockEditorContext: vi.fn(),
-}));
-
-import { useBlockEditorContext } from '../../src/context/BlockEditorProvider';
-
-const mockUploadImage = vi.fn();
-const mockOnError = vi.fn();
-
-beforeEach(() => {
-  vi.clearAllMocks();
-  (useBlockEditorContext as ReturnType<typeof vi.fn>).mockReturnValue({
-    uploadImage: mockUploadImage,
-    onError: mockOnError,
-  });
-});
-
-// ─── ArtistEditor 갤러리 업로드 로직 직접 시뮬레이션 ───────
-// ArtistEditor.handleGalleryMultiUpload():
-//   for (const file of files.slice(0, remaining)) {
-//     result = await uploadImage(file)
-//     if result.url → gallery.push(result.url)
-//     if result.key → onImageUploaded(result.key)
-//   }
-async function simulateGalleryUpload(
-  files: File[],
-  remaining: number,
-  uploadFn: typeof mockUploadImage,
-  onImageUploaded?: (key: string) => void,
-  onErrorFn?: (msg: string) => void
-): Promise<string[]> {
-  const gallery: string[] = [];
-  const toProcess = files.slice(0, remaining);
-
-  for (const file of toProcess) {
-    try {
-      const result = await uploadFn(file);
-      if (result.url) {
-        gallery.push(result.url);
-        if (result.key) onImageUploaded?.(result.key);
-      }
-    } catch {
-      onErrorFn?.('이미지 업로드 중 오류 발생');
-    }
-  }
-  return gallery;
-}
-
-// ────────────────────────────────────────────────────────
-describe('TC-A-013: 갤러리 다중 업로드 성공', () => {
-  it('파일 3개 → 순차 업로드 → gallery 배열에 URL 3개 추가', async () => {
-    mockUploadImage
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g1.jpg', key: 'g1' })
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g2.jpg', key: 'g2' })
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g3.jpg', key: 'g3' });
-
-    const files = [
-      new File([new Uint8Array(512)], 'p1.jpg', { type: 'image/jpeg' }),
-      new File([new Uint8Array(512)], 'p2.jpg', { type: 'image/jpeg' }),
-      new File([new Uint8Array(512)], 'p3.jpg', { type: 'image/jpeg' }),
-    ];
-
-    const gallery = await simulateGalleryUpload(files, 5 /* remaining */, mockUploadImage);
-
-    expect(mockUploadImage).toHaveBeenCalledTimes(3);
-    expect(gallery).toEqual([
-      'https://cdn.example.com/g1.jpg',
-      'https://cdn.example.com/g2.jpg',
-      'https://cdn.example.com/g3.jpg',
-    ]);
-  });
-
-  it('각 파일의 key로 onImageUploaded 개별 호출', async () => {
-    mockUploadImage
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g1.jpg', key: 'key-1' })
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g2.jpg', key: 'key-2' });
-
-    const onImageUploaded = vi.fn();
-    const files = [
-      new File([new Uint8Array(512)], 'p1.jpg', { type: 'image/jpeg' }),
-      new File([new Uint8Array(512)], 'p2.jpg', { type: 'image/jpeg' }),
-    ];
-
-    await simulateGalleryUpload(files, 5, mockUploadImage, onImageUploaded);
-
-    expect(onImageUploaded).toHaveBeenCalledTimes(2);
-    expect(onImageUploaded).toHaveBeenNthCalledWith(1, 'key-1');
-    expect(onImageUploaded).toHaveBeenNthCalledWith(2, 'key-2');
-  });
-});
-
-// ────────────────────────────────────────────────────────
-describe('TC-A-014: 갤러리 최대 개수 초과 → 사전 차단', () => {
-  it('remaining=0이면 업로드 불가 + onError 호출 (ArtistEditor:157)', () => {
-    // ArtistEditor:154-158: remaining <= 0 이면 return
-    const currentCount = 5;
-    const maxGallery = 5;
-    const remaining = maxGallery - currentCount;
-
-    if (remaining <= 0) {
-      mockOnError(`갤러리 이미지는 최대 ${maxGallery}장까지 등록할 수 있습니다.`);
-    }
-
-    expect(mockUploadImage).not.toHaveBeenCalled();
-    expect(mockOnError).toHaveBeenCalledWith(
-      '갤러리 이미지는 최대 5장까지 등록할 수 있습니다.'
-    );
-  });
-
-  it('remaining=2, 파일 5개 선택 → 2개만 업로드 (slice)', async () => {
-    mockUploadImage.mockResolvedValue({ url: 'https://cdn.example.com/g.jpg', key: 'gk' });
-
-    const files = Array.from({ length: 5 }, (_, i) =>
-      new File([new Uint8Array(512)], `p${i}.jpg`, { type: 'image/jpeg' })
-    );
-
-    // remaining=2로 slice
-    const gallery = await simulateGalleryUpload(files, 2, mockUploadImage);
-
-    expect(mockUploadImage).toHaveBeenCalledTimes(2);
-    expect(gallery).toHaveLength(2);
-  });
-
-  it('중간에 업로드 실패해도 나머지 계속 처리 (for loop + try/catch)', async () => {
-    mockUploadImage
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g1.jpg', key: 'g1' })
-      .mockRejectedValueOnce(new Error('Upload Failed')) // 2번째 실패
-      .mockResolvedValueOnce({ url: 'https://cdn.example.com/g3.jpg', key: 'g3' });
-
-    const files = [
-      new File([new Uint8Array(512)], 'p1.jpg', { type: 'image/jpeg' }),
-      new File([new Uint8Array(512)], 'p2.jpg', { type: 'image/jpeg' }),
-      new File([new Uint8Array(512)], 'p3.jpg', { type: 'image/jpeg' }),
-    ];
-
-    const onError = vi.fn();
-    const gallery = await simulateGalleryUpload(files, 5, mockUploadImage, undefined, onError);
-
-    // 3번 호출 (실패해도 for loop 계속)
-    expect(mockUploadImage).toHaveBeenCalledTimes(3);
-    // 성공한 2개만 gallery에 추가
-    expect(gallery).toHaveLength(2);
-    // 에러 핸들러 1번 호출
-    expect(onError).toHaveBeenCalledWith('이미지 업로드 중 오류 발생');
-  });
-});
-```
-
-**Step 2: 실행**
-
-Run: `npm run test:api -- artist-upload-gallery`
-Expected: 5개 PASS
-
-**Step 3: Commit**
-
-```bash
-git add __tests__/api/artist-upload-gallery.test.tsx
-git commit -m "test(api): add ArtistEditor gallery upload API tests"
-```
-
----
-
-## Task 6: 전체 API 테스트 실행 + 커버리지 검증
+## Task 4: 전체 API 테스트 실행 + 커버리지 검증
 
 **Step 1: 전체 API 테스트 실행**
 
@@ -930,28 +623,26 @@ Expected output:
 __tests__/api/upload-single.test.ts         (12 tests)
 __tests__/api/upload-multiple.test.ts       ( 5 tests)
 __tests__/api/upload-resize.test.ts         ( 3 tests)
-__tests__/api/artist-upload-main.test.tsx   ( 5 tests)
-__tests__/api/artist-upload-gallery.test.tsx( 5 tests)
 
-Test Files  5 passed (5)
-Tests       30 passed (30)
+Test Files  3 passed (3)
+Tests       20 passed (20)
 ```
 
-**Step 2: 전체 테스트 (기존 381개 + 신규 30개) 실행**
+**Step 2: 전체 테스트 (기존 381개 + 신규 20개) 실행**
 
 Run: `npm test`
-Expected: `411 passed`
+Expected: `401 passed`
 
 **Step 3: 커버리지 확인**
 
-Run: `npm run test:coverage 2>&1 | grep -E "File|All files|useImageDropZone|ArtistEditor"`
-Expected: `useImageDropZone.ts`와 `ArtistEditor.tsx` 커버리지 상승 확인
+Run: `npm run test:coverage 2>&1 | grep -E "File|All files|useImageDropZone"`
+Expected: `useImageDropZone.ts` 커버리지 상승 확인
 
 **Step 4: 최종 Commit**
 
 ```bash
 git add __tests__/api/ package.json
-git commit -m "test(api): complete all API test coverage for upload flows (30 tests)"
+git commit -m "test(api): complete all API test coverage for upload flows (20 tests)"
 ```
 
 ---
@@ -979,13 +670,3 @@ git commit -m "test(api): complete all API test coverage for upload flows (30 te
 | TC-A-009a | upload-resize | 15MB → 리사이즈 → 7MB → 업로드 | High |
 | TC-A-009b | upload-resize | 리사이즈 중 isResizing 상태 | High |
 | TC-A-010 | upload-resize | 리사이즈 후도 초과 → 업로드 차단 | High |
-| TC-A-011a | artist-main | 성공 시 url 반환 | High |
-| TC-A-011b | artist-main | url 있을 때만 onChange 호출 | High |
-| TC-A-011c | artist-main | key 있으면 onImageUploaded 호출 | High |
-| TC-A-012a | artist-main | throw → onError 호출 | High |
-| TC-A-012b | artist-main | url="" → mainImage 미업데이트 | Medium |
-| TC-A-013a | artist-gallery | 3개 순차 업로드 → gallery 3개 | High |
-| TC-A-013b | artist-gallery | 각 key로 onImageUploaded 개별 호출 | High |
-| TC-A-014a | artist-gallery | remaining=0 → 사전 차단 + onError | High |
-| TC-A-014b | artist-gallery | remaining=2, 5개 선택 → 2개만 | High |
-| TC-A-014c | artist-gallery | 중간 실패해도 나머지 계속 처리 | Medium |
