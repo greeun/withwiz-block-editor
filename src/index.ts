@@ -11,7 +11,6 @@ export type {
   UploadFn,
   ErrorFn,
   ResizeResult,
-  ArtistBioData,
 } from "./types";
 
 /* --- Core --- */
@@ -29,7 +28,6 @@ export { BlockEditorProvider, useBlockEditorContext } from "./context/BlockEdito
 export { BlockEditor } from "./components/BlockEditor";
 export { BlockRenderer } from "./components/BlockRenderer";
 export { ImageUploadField } from "./components/ImageUploadField";
-export { ArtistEditor } from "./components/ArtistEditor";
 export { BlockPreviewTheme } from "./components/BlockPreviewTheme";
 
 /* --- Hooks --- */

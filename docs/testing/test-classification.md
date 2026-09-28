@@ -4,26 +4,28 @@
 
 | 항목 | 내용 |
 |------|------|
-| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 (2026-09-16 갱신분은 미릴리스 `fix/residual-defects` 브랜치 기준) |
+| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 (2026-09-16 갱신분은 미릴리스 `fix/residual-defects` 브랜치, 2026-09-29 갱신분은 0.4.0 이후 미릴리스 `chore/remove-consumer-mentions` 브랜치 기준) |
 | 범위 | src/ 전체 (core/, blocks/, components/, context/, hooks/, mini-editor/) |
-| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영. 2026-09-16 갱신은 develop `1fa7aea` 에서 분기한 `fix/residual-defects` 의 `b68d5e1` 기준 |
-| 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 |
+| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영. 2026-09-16 갱신은 develop `1fa7aea` 에서 분기한 `fix/residual-defects` 의 `b68d5e1` 기준. 2026-09-29 갱신은 develop `e7f549b` 에서 분기한 `chore/remove-consumer-mentions` 의 `c97f515` 기준 |
+| 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 (2026-09-29 실행은 Vitest 4.1.11 + @vitest/coverage-v8 4.1.11) |
 | 전역 설정 | `__tests__/setup.ts`: jest-dom, matchMedia·IntersectionObserver·ResizeObserver mock, `vi.useFakeTimers({ shouldAdvanceTime: true })` 전역 적용 |
+| 실측 결과 (2026-09-29) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 22개, 테스트 523개 (통과 497, 실패 0, 스킵 0, todo 26). 같은 날 제거 전 기준 실행(`e7f549b`)은 파일 23개, 테스트 534개 (통과 508, todo 26) 였다 |
 | 실측 결과 (2026-09-16) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 23개, 테스트 534개 (통과 508, 실패 0, 스킵 0, todo 26). 같은 날 수정 전 기준 실행(`1fa7aea`)은 파일 23개, 테스트 525개 (통과 499, todo 26) 였다. 2026-09-15 첫 실행과 2026-09-16 커버리지 실행에서 PERF-002 1건씩 측정 편차로 실패한 기록은 TC-P-003 비고에 있다 |
-| 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (적용되지 않는 사유와 2026-09-16 임시 설치 측정값은 "테스트 커버리지 목표" 절 참조) |
-| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신. 2026-09-16 `linkify()` 따옴표 앞 URL 종료 수정(`b68d5e1`, 테스트 9건 추가·기존 기대값 6건 변경)과 TEST-GUIDE.md 정정(`9474f71`), 커버리지 임시 설치 측정 결과를 반영 |
+| 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (적용되지 않는 사유와 2026-09-29 측정값은 "테스트 커버리지 목표" 절 참조) |
+| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신. 2026-09-16 `linkify()` 따옴표 앞 URL 종료 수정(`b68d5e1`, 테스트 9건 추가·기존 기대값 6건 변경)과 TEST-GUIDE.md 정정(`9474f71`), 커버리지 임시 설치 측정 결과를 반영. 2026-09-29 약력 편집기 컴포넌트 제거(`c97f515`)에 맞춰 SC-I-006·SC-S-004·SC-S-005 를 기능 제거로 표시하고 파일·테스트·커버리지 수치를 재측정값으로 갱신 |
 
 **버전별 변경 반영 범위**
 
 | 버전 | 커밋 | 테스트 분류에 반영한 변경 |
 |------|------|------------------------|
-| 0.1.x | `73fa209` 등 | ArtistEditor·ImageUploadField·BlockEditor·BlockRenderer 는 첫 커밋(2026-03-03)부터 존재했으나 2026-03-04 문서에는 빠져 있었다 |
+| 0.1.x | `73fa209` 등 | 약력 편집기 컴포넌트(2026-09-29 제거)·ImageUploadField·BlockEditor·BlockRenderer 는 첫 커밋(2026-03-03)부터 존재했으나 2026-03-04 문서에는 빠져 있었다 |
 | 0.2.0 | `fd8a97b`~`f97493c` | MiniEditor(toolbar-config, useRichText, MiniEditor) 추가와 하드닝 7종 |
 | 0.2.0 | `ebdd83c`, `ebacfd0` | 렌더러 시맨틱 HTML 개선 (subheading → `h2`, 이미지·영상 → `figure`/`figcaption`, 인용 → `blockquote`, 캡션 → `alt`) |
-| 0.2.0 | `5c037cc`, `cec4b9e` | useImageDropZone maxFiles 안내 수정, Provider·image-resize·ArtistEditor·MiniEditor 여정·PERF-002 테스트 추가 |
+| 0.2.0 | `5c037cc`, `cec4b9e` | useImageDropZone maxFiles 안내 수정, Provider·image-resize·약력 편집기·MiniEditor 여정·PERF-002 테스트 추가 |
 | 0.3.0 | `709f130` | BlockPreviewTheme 추가 (테스트 없음) |
-| 0.3.1 | `977be3f`, `a483153` | `h()` 가 `"`·`'` 도 이스케이프 (`hAttr()` 는 `h()` 를 그대로 반환), `linkify()` href 값 따옴표 이스케이프, ArtistEditor 미리보기·onChange HTML 이미지 src 에 `sanitizeImageSrc()` + `hAttr()` 적용. `__tests__/security/attribute-injection.test.tsx` (SEC-007~009, 15건) 추가, `html-renderer.test.ts` 기대값 1건 변경·9건 추가 |
+| 0.3.1 | `977be3f`, `a483153` | `h()` 가 `"`·`'` 도 이스케이프 (`hAttr()` 는 `h()` 를 그대로 반환), `linkify()` href 값 따옴표 이스케이프, 약력 편집기 미리보기·onChange HTML 이미지 src 에 `sanitizeImageSrc()` + `hAttr()` 적용. `__tests__/security/attribute-injection.test.tsx` (SEC-007~009, 15건) 추가, `html-renderer.test.ts` 기대값 1건 변경·9건 추가 |
 | 미릴리스 (`fix/residual-defects`) | `b68d5e1` | `linkify()` URL 일치가 원문 따옴표(`"`·`'`)와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 에 따옴표로 감싼 URL describe 9건 추가, 기존 기대값 3건(nl2br 1, linkify 2) 변경, `attribute-injection.test.tsx` SEC-007 3건 기대값 변경 |
+| 미릴리스 (`chore/remove-consumer-mentions`) | `c97f515` | **BREAKING** 약력 편집기 컴포넌트·데이터 타입·전용 스타일시트와 해당 exports 서브패스 2개 제거. `__tests__/integration/` 의 전용 통합 테스트 파일(6건)과 `attribute-injection.test.tsx` SEC-009(5건) 삭제. SC-I-006·SC-S-004·SC-S-005 는 기능 제거(2026-09-29)로 표시하고 집계에서 뺀다 |
 
 ### 표기 규칙
 
@@ -32,7 +34,7 @@
 | 시나리오 ID | `SC-{도메인}-{3자리 번호}` |
 | 케이스 ID | `TC-{도메인}-{3자리 번호}`. 각 TC 속성 표의 **시나리오** 행에 상위 SC 를 명시한다 |
 | 도메인 약어 | Unit `U`, Integration `I`, API `A`, E2E `E`, Security `S`, Performance `P`, Accessibility `AC`, Smoke `SM`, Load/Stress `L`, Chaos `C` |
-| 상태 | ✅ 완료: 테스트가 존재하고 통과한다. 🔲 계획: 실제 단언을 가진 테스트가 없다 |
+| 상태 | ✅ 완료: 테스트가 존재하고 통과한다. 🔲 계획: 실제 단언을 가진 테스트가 없다. ⛔ 기능 제거(날짜): 대상 기능이 패키지에서 제거되어 ID 만 남기고 수치 집계에서 뺀다 |
 | 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 실측 JSON 리포트 기준으로 기재한다. 2026-09-16 재측정에서 수치나 내용이 바뀐 TC(TC-U-020, TC-S-003)는 2026-09-16 으로 표기하고, 2026-09-15 로 표기된 나머지 TC 수치는 2026-09-16 재측정 값과 같다 |
 | 단계 표 근거 | ✅ 완료 TC 는 실제 테스트 이름과 단언에서 대표 항목을 뽑는다. 🔲 계획 TC 는 소스 코드 동작에 근거한다 |
 
@@ -66,7 +68,7 @@
 | SC-I-003 | 멀티 블록 타입 혼합 렌더링 | Integration | High | ✅ 완료 |
 | SC-I-004 | XSS 방어 통합 시나리오 | Integration | Critical | ✅ 완료 |
 | SC-I-005 | 누락 필드·긴 텍스트·URL 특수문자 경계값 렌더링 | Integration | Medium | ✅ 완료 |
-| SC-I-006 | ArtistEditor + BlockEditorProvider 사용자 흐름 | Integration | High | ✅ 완료 |
+| SC-I-006 | 약력 편집기 컴포넌트 + BlockEditorProvider 사용자 흐름 | Integration | High | ⛔ 기능 제거(2026-09-29) |
 | SC-I-007 | BlockEditor 편집 흐름 (블록 조작 → onChange 출력) | Integration | High | 🔲 계획 |
 | SC-A-001 | JWT 인증 성공 이미지 업로드 | API | Critical | ✅ 완료 |
 | SC-A-002 | JWT 만료/미인증 → 401 에러 처리 | API | Critical | ✅ 완료 |
@@ -82,8 +84,8 @@
 | SC-S-001 | XSS 공격 방어 (텍스트 콘텐츠) | Security | Critical | ✅ 완료 |
 | SC-S-002 | 파일 업로드 보안 검증 | Security | Critical | ✅ 완료 |
 | SC-S-003 | 본문 URL 자동 링크 변환 속성 주입 차단 | Security | Critical | ✅ 완료 |
-| SC-S-004 | ArtistEditor 이미지 src 속성 주입 차단 | Security | Critical | ✅ 완료 |
-| SC-S-005 | ArtistEditor 업로드 파일 클라이언트 검증 | Security | High | 🔲 계획 |
+| SC-S-004 | 약력 편집기 이미지 src 속성 주입 차단 | Security | Critical | ⛔ 기능 제거(2026-09-29) |
+| SC-S-005 | 약력 편집기 업로드 파일 클라이언트 검증 | Security | High | ⛔ 기능 제거(2026-09-29) |
 | SC-S-006 | MiniEditor sanitize 미지정 시 HTML 주입 계약 | Security | Medium | 🔲 계획 |
 | SC-P-001 | 대량 블록 렌더링 성능 | Performance | High | ✅ 완료 |
 | SC-P-002 | 렌더링 출력 크기 최적화 | Performance | Low | ✅ 완료 |
@@ -98,8 +100,8 @@
 | SC-AC-007 | ImageUploadField 키보드 조작 | Accessibility | High | 🔲 계획 |
 | SC-AC-008 | ImageUploadField 오류·진행 상태 안내 | Accessibility | Medium | 🔲 계획 |
 | SC-AC-009 | video 블록 iframe title 속성 | Accessibility | Medium | 🔲 계획 |
-| SC-AC-010 | BlockEditor·BlockRenderer·ArtistEditor 편집 컨트롤 접근 가능한 이름 | Accessibility | Medium | 🔲 계획 |
-| SC-SM-001 | exports 서브패스 18개 해석·로드 | Smoke | High | 🔲 계획 |
+| SC-AC-010 | BlockEditor·BlockRenderer 편집 컨트롤 접근 가능한 이름 | Accessibility | Medium | 🔲 계획 |
+| SC-SM-001 | exports 서브패스 16개 해석·로드 | Smoke | High | 🔲 계획 |
 | SC-SM-002 | 루트 엔트리 런타임 export 목록 고정 | Smoke | Medium | 🔲 계획 |
 
 ---
@@ -711,27 +713,15 @@
 
 ---
 
-### TC-I-006: ArtistEditor 사용자 흐름
+### TC-I-006: 약력 편집기 사용자 흐름 ⛔ 기능 제거(2026-09-29)
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-I-006 |
-| **파일** | `__tests__/integration/artist-editor.test.tsx` |
-| **대상** | `src/components/ArtistEditor.tsx` + `BlockEditorProvider` + `createSerializer('abe-blocks:')` |
-| **우선순위** | High |
-| **전제조건** | `HTMLInputElement.prototype.click` 을 패치해 컴포넌트가 동적으로 생성한 file input 을 캡처하고 `onchange` 를 직접 실행한다 |
+| **파일** | 삭제됨 (`__tests__/integration/` 의 전용 통합 테스트 파일, 6건) |
+| **대상** | 삭제됨 (약력 편집기 컴포넌트, `c97f515`) |
 
-| # | 단계 | 예상 결과 |
-|---|------|---------|
-| 1 | `content=""` 로 마운트 | `.abe-wrapper`·`.abe-textarea` 존재, 미리보기에 `약력을 입력하면` 표시, upload·onChange 미호출 |
-| 2 | text·mainImage·gallery 2장을 담은 마커 payload 로 마운트 | textarea 값 복원, 대표 이미지 영역 `has-image`, `.abe-gallery-item` 2개, `2/5` 표시 |
-| 3 | 대표 이미지 영역 클릭 → 파일 1개 제출 | upload 1회, `onImageUploaded('k-main')`, 마지막 onChange 역직렬화 결과 `mainImage` 가 업로드 URL |
-| 4 | 갤러리 추가 버튼 → 파일 3개 제출 → 두 번째 × 클릭 | gallery 가 업로드 순서대로 3개 → `[urls[0], urls[2]]`, 마지막 onChange 도 동일 |
-| 5 | `maxGallery=2` 로 2장을 채운 상태 | `이미지 추가` 버튼 없음, upload·onError 미호출 |
-| 6 | upload 가 `Error('network down')` throw | `onError('이미지 업로드 중 오류 발생')`, 대표 이미지 영역 `has-image` 없음, onChange payload 의 `mainImage` 는 빈 값 |
-
-- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-15 실측)
-- **비고:** ArtistEditor 는 첫 커밋부터 있었지만 2026-03-04 문서에는 빠져 있었고, 이 테스트는 2026-05-25 (`cec4b9e`) 에 추가되었다. 5단계 테스트 이름은 onError 경고를 언급하지만 단언은 onError 미호출을 확인한다. 미리보기·onChange HTML 의 이미지 속성 주입 차단은 TC-S-004 가 검증하고, 업로드 파일 검증은 TC-S-005 계획에서 다룬다.
+- **비고:** 대상 컴포넌트가 특정 소비 프로젝트 도메인에 묶여 있어 패키지에서 제거했다. 필요한 소비 프로젝트는 자체 컴포넌트로 옮긴다. 테스트 수는 집계에서 뺀다.
 
 ---
 
@@ -780,7 +770,6 @@
   → 실패 시 setError(message) + onError(message), finally 에서 isUploading=false
 
 ImageUploadField 경유: onUpload → onUploadComplete(blockId, field, result.url) → BlockRenderer updateBlock
-ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 ```
 
 **실행 명령:** `npm run test:api`
@@ -953,15 +942,14 @@ ArtistEditor 경유: 검증 없이 uploadImage(file) 직접 호출 (TC-S-005)
 |------|------|
 | **시나리오** | SC-A-008 |
 | **파일** | `__tests__/api/upload-single.test.ts` (추가 예정) |
-| **대상** | `useImageDropZone`, `ImageUploadField`, `ArtistEditor` 의 `result.url` 처리 |
+| **대상** | `useImageDropZone`, `ImageUploadField` 의 `result.url` 처리 |
 | **우선순위** | Medium |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
 | 1 | `useImageDropZone` 에서 `{ url: '', key: 'k' }` resolve | `onUpload({ url: '', key: 'k' })`, `onKeyTracked('k')` 호출, error `null` (url 을 검사하지 않는다) |
 | 2 | `ImageUploadField` 에서 `{ key: 'k' }` (url 없음) resolve | `onUploadComplete(blockId, field, undefined)` 호출 |
-| 3 | `ArtistEditor` 대표 이미지 업로드에서 `{ url: '', key: 'k' }` resolve | `mainImage` 변경 없음, `onImageUploaded` 미호출, `onError` 미호출 (`if (result.url)` 분기) |
-| 4 | 기준 결정 | 빈 url 을 오류로 안내할지 여부가 소스에 정의되어 있지 않다. 경로마다 결과가 다르므로 기준을 정한 뒤 단언을 확정한다 |
+| 3 | 기준 결정 | 빈 url 을 오류로 안내할지 여부가 소스에 정의되어 있지 않다. 경로마다 결과가 다르므로 기준을 정한 뒤 단언을 확정한다 |
 
 - **자동화:** 가능 ✅
 
@@ -1158,54 +1146,31 @@ beforeEach(() => {
 
 - **자동화:** 가능 ✅ | **테스트 수:** 10개 (2026-09-16 실측: SEC-007 3, SEC-008 7)
 - **관련 요구사항:** OWASP A03:2021 Injection
-- **비고:** 0.3.0 에서는 1단계와 같은 입력이 `a` 요소에 `onmouseover` 속성을 만들었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 1순위). 0.3.1 (`977be3f`) 에서 `h()` 따옴표 이스케이프와 `linkify()` href 따옴표 이스케이프 두 겹으로 수정되었고 이 파일이 함께 추가되었다. 계획 당시에는 `xss-prevention.test.ts` 에 추가할 예정이었으나 새 파일로 구현되었다. 계획 4단계(`&` 가 포함된 정상 URL 회귀 방지)는 이 파일에 없고 `linkify('https://x.com/?a=1&amp;b=2')` 단위 테스트(TC-U-020 4·9단계)가 가깝다. 계획 5단계 ArtistEditor 약력 텍스트는 `generateHtml()` 이 같은 `nl2br()` 를 사용하므로 같은 방어가 적용되지만 링크 페이로드로 검증하는 테스트는 없다 (SEC-009 는 약력에 링크가 없는 문자열만 지정한다). 2026-09-16 (`b68d5e1`) 에서 `linkify()` URL 일치가 따옴표 앞에서 끝나도록 바뀌어, 1·2단계 href 기대값이 `https://x.com/"onmouseover="alert(1)` 에서 `https://x.com/` 로 바뀌고 링크 다음 텍스트 단언이 추가되었다. 3단계는 테스트 이름이 `linkify 단독 사용: 작은따옴표는 href 에 &#39; 로 출력됨` 에서 `linkify 단독 사용: 이스케이프되지 않은 작은따옴표가 들어와도 href 를 끊지 못함` 으로 바뀌었고, 출력 문자열 단언이 `href="https://x.com/&#39;onmouseover=&#39;alert(1)"` 포함에서 `href="https://x.com/"` 포함으로 바뀌었으며, href 파싱 값과 링크 다음 텍스트 단언이 추가되었다. 속성 목록과 `on*` 속성 부재 단언은 그대로 유지된다. 결함 이력은 TC-U-020 비고를 참조한다.
+- **비고:** 0.3.0 에서는 1단계와 같은 입력이 `a` 요소에 `onmouseover` 속성을 만들었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 1순위). 0.3.1 (`977be3f`) 에서 `h()` 따옴표 이스케이프와 `linkify()` href 따옴표 이스케이프 두 겹으로 수정되었고 이 파일이 함께 추가되었다. 계획 당시에는 `xss-prevention.test.ts` 에 추가할 예정이었으나 새 파일로 구현되었다. 계획 4단계(`&` 가 포함된 정상 URL 회귀 방지)는 이 파일에 없고 `linkify('https://x.com/?a=1&amp;b=2')` 단위 테스트(TC-U-020 4·9단계)가 가깝다. 계획 5단계(약력 편집기 약력 텍스트)는 대상 컴포넌트가 2026-09-29 에 제거되어 해당하지 않는다. 2026-09-16 (`b68d5e1`) 에서 `linkify()` URL 일치가 따옴표 앞에서 끝나도록 바뀌어, 1·2단계 href 기대값이 `https://x.com/"onmouseover="alert(1)` 에서 `https://x.com/` 로 바뀌고 링크 다음 텍스트 단언이 추가되었다. 3단계는 테스트 이름이 `linkify 단독 사용: 작은따옴표는 href 에 &#39; 로 출력됨` 에서 `linkify 단독 사용: 이스케이프되지 않은 작은따옴표가 들어와도 href 를 끊지 못함` 으로 바뀌었고, 출력 문자열 단언이 `href="https://x.com/&#39;onmouseover=&#39;alert(1)"` 포함에서 `href="https://x.com/"` 포함으로 바뀌었으며, href 파싱 값과 링크 다음 텍스트 단언이 추가되었다. 속성 목록과 `on*` 속성 부재 단언은 그대로 유지된다. 결함 이력은 TC-U-020 비고를 참조한다.
 
 ---
 
-### TC-S-004: ArtistEditor 이미지 src 속성 주입 차단
+### TC-S-004: 약력 편집기 이미지 src 속성 주입 차단 ⛔ 기능 제거(2026-09-29)
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-S-004 |
-| **파일** | `__tests__/security/attribute-injection.test.tsx` (SEC-009) |
-| **대상** | `src/components/ArtistEditor.tsx`: `generateHtml()` (미리보기 `dangerouslySetInnerHTML` 과 onChange 출력에 모두 사용). 대표 이미지·갤러리 src 를 `sanitizeImageSrc()` 로 거른 뒤 `hAttr()` 로 출력하고, 빈 문자열이 된 주소는 img 를 출력하지 않는다 |
-| **우선순위** | Critical |
-| **전제조건** | `BlockEditorProvider`(`uploadImage` 는 `vi.fn()`) 로 감싸고 `createSerializer('abe-blocks:')` payload 로 마운트한다. onChange 출력은 `.abe-textarea` 값을 바꿔 발생시킨 마지막 호출 인자를 `<template>` 으로 파싱한다 |
-| **테스트 데이터** | `IMG_PAYLOAD = 'x.png" onerror="alert(1)'`, `"y.png' onerror='alert(2)"`, `'javascript:alert(1)'`, `'javascript:alert(3)'`, 허용 주소 `https://cdn.example.com/main.png?w=1&h=2`·`https://cdn.example.com/ok.png` |
+| **파일** | 삭제됨 (`__tests__/security/attribute-injection.test.tsx` 의 SEC-009, 5건) |
+| **대상** | 삭제됨 (약력 편집기 컴포넌트, `c97f515`) |
 
-| # | 단계 | 예상 결과 |
-|---|------|---------|
-| 1 | `{ text: '약력', mainImage: IMG_PAYLOAD, gallery: [] }` 로 마운트 후 textarea 를 `약력 수정` 으로 변경 | 미리보기 `.abe-pv-article` 에 `img` 0개·`on*` 속성 없음, onChange HTML 에도 `img` 0개·`on*` 속성 없음 |
-| 2 | `{ text: '', mainImage: IMG_PAYLOAD, gallery: [] }` (대표 이미지만) 로 마운트 | `.abe-pv-main-img` 없음, `img` 0개, `on*` 속성 없음 |
-| 3 | `mainImage: 'javascript:alert(1)'` 로 마운트 | `.abe-pv-main-img` 없음, `img` 0개 |
-| 4 | `mainImage: 'https://cdn.example.com/main.png?w=1&h=2'` 로 마운트 | `.abe-pv-main-img img` 1개, 속성 `['src', 'alt']`, src 파싱 값이 원래 주소와 같음 |
-| 5 | `gallery: [ok, IMG_PAYLOAD, "y.png' onerror='alert(2)", 'javascript:alert(3)']` 로 마운트 후 textarea 변경 | 미리보기와 onChange HTML 모두 `.abe-pv-gallery-grid img` 1개 (속성 `['src', 'alt', 'class']`, src 가 `ok`), 그리드 클래스 `layout-1` (허용된 항목 수 기준), `on*` 속성 없음 |
-
-- **자동화:** 가능 ✅ | **테스트 수:** 5개 (2026-09-15 실측)
-- **관련 요구사항:** OWASP A03:2021 Injection
-- **비고:** 0.3.0 에서는 mainImage 를 이스케이프 없이, gallery 를 당시 따옴표를 처리하지 않던 `h()` 만 거쳐 삽입해 `onerror`·`onload` 속성이 생성되었다 (2026-09-13 워크트리 밖 확인, 당시 우선순위 갭 2순위). 0.3.1 (`977be3f`) 에서 수정되었다. 계획 당시 파일명은 `artist-editor-output.test.tsx` 였다. 계획 4단계 기대값은 "렌더러와 같은 정책으로 `src=""`" 였으나 구현은 허용되지 않는 주소일 때 img 요소 자체를 출력하지 않는다. 렌더러 `img-full` 은 같은 입력에 `<img src="" alt="">` 를 출력하므로(TC-U-011 4단계) 두 출력 정책이 다르다. 편집 영역 썸네일 `<img src={data.mainImage}>`·`<img src={src}>` 는 JSX 이므로 React 가 속성값으로 설정해 속성 주입 대상이 아니며 `sanitizeImageSrc()` 를 적용하지 않는다. 따라서 허용되지 않는 mainImage 도 편집 영역에는 `has-image` 로 표시되고 미리보기에는 나타나지 않는다 (소스 확인, 테스트 없음).
+- **비고:** 0.3.1 (`977be3f`) 에서 추가된 회귀 테스트였다. 대상 컴포넌트 제거와 함께 SEC-009 describe 를 삭제했다. 같은 파일의 SEC-007·SEC-008 (TC-S-003) 은 유지된다. `sanitizeImageSrc()`·`hAttr()` 자체는 TC-U-001·TC-U-002 가 계속 검증한다.
 
 ---
 
-### TC-S-005: ArtistEditor 업로드 파일 클라이언트 검증 🔲 계획
+### TC-S-005: 약력 편집기 업로드 파일 클라이언트 검증 ⛔ 기능 제거(2026-09-29)
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-S-005 |
-| **파일** | `__tests__/integration/artist-editor.test.tsx` (추가 예정) |
-| **대상** | `src/components/ArtistEditor.tsx`: `handleImageUpload()`, `handleGalleryMultiUpload()` |
-| **우선순위** | High |
-| **전제조건** | TC-I-006 의 file input 캡처 헬퍼 재사용 |
+| **파일** | 없음 (구현 전 계획 상태에서 대상이 제거됨) |
+| **대상** | 삭제됨 (약력 편집기 컴포넌트, `c97f515`) |
 
-| # | 단계 | 예상 결과 |
-|---|------|---------|
-| 1 | 대표 이미지에 `image/svg+xml` 파일 제출 | 현재 소스: `validateImageFile` 없이 `uploadImage` 호출. 기대: 업로드 전 거부, `onError` 로 사유 전달 |
-| 2 | 대표 이미지에 `size` 15MB JPEG 제출 | 현재 소스: 크기 확인 없이 업로드. 기대: `useImageDropZone` 과 같은 10MB 기준 적용 |
-| 3 | 갤러리에 `application/pdf` 파일 제출 | 현재 소스: `accept="image/*"` 는 선택 창 힌트일 뿐이므로 업로드된다. 기대: 거부 |
-| 4 | 업로드 실패 시 onError 메시지 | 현재 소스: 원래 오류 메시지를 버리고 `이미지 업로드 중 오류 발생` 으로 고정한다 (TC-I-006 6단계에서 확인) |
-
-- **자동화:** 가능 ✅
-- **비고:** 1~3단계 현재 동작은 소스 코드 확인에 근거한다. 우선순위 갭 5순위에 해당한다.
+- **비고:** 계획 상태였던 TC 로, 대상 컴포넌트가 제거되어 구현하지 않는다.
 
 ---
 
@@ -1536,7 +1501,7 @@ beforeEach(() => {
 |------|------|
 | **시나리오** | SC-AC-010 |
 | **파일** | `__tests__/accessibility/editor-controls.a11y.test.tsx` (신규) |
-| **대상** | `src/components/BlockEditor.tsx`, `src/components/BlockRenderer.tsx`, `src/components/ArtistEditor.tsx` |
+| **대상** | `src/components/BlockEditor.tsx`, `src/components/BlockRenderer.tsx` |
 | **우선순위** | Medium |
 | **기준** | WCAG 2.1 SC 3.3.2, SC 4.1.2 |
 
@@ -1544,16 +1509,15 @@ beforeEach(() => {
 |---|------|---------|
 | 1 | BlockRenderer 입력·textarea 이름 확인 | 현재 소스: `placeholder` 만 있고 `<label>`·`aria-label` 없음. 기대: placeholder 외 접근 가능한 이름 |
 | 2 | BlockEditor 블록 헤더 `↑` `↓` `×` 버튼 이름 확인 | 현재 소스: 이름이 기호 문자뿐. 기대: `위로 이동`·`아래로 이동`·`블록 삭제` 등 |
-| 3 | ArtistEditor textarea 와 `약력 텍스트` 표시 연결 | 현재 소스: 표시 `<div>` 가 textarea 와 연결되지 않음. 기대: 레이블로 연결 |
-| 4 | ArtistEditor 대표 이미지 영역 키보드 조작 | 현재 소스: `<div onClick>` 이며 `tabIndex`·`role` 없음. 기대: TC-AC-007 과 같은 기준 |
 
 - **자동화:** 가능 ✅
+- **비고:** 약력 편집기 컴포넌트의 단계 2개(textarea 레이블 연결, 대표 이미지 영역 키보드 조작)는 2026-09-29 기능 제거로 삭제했다.
 
 ---
 
 ## 8. Smoke Tests (스모크 테스트)
 
-**목적:** 빌드 산출물이 `package.json` exports 계약대로 해석·로드되는지 확인한다. 사전 조사 문서의 공통 갭("block-editor 는 exports 서브패스가 18개인데 스모크가 없다")을 반영해 추가한 도메인이다.
+**목적:** 빌드 산출물이 `package.json` exports 계약대로 해석·로드되는지 확인한다. 사전 조사 문서의 공통 갭("block-editor 는 exports 서브패스가 18개인데 스모크가 없다")을 반영해 추가한 도메인이다. 2026-09-29 기능 제거로 서브패스는 16개가 되었다.
 
 **실행 명령:** 없음 (`package.json` 에 smoke 스크립트가 없어 신규 추가가 필요하다)
 
@@ -1565,17 +1529,17 @@ beforeEach(() => {
 |------|------|
 | **시나리오** | SC-SM-001 |
 | **파일** | `__tests__/smoke/exports.test.ts` (신규) |
-| **대상** | `package.json` `exports` 18개, `files`, `typesVersions`, `tsup.config.ts` |
+| **대상** | `package.json` `exports` 16개, `files`, `typesVersions`, `tsup.config.ts` |
 | **우선순위** | High |
 | **전제조건** | `npm run build` (`tsup && tsc --emitDeclarationOnly --skipLibCheck`) 로 `dist/` 생성. 현재 워크트리에는 `dist/` 가 없으며 이 문서 작성 중 빌드는 실행하지 않았다 |
-| **테스트 데이터** | JS 14개: `.`, `./blocks/built-in`, `./components/ArtistEditor`, `./components/BlockEditor`, `./components/BlockPreviewTheme`, `./components/BlockRenderer`, `./components/ImageUploadField`, `./context/BlockEditorProvider`, `./core/html-renderer`, `./core/image-resize`, `./core/serializer`, `./hooks/useImageDropZone`, `./mini-editor/MiniEditor`, `./types` / CSS 4개: `./styles/artist.css`, `./styles/editor.css`, `./styles/mini-editor.css`, `./styles/preview.css` |
+| **테스트 데이터** | JS 13개: `.`, `./blocks/built-in`, `./components/BlockEditor`, `./components/BlockPreviewTheme`, `./components/BlockRenderer`, `./components/ImageUploadField`, `./context/BlockEditorProvider`, `./core/html-renderer`, `./core/image-resize`, `./core/serializer`, `./hooks/useImageDropZone`, `./mini-editor/MiniEditor`, `./types` / CSS 3개: `./styles/editor.css`, `./styles/mini-editor.css`, `./styles/preview.css` |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | `package.json` exports 키 수 확인 | 18 (JS 14, CSS 4) |
-| 2 | JS 서브패스 대상 파일 존재 확인 | `dist/**/*.js` 14개 존재 |
+| 1 | `package.json` exports 키 수 확인 | 16 (JS 13, CSS 3) |
+| 2 | JS 서브패스 대상 파일 존재 확인 | `dist/**/*.js` 13개 존재 |
 | 3 | 패키지 이름으로 각 JS 서브패스 동적 import | 오류 없이 로드, 대표 export 존재 (`createSerializer`, `createHtmlRenderer`, `MiniEditor`, `BlockPreviewTheme`, `useImageDropZone` 등). `./types` 는 인터페이스·타입 별칭만 선언하므로 런타임 export 가 없어야 정상이다 |
-| 4 | CSS 서브패스 4개 확인 | `styles/*.css` 존재, 크기 > 0 (소스 기준 artist 7,531 / editor 9,931 / mini-editor 2,696 / preview 11,381 bytes) |
+| 4 | CSS 서브패스 3개 확인 | `styles/*.css` 존재, 크기 > 0 (소스 기준 editor 9,931 / mini-editor 2,696 / preview 11,381 bytes) |
 | 5 | `dist/components/BlockPreviewTheme.js` 내용 확인 | tsup `.css` text 로더 설정에 따라 `styles/preview.css` 본문이 문자열로 포함된다 |
 | 6 | 각 JS 서브패스 `.d.ts` 존재 확인 | `typesVersions` 가 `./dist/*` 를 가리키므로 `tsc` 출력(`outDir: ./dist`)에 선언 파일이 있어야 한다 |
 | 7 | `npm pack --dry-run` 목록 확인 | `files` 필드에 따라 `dist/`·`styles/` 와 기본 포함 파일만 들어간다 |
@@ -1596,7 +1560,7 @@ beforeEach(() => {
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | `import * as m from '@withwiz/block-editor'` 의 키 목록 | 런타임 export 19개: `createSerializer`, `createHtmlRenderer`, `h`, `nl2br`, `resizeImageIfNeeded`, `validateImageFile`, `validateImageFileDetailed`, `ALLOWED_IMAGE_TYPES`, `BUILT_IN_BLOCKS`, `createEmptyBlock`, `getBlockDef`, `BlockEditorProvider`, `useBlockEditorContext`, `BlockEditor`, `BlockRenderer`, `ImageUploadField`, `ArtistEditor`, `BlockPreviewTheme`, `useImageDropZone` |
+| 1 | `import * as m from '@withwiz/block-editor'` 의 키 목록 | 런타임 export 18개: `createSerializer`, `createHtmlRenderer`, `h`, `nl2br`, `resizeImageIfNeeded`, `validateImageFile`, `validateImageFileDetailed`, `ALLOWED_IMAGE_TYPES`, `BUILT_IN_BLOCKS`, `createEmptyBlock`, `getBlockDef`, `BlockEditorProvider`, `useBlockEditorContext`, `BlockEditor`, `BlockRenderer`, `ImageUploadField`, `BlockPreviewTheme`, `useImageDropZone` |
 | 2 | 루트에 없는 공개 기능 확인 | `MiniEditor`, `validateImageFileAsync`, `hAttr`, `sanitizeUrl`, `sanitizeImageSrc`, `linkify` 는 서브패스로만 제공된다 |
 | 3 | `m.ALLOWED_IMAGE_TYPES` | `['image/jpeg', 'image/png', 'image/webp', 'image/gif']` |
 | 4 | `m.BUILT_IN_BLOCKS.length` | 22 |
@@ -1610,19 +1574,21 @@ beforeEach(() => {
 | 유형 | 파일 수 | 테스트 수 (통과 / todo) | SC 수 (완료 / 계획) | TC 수 (완료 / 계획) |
 |------|--------|----------------------|-------------------|-------------------|
 | **Unit** | 11개 | 324개 (324 / 0) | 19개 (15 / 4) | 20개 (16 / 4) |
-| **Integration** | 2개 | 34개 (34 / 0) | 7개 (6 / 1) | 7개 (6 / 1) |
+| **Integration** | 1개 | 28개 (28 / 0) | 6개 (5 / 1) | 6개 (5 / 1) |
 | **API** | 1개 | 11개 (11 / 0) | 8개 (6 / 2) | 8개 (6 / 2) |
 | **E2E** | 3개 | 57개 (57 / 0) | 3개 (3 / 0) | 3개 (3 / 0) |
-| **Security** | 3개 | 50개 (50 / 0) | 6개 (4 / 2) | 6개 (4 / 2) |
+| **Security** | 3개 | 45개 (45 / 0) | 4개 (3 / 1) | 4개 (3 / 1) |
 | **Performance** | 2개 | 12개 (12 / 0) | 4개 (3 / 1) | 4개 (3 / 1) |
 | **Accessibility** | 1개 | 46개 (20 / 26) | 10개 (4 / 6) | 10개 (4 / 6) |
 | **Smoke (SM)** | 0개 | 0개 | 2개 (0 / 2) | 2개 (0 / 2) |
-| **합계** | **23개** | **534개 (508 / 26)** | **59개 (41 / 18)** | **60개 (42 / 18)** |
+| **합계** | **22개** | **523개 (497 / 26)** | **56개 (39 / 17)** | **57개 (40 / 17)** |
 
+- SC·TC 수는 ⛔ 기능 제거(2026-09-29) 로 표시한 SC 3개(SC-I-006, SC-S-004, SC-S-005)와 TC 3개(TC-I-006, TC-S-004, TC-S-005)를 뺀 값이다.
+- 2026-09-29 (`c97f515`, 미릴리스) 에서 약력 편집기 컴포넌트 제거로 Integration 파일 1개(6건)와 `attribute-injection.test.tsx` SEC-009 5건이 삭제되어 파일 23개·534개에서 22개·523개가 되었다. 남은 테스트의 기대값 변경은 없다.
 - 실패 0개, 스킵 0개이다 (2026-09-15 첫 실행과 2026-09-16 커버리지 실행의 PERF-002 측정 편차 각 1건은 TC-P-003 비고 참조). todo 26개는 모두 `accessibility.test.ts` 에 있다.
 - 2026-09-16 (`b68d5e1`, 미릴리스) 에서 `html-renderer.test.ts` 9건(TC-U-020 5~9단계)이 늘어 525개에서 534개가 되었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 7단계 1건, TC-U-020 2·3단계 2건, TC-S-003 1~3단계 3건으로 모두 6건이다.
 - 2026-09-13 (0.3.0, 파일 22개·테스트 501개) 대비 0.3.1 에서 파일 1개(`attribute-injection.test.tsx` 15건: TC-S-003 10, TC-S-004 5)와 `html-renderer.test.ts` 9건(TC-U-001 5, TC-U-020 4)이 늘었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 3단계 1건이다.
-- 2026-03-04 문서는 파일 11개, 테스트 381개를 집계했다. 이번에 새로 집계한 파일 11개는 API 1 (`upload-single.test.ts`: 2026-03-04 `8a99864` 로 이미 존재했으나 집계에서 빠짐), Unit 7 (Provider, image-resize, useImageDropZone, MiniEditor 4종), Integration 1 (ArtistEditor), E2E 1 (MiniEditor 여정), Performance 1 (PERF-002) 이다.
+- 2026-03-04 문서는 파일 11개, 테스트 381개를 집계했다. 이번에 새로 집계한 파일 11개는 API 1 (`upload-single.test.ts`: 2026-03-04 `8a99864` 로 이미 존재했으나 집계에서 빠짐), Unit 7 (Provider, image-resize, useImageDropZone, MiniEditor 4종), Integration 1 (약력 편집기, 2026-09-29 삭제), E2E 1 (MiniEditor 여정), Performance 1 (PERF-002) 이다.
 - TC-AC-005 는 계획 상태이지만 파일에 테스트 10개(sentinel 1, todo 9)가 있으므로 테스트 수에는 포함한다.
 
 ### 테스트 파일 대조
@@ -1641,30 +1607,28 @@ beforeEach(() => {
 | `__tests__/unit/mini-editor/MiniEditor.test.tsx` | Unit | 8 | 8 | 0 | TC-U-015 |
 | `__tests__/unit/mini-editor/MiniEditor.regressions.test.tsx` | Unit | 25 | 25 | 0 | TC-U-016, TC-U-017 |
 | `__tests__/integration/block-editor-integration.test.ts` | Integration | 28 | 28 | 0 | TC-I-001~005 |
-| `__tests__/integration/artist-editor.test.tsx` | Integration | 6 | 6 | 0 | TC-I-006 |
 | `__tests__/api/upload-single.test.ts` | API | 11 | 11 | 0 | TC-A-001, 002, 004, 005, 006, 007 |
 | `__tests__/e2e/serializer-roundtrip.test.ts` | E2E | 20 | 20 | 0 | TC-E-001 |
 | `__tests__/e2e/block-editor-render.test.tsx` | E2E | 31 | 31 | 0 | TC-E-002 |
 | `__tests__/e2e/mini-editor-journey.test.tsx` | E2E | 6 | 6 | 0 | TC-E-003 |
 | `__tests__/security/xss-prevention.test.ts` | Security | 14 | 14 | 0 | TC-S-001 |
 | `__tests__/security/file-upload-validation.test.ts` | Security | 21 | 21 | 0 | TC-S-002 |
-| `__tests__/security/attribute-injection.test.tsx` | Security | 15 | 15 | 0 | TC-S-003, TC-S-004 |
+| `__tests__/security/attribute-injection.test.tsx` | Security | 10 | 10 | 0 | TC-S-003 |
 | `__tests__/performance/rendering-performance.test.ts` | Performance | 7 | 7 | 0 | TC-P-001, TC-P-002 |
 | `__tests__/performance/serializer-renderer-perf.test.ts` | Performance | 5 | 5 | 0 | TC-P-003 |
 | `__tests__/accessibility/accessibility.test.ts` | Accessibility | 46 | 20 | 26 | TC-AC-001~005 |
-| **합계 23개** | | **534** | **508** | **26** | 누락 파일 0개 |
+| **합계 22개** | | **523** | **497** | **26** | 누락 파일 0개 |
 
 ### 소스 모듈 대조
 
 | 소스 파일 | 추가 시점 | 테스트에서 import 하는 파일 | 관련 SC |
 |----------|---------|------------------------|--------|
 | `src/core/html-renderer.ts` | 0.1.0 | 10개 | SC-U-001, SC-U-004, SC-U-019, SC-I-001~005, SC-E-001~002, SC-S-001, SC-S-003, SC-P-001~003, SC-AC-001~004, SC-AC-009 |
-| `src/core/serializer.ts` | 0.1.0 | 5개 | SC-U-002, SC-E-001, SC-P-003, SC-I-006, SC-S-004 |
+| `src/core/serializer.ts` | 0.1.0 | 3개 | SC-U-002, SC-E-001, SC-P-003 |
 | `src/core/image-resize.ts` | 0.1.0 | 3개 (api 파일은 mock 대상으로만 참조) | SC-U-005~007, SC-U-011, SC-S-002, SC-A-003 |
 | `src/blocks/built-in.ts` | 0.1.0 | 3개 | SC-U-003, SC-E-001, SC-P-003 |
-| `src/context/BlockEditorProvider.tsx` | 0.1.0 | 5개 (api 파일은 mock 대상으로만 참조) | SC-U-008, SC-U-010, SC-I-006, SC-S-004 |
+| `src/context/BlockEditorProvider.tsx` | 0.1.0 | 3개 (api 파일은 mock 대상으로만 참조) | SC-U-008, SC-U-010 |
 | `src/hooks/useImageDropZone.ts` | 0.1.0 | 2개 | SC-U-010, SC-A-001~008 |
-| `src/components/ArtistEditor.tsx` | 0.1.0 | 2개 | SC-I-006, SC-S-004, SC-S-005, SC-AC-010 |
 | `src/components/BlockEditor.tsx` | 0.1.0 | 0개 | SC-I-007, SC-AC-010 |
 | `src/components/BlockRenderer.tsx` | 0.1.0 | 0개 | SC-U-009, SC-AC-010 |
 | `src/components/ImageUploadField.tsx` | 0.1.0 | 0개 | SC-U-017, SC-AC-006~008 |
@@ -1684,13 +1648,13 @@ beforeEach(() => {
 |--------|--------------|----------------|------------|
 | Unit | 적용 | 순수 함수(core/, blocks/)와 hook·컴포넌트 단위 테스트 파일 11개가 있다 | SC-U-001~019 |
 | API | 적용(재정의) | HTTP 서버가 없다. 호스트가 주입하는 `UploadFn` 과 `useImageDropZone` 사이 계약을 API 로 정의한다 | SC-A-001~008 |
-| Integration | 적용 | 렌더러 다중 블록 조합, ArtistEditor + Provider + serializer 연동이 있다 | SC-I-001~007 |
+| Integration | 적용 | 렌더러 다중 블록 조합 통합 테스트가 있다 (Provider + serializer 연동 컴포넌트 흐름은 2026-09-29 기능 제거로 SC-I-006 과 함께 빠졌다) | SC-I-001~005, SC-I-007 |
 | E2E | 적용(명칭 유의) | 브라우저 없이 jsdom 에서 실행한다. `block-editor-render.test.tsx` 는 이름과 달리 `BlockRenderer` 컴포넌트가 아니라 렌더러 출력 HTML 을 DOM 에 마운트한다 | SC-E-001~003 |
-| Security | 적용 | 렌더러가 HTML 문자열을 만들고 호스트가 이를 삽입하므로 XSS 방어가 핵심 책임이다. 업로드 파일 검증 로직도 보유한다 | SC-S-001~006 |
+| Security | 적용 | 렌더러가 HTML 문자열을 만들고 호스트가 이를 삽입하므로 XSS 방어가 핵심 책임이다. 업로드 파일 검증 로직도 보유한다 | SC-S-001~003, SC-S-006 |
 | Accessibility | 적용(구현됨) | 렌더러 출력(시맨틱·alt)과 MiniEditor ARIA 는 구현·검증되어 있다. 폼 컴포넌트(ImageUploadField) 접근성 검증은 0건이다 | SC-AC-001~010 |
 | Performance | 적용 | 처리 시간 측정 파일 2개가 있다. PERF-001 은 가짜 타이머 때문에 측정값이 0 이다 | SC-P-001~004 |
 | Load/Stress (L) | 부분 | 서버 자원이 없다. 동시 호출 결과 일관성은 PERF-002 "htmlRenderer 동시 100건" 1건이 담당하며 Performance(TC-P-003)로 집계한다 | 별도 SC 없음 |
-| Smoke (SM) | 미적용 | exports 서브패스 18개(JS 14, CSS 4)를 검증하는 테스트와 스크립트가 없다. 사전 조사 공통 갭 절에 따라 계획 SC 를 추가한다 | SC-SM-001~002 |
+| Smoke (SM) | 미적용 | exports 서브패스 16개(JS 13, CSS 3)를 검증하는 테스트와 스크립트가 없다. 사전 조사 공통 갭 절에 따라 계획 SC 를 추가한다 | SC-SM-001~002 |
 | Chaos (C) | 미적용 | 네트워크·저장소 의존은 호스트 `UploadFn` 뒤에 있다. 업로드 reject(TC-A-002, TC-A-006)와 파일 읽기 실패(TC-U-006 6단계) 주입이 장애 경로를 담당한다 | 별도 SC 없음 |
 
 ---
@@ -1703,28 +1667,27 @@ beforeEach(() => {
 | 2 | `BlockEditor.tsx`(376줄)·`BlockRenderer.tsx`(314줄) 테스트 0건 | 두 컴포넌트를 import 하는 테스트 파일이 없다. 편집 버튼에 `type` 이 지정되지 않았다 | SC-I-007, SC-U-009, SC-AC-010 |
 | 3 | 자동 리사이즈가 `useImageDropZone` 경유로 실행되지 않음 | 10MB 고정 검증이 리사이즈보다 먼저 실행되고 `resizeImageIfNeeded` 는 10MB 이하 파일을 축소하지 않는다. ImageUploadField 안내 "10MB 초과시 자동 최적화" 와 실제 동작이 다르다 | SC-A-003, SC-U-007 |
 | 4 | PERF-001 시간 단언 허위 양성 | 전역 가짜 타이머 때문에 `performance.now()` 차이가 0 이다 | SC-P-004 |
-| 5 | ArtistEditor 업로드 파일 검증 부재 | 업로드 핸들러 2개가 `validateImageFile` 없이 `uploadImage` 를 호출한다 | SC-S-005 |
-| 6 | exports 18개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
-| 7 | 커버리지 측정 환경 미구성·임계값 미적용 | coverage provider 가 devDependencies 에 없어 `npm ci` 환경에서 `npm run test:coverage` 가 실패한다 (2026-09-16 에는 `--no-save` 임시 설치로 측정). 임계값 키 위치가 Vitest 4 설정 형식과 달라 적용되지 않는다 | "테스트 커버리지 목표" 절 |
+| 5 | exports 16개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
+| 6 | 커버리지 임계값 미적용 | coverage provider 는 `be1579e` 에서 devDependencies 에 추가되어 `npm ci` 후 `npm run test:coverage` 가 실행된다 (2026-09-29 확인). 임계값 키 위치가 Vitest 4 설정 형식과 달라 적용되지 않는다 | "테스트 커버리지 목표" 절 |
 
 ### 해소된 갭
 
 | 당시 순위 | 항목 | 해소 내용 | 관련 SC |
 |---------------|------|---------|--------|
 | 2026-09-13 1순위 (0.3.1) | 본문 URL 자동 링크 변환에서 속성 주입 발생 | `977be3f`: `h()` 가 `"`·`'` 를 이스케이프하고 `linkify()` 가 href 값의 따옴표를 이스케이프한다. `attribute-injection.test.tsx` SEC-007·SEC-008 과 `html-renderer.test.ts` 의 `h()`·`nl2br()`·`linkify()` 테스트가 회귀를 막는다 | SC-S-003, SC-U-001, SC-U-019 |
-| 2026-09-13 2순위 (0.3.1) | ArtistEditor 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않는다. `attribute-injection.test.tsx` SEC-009 가 회귀를 막는다 | SC-S-004 |
+| 2026-09-13 2순위 (0.3.1) | 약력 편집기 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않게 수정되었다. 2026-09-29 (`c97f515`) 에 컴포넌트와 SEC-009 가 함께 제거되었다 | SC-S-004 |
 | 2026-09-15 6순위 (미릴리스) | 따옴표로 감싼 URL 의 링크 대상에 닫는 따옴표가 포함됨 | `b68d5e1`: `linkify()` URL 일치가 원문 따옴표와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 의 따옴표로 감싼 URL describe 9건이 회귀를 막는다 (TC-U-020 5~9단계) | SC-U-019 |
+| 2026-09-16 5순위 | 약력 편집기 업로드 파일 검증 부재 | 2026-09-29 (`c97f515`) 에 대상 컴포넌트가 제거되어 해당 없음 | SC-S-005 |
 
 ### 문서·명칭 불일치
 
 | 대상 | 내용 |
 |------|------|
-| `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목까지만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
+| `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목과 2026-09-29 에 추가한 `[Unreleased]` 기능 제거 항목만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
 | `__tests__/docs/TEST-GUIDE.md` | 해소: 2026-09-15 에 테스트 수를 정정했고, 2026-09-16 (`9474f71`) 에 나머지 불일치를 정정했다. 정정 항목은 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), gallery 예시 필드·클래스, 커버리지 `97%+` 표기(2026-09-16 실측값으로 교체), 적용되지 않는 임계값을 "Enforced" 로 적은 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조, `__tests__/docs` 기준으로 깨진 문서 링크, E2E 렌더링 테스트의 접근성 속성 검증 표기이다 |
 | `__tests__/docs/TEST-SCRIPTS.md`, `docs/04-report/*.md` | `381` 테스트 표기가 남아 있다 (수정하지 않음) |
 | `__tests__/accessibility/accessibility.test.ts` | 머리 주석 A11Y-005 설명은 2026-09-13 에 정정했다. describe 이름 `N/A (no form components shipped)` 와 SCOPE NOTE 의 "BlockEditor UI a11y → `__tests__/e2e/block-editor-render.test.tsx`" 는 사실과 다르며 수정하지 않았다 |
 | `__tests__/api/upload-single.test.ts` | describe 내부 TC 번호가 이 문서 ID 와 다르다. 3절 대응표를 참조한다 |
-| `__tests__/integration/artist-editor.test.tsx` | maxGallery 테스트 이름은 onError 경고를 언급하지만 단언은 onError 미호출을 확인한다 |
 | `__tests__/unit/mini-editor/MiniEditor.test.tsx` | `calls onChange when toolbar button is clicked` 단언은 `execCommand` 호출만 확인한다 |
 | `__tests__/integration/block-editor-integration.test.ts` | `should escape quotes in attributes` 는 속성 이스케이프를 단언하지 않는다 |
 | `__tests__/__mocks__/README.md` | `factories/`·`services/`·`helpers/` 구조를 설명하지만 디렉터리에는 README.md 만 있다 |
@@ -1734,16 +1697,17 @@ beforeEach(() => {
 
 ## 테스트 커버리지 목표
 
-| 지표 | `vitest.config.ts` 기재값 | 2026-03-04 기록값 | 2026-09-16 실측: 테스트가 불러온 파일 | 2026-09-16 실측: `src/**` 전체 |
-|------|------|------|------|------|
-| Stmts | 85% | 76.84% | 86.69% | 58.68% |
-| Lines | 85% | 72.04% | 86.43% | 58.93% |
-| Funcs | 85% | 83.92% | 89.91% | 48.41% |
-| Branches | 80% | 81.67% | 88.04% | 58.93% |
+| 지표 | `vitest.config.ts` 기재값 | 2026-03-04 기록값 | 2026-09-16 실측: 테스트가 불러온 파일 | 2026-09-16 실측: `src/**` 전체 | 2026-09-29 실측: 테스트가 불러온 파일 | 2026-09-29 실측: `src/**` 전체 |
+|------|------|------|------|------|------|------|
+| Stmts | 85% | 76.84% | 86.69% | 58.68% | 86.2% | 54.41% |
+| Lines | 85% | 72.04% | 86.43% | 58.93% | 85.2% | 53.97% |
+| Funcs | 85% | 83.92% | 89.91% | 48.41% | 90.52% | 43.65% |
+| Branches | 80% | 81.67% | 88.04% | 58.93% | 88.98% | 57.14% |
 
-- **측정 환경:** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않는다. 그래서 `npm ci` 환경에서 `npm run test:coverage` 는 `MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'` 를 출력하고 종료 코드 1 을 반환한다 (2026-09-13·2026-09-15·2026-09-16 확인). 2026-09-16 에는 `npm install --no-save @vitest/coverage-v8@4.1.7` 로 임시 설치해 측정했다 (`package.json`·`package-lock.json` 변경 없음, 측정 대상 `b68d5e1`).
-- **측정 범위:** 기본 실행은 테스트가 불러온 파일만 보고서에 포함한다. 테스트가 import 하지 않는 `BlockEditor.tsx`·`BlockRenderer.tsx`·`ImageUploadField.tsx`·`BlockPreviewTheme.tsx` 는 기본 보고서에서 빠지며, `--coverage.include='src/**'` 로 측정하면 네 파일 모두 0% 이다. 파일별 수치는 `__tests__/docs/TEST-GUIDE.md` "Coverage by Module" 표에 적었다. 2026-03-04 기록값과 이전 `TEST-GUIDE.md` 의 `97%+` 표기는 모두 2026-09-16 실측값과 다르다.
-- **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 커버리지 설정 해석 코드도 `coverage.thresholds` 만 읽는다. 따라서 현재 값은 적용되지 않으며, 2026-09-16 `src/**` 전체 수치가 기재값보다 낮아도 실행은 실패하지 않는다.
+- **측정 환경 (2026-09-29):** `@vitest/coverage-v8` 4.1.11 이 `be1579e` 에서 devDependencies 에 추가되어 `npm ci` 만으로 `npm run test:coverage` 가 실행된다. 측정 대상 `c97f515`. 약력 편집기 컴포넌트가 빠지면서 테스트가 불러온 파일의 Stmts·Lines 는 조금 내려가고 `src/**` 전체 수치도 내려갔다 (제거된 파일의 커버된 줄이 함께 빠짐).
+- **측정 환경 (2026-09-16 까지):** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않는다. 그래서 `npm ci` 환경에서 `npm run test:coverage` 는 `MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'` 를 출력하고 종료 코드 1 을 반환한다 (2026-09-13·2026-09-15·2026-09-16 확인). 2026-09-16 에는 `npm install --no-save @vitest/coverage-v8@4.1.7` 로 임시 설치해 측정했다 (`package.json`·`package-lock.json` 변경 없음, 측정 대상 `b68d5e1`).
+- **측정 범위:** 기본 실행은 테스트가 불러온 파일만 보고서에 포함한다. 테스트가 import 하지 않는 `BlockEditor.tsx`·`BlockRenderer.tsx`·`ImageUploadField.tsx`·`BlockPreviewTheme.tsx` 는 기본 보고서에서 빠지며, `--coverage.include='src/**'` 로 측정하면 네 파일 모두 0% 이다 (2026-09-29 도 같다). 파일별 수치는 `__tests__/docs/TEST-GUIDE.md` "Coverage by Module" 표에 적었다. 2026-03-04 기록값과 이전 `TEST-GUIDE.md` 의 `97%+` 표기는 모두 2026-09-16 실측값과 다르다. `TEST-GUIDE.md` 파일별 표는 2026-09-29 실측값으로 갱신했다.
+- **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 커버리지 설정 해석 코드도 `coverage.thresholds` 만 읽는다. 따라서 현재 값은 적용되지 않으며, 2026-09-29 `src/**` 전체 수치가 기재값보다 낮아도 실행은 실패하지 않는다.
 
 **개선 우선순위 (테스트 0건 모듈 기준):**
 1. `ImageUploadField.tsx`: TC-U-018, TC-AC-006~008
@@ -1757,19 +1721,21 @@ beforeEach(() => {
 ## 리뷰 체크리스트
 
 - [x] 사전 조사 판정표에서 적용으로 판정된 7개 도메인(Unit, API, Integration, E2E, Security, Accessibility, Performance) 모두 포함
-- [x] Smoke 계획 SC 추가 (exports 18개), Load/Stress·Chaos 는 판정 근거와 함께 별도 SC 를 두지 않음
-- [x] 테스트 파일 23개가 모두 TC 에 연결됨 (누락 0개)
-- [x] TC 별 테스트 수 합계가 2026-09-16 실측 534개 (통과 508, todo 26) 와 일치
+- [x] Smoke 계획 SC 추가 (exports 16개, 2026-09-29 기준), Load/Stress·Chaos 는 판정 근거와 함께 별도 SC 를 두지 않음
+- [x] 테스트 파일 22개가 모두 TC 에 연결됨 (누락 0개)
+- [x] TC 별 테스트 수 합계가 2026-09-29 실측 523개 (통과 497, todo 26) 와 일치
 - [x] 완료 TC 단계 표를 실제 테스트 이름·단언 기준으로 작성
 - [x] 계획 TC 단계 표를 소스 동작 기준으로 작성 (현재 동작 일부는 워크트리 밖 임시 테스트로 확인)
 - [x] 보안·접근성 기준 명시 (OWASP, WCAG)
-- [x] 확인된 결함 수정과 테스트 구현: SC-S-003, SC-S-004 (0.3.1, `977be3f`)
+- [x] 확인된 결함 수정과 테스트 구현: SC-S-003, SC-S-004 (0.3.1, `977be3f`. SC-S-004 는 2026-09-29 기능 제거)
 - [x] 따옴표로 감싼 URL 링크 대상 기준 결정과 테스트 추가 (2026-09-16, `b68d5e1`)
 - [ ] 테스트 0건 컴포넌트 테스트 구현: ImageUploadField, BlockPreviewTheme, BlockEditor, BlockRenderer
 - [ ] 자동 리사이즈 경로 기준 결정과 SC-A-003 구현
 - [ ] PERF-001 허위 양성 교정 (SC-P-004)
 - [ ] exports Smoke 구현과 실행 스크립트 추가
-- [ ] 커버리지 측정 환경 구성 (coverage provider 설치, `coverage.thresholds` 형식)
+- [x] 커버리지 측정 환경 구성: coverage provider devDependency 추가 (`be1579e`)
+- [ ] 커버리지 임계값 `coverage.thresholds` 형식 적용
 - [x] `TEST-GUIDE.md` 테스트 수를 0.3.1 실측값으로 정정 (2026-09-15)
 - [x] `TEST-GUIDE.md` 예시 코드·커버리지 표기·문서 참조 정정 (2026-09-16, `9474f71`)
+- [x] 약력 편집기 컴포넌트 제거에 맞춘 SC·TC 표시와 수치 갱신 (2026-09-29, `c97f515`)
 - [ ] 문서·명칭 불일치 정리 (CHANGELOG, TEST-SCRIPTS.md, docs/04-report, 테스트 describe 이름)
