@@ -4,15 +4,16 @@
 
 | 항목 | 내용 |
 |------|------|
-| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 (2026-09-16 갱신분은 미릴리스 `fix/residual-defects` 브랜치, 2026-09-29 갱신분은 0.4.0 이후 미릴리스 `chore/remove-consumer-mentions` 브랜치 기준) |
+| 대상 | `@withwiz/block-editor` 0.3.1 React 컴포넌트 라이브러리 (2026-09-16 갱신분은 미릴리스 `fix/residual-defects` 브랜치, 2026-09-29 갱신분은 0.4.0 이후 미릴리스 `chore/remove-consumer-mentions` 브랜치, 2026-09-30 갱신분은 0.5.0 이후 미릴리스 `fix/coverage-thresholds` 브랜치 기준) |
 | 범위 | src/ 전체 (core/, blocks/, components/, context/, hooks/, mini-editor/) |
-| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영. 2026-09-16 갱신은 develop `1fa7aea` 에서 분기한 `fix/residual-defects` 의 `b68d5e1` 기준. 2026-09-29 갱신은 develop `e7f549b` 에서 분기한 `chore/remove-consumer-mentions` 의 `c97f515` 기준 |
-| 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 (2026-09-29 실행은 Vitest 4.1.11 + @vitest/coverage-v8 4.1.11) |
+| 기준 커밋 | `a483153` (chore(release): 0.3.1, develop). 문서 브랜치에는 병합 커밋 `d3a108f` 로 반영. 2026-09-16 갱신은 develop `1fa7aea` 에서 분기한 `fix/residual-defects` 의 `b68d5e1` 기준. 2026-09-29 갱신은 develop `e7f549b` 에서 분기한 `chore/remove-consumer-mentions` 의 `c97f515` 기준. 2026-09-30 갱신은 develop `b3fbf98`(0.5.0) 에서 분기한 `fix/coverage-thresholds` 의 `947ea24` 기준 |
+| 환경 | Vitest 4.1.7 + jsdom 29.1.1 + @testing-library/react 16.3.2 + React 19.2.6 (2026-09-29·2026-09-30 실행은 Vitest 4.1.11 + @vitest/coverage-v8 4.1.11) |
 | 전역 설정 | `__tests__/setup.ts`: jest-dom, matchMedia·IntersectionObserver·ResizeObserver mock, `vi.useFakeTimers({ shouldAdvanceTime: true })` 전역 적용 |
+| 실측 결과 (2026-09-30) | `npx vitest run` 실행: 파일 22개, 테스트 529개 (통과 503, 실패 0, 스킵 0, todo 26). 2026-09-29 대비 `image-resize.test.ts` 에 리사이즈 단계 테스트 6건(TC-U-007)이 늘었다. 커버리지 3종 측정 결과는 "테스트 커버리지 목표" 절 참조 |
 | 실측 결과 (2026-09-29) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 22개, 테스트 523개 (통과 497, 실패 0, 스킵 0, todo 26). 같은 날 제거 전 기준 실행(`e7f549b`)은 파일 23개, 테스트 534개 (통과 508, todo 26) 였다 |
 | 실측 결과 (2026-09-16) | `npm ci` 후 `npm test`(`vitest run`) 실행: 파일 23개, 테스트 534개 (통과 508, 실패 0, 스킵 0, todo 26). 같은 날 수정 전 기준 실행(`1fa7aea`)은 파일 23개, 테스트 525개 (통과 499, todo 26) 였다. 2026-09-15 첫 실행과 2026-09-16 커버리지 실행에서 PERF-002 1건씩 측정 편차로 실패한 기록은 TC-P-003 비고에 있다 |
-| 목표 커버리지 | `vitest.config.ts` 기재값: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (적용되지 않는 사유와 2026-09-29 측정값은 "테스트 커버리지 목표" 절 참조) |
-| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신. 2026-09-16 `linkify()` 따옴표 앞 URL 종료 수정(`b68d5e1`, 테스트 9건 추가·기존 기대값 6건 변경)과 TEST-GUIDE.md 정정(`9474f71`), 커버리지 임시 설치 측정 결과를 반영. 2026-09-29 약력 편집기 컴포넌트 제거(`c97f515`)에 맞춰 SC-I-006·SC-S-004·SC-S-005 를 기능 제거로 표시하고 파일·테스트·커버리지 수치를 재측정값으로 갱신 |
+| 목표 커버리지 | `vitest.config.ts` 의 `coverage.thresholds`: Stmts 85%, Lines 85%, Funcs 85%, Branches 80% (`autoUpdate: false`). 2026-09-30 (`947ea24`) 부터 `coverage.thresholds` 로 적용되어 `npm run test:coverage` 가 기준 미달 시 실패하고, CI(`npm run test:coverage -- --exclude '**/performance/**'`)에서도 미달 시 실패한다. 측정값은 "테스트 커버리지 목표" 절 참조 |
+| 문서 이력 | 2026-03-04 `docs/plans/2026-03-04-test-classification.md` 로 최초 작성. 2026-09-13 `docs/testing/test-classification.md` 로 이동하고 0.3.0 코드 기준으로 전면 갱신. 2026-09-15 develop(0.3.1) 병합 후 속성 주입 수정과 신규 보안 테스트 기준으로 갱신. 2026-09-16 `linkify()` 따옴표 앞 URL 종료 수정(`b68d5e1`, 테스트 9건 추가·기존 기대값 6건 변경)과 TEST-GUIDE.md 정정(`9474f71`), 커버리지 임시 설치 측정 결과를 반영. 2026-09-29 약력 편집기 컴포넌트 제거(`c97f515`)에 맞춰 SC-I-006·SC-S-004·SC-S-005 를 기능 제거로 표시하고 파일·테스트·커버리지 수치를 재측정값으로 갱신. 2026-09-30 커버리지 임계값을 `coverage.thresholds` 로 옮겨 적용하고 리사이즈 단계 테스트 6건을 추가한 변경(`947ea24`)에 맞춰 SC-U-007·TC-U-007 을 완료로 바꾸고, 우선순위 갭 6순위(커버리지 임계값 미적용)를 해소로 옮기고, 테스트 수와 커버리지 수치를 재측정값으로 갱신 |
 
 **버전별 변경 반영 범위**
 
@@ -26,6 +27,7 @@
 | 0.3.1 | `977be3f`, `a483153` | `h()` 가 `"`·`'` 도 이스케이프 (`hAttr()` 는 `h()` 를 그대로 반환), `linkify()` href 값 따옴표 이스케이프, 약력 편집기 미리보기·onChange HTML 이미지 src 에 `sanitizeImageSrc()` + `hAttr()` 적용. `__tests__/security/attribute-injection.test.tsx` (SEC-007~009, 15건) 추가, `html-renderer.test.ts` 기대값 1건 변경·9건 추가 |
 | 미릴리스 (`fix/residual-defects`) | `b68d5e1` | `linkify()` URL 일치가 원문 따옴표(`"`·`'`)와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 에 따옴표로 감싼 URL describe 9건 추가, 기존 기대값 3건(nl2br 1, linkify 2) 변경, `attribute-injection.test.tsx` SEC-007 3건 기대값 변경 |
 | 미릴리스 (`chore/remove-consumer-mentions`) | `c97f515` | **BREAKING** 약력 편집기 컴포넌트·데이터 타입·전용 스타일시트와 해당 exports 서브패스 2개 제거. `__tests__/integration/` 의 전용 통합 테스트 파일(6건)과 `attribute-injection.test.tsx` SEC-009(5건) 삭제. SC-I-006·SC-S-004·SC-S-005 는 기능 제거(2026-09-29)로 표시하고 집계에서 뺀다 |
+| 미릴리스 (`fix/coverage-thresholds`) | `947ea24` | `vitest.config.ts` 커버리지 임계값을 `coverage` 최상위에서 `coverage.thresholds` 아래로 옮겨 적용(기준값 변경 없음). `image-resize.test.ts` 에 `resizeImageIfNeeded (resize stages)` describe 6건 추가(TC-U-007), 같은 파일의 "jsdom 캔버스라 리사이즈 단계는 검증하지 않는다" 주석을 대체 Image·canvas 로 검증한다는 내용으로 변경. 기존 테스트 기대값 변경 없음 |
 
 ### 표기 규칙
 
@@ -35,7 +37,7 @@
 | 케이스 ID | `TC-{도메인}-{3자리 번호}`. 각 TC 속성 표의 **시나리오** 행에 상위 SC 를 명시한다 |
 | 도메인 약어 | Unit `U`, Integration `I`, API `A`, E2E `E`, Security `S`, Performance `P`, Accessibility `AC`, Smoke `SM`, Load/Stress `L`, Chaos `C` |
 | 상태 | ✅ 완료: 테스트가 존재하고 통과한다. 🔲 계획: 실제 단언을 가진 테스트가 없다. ⛔ 기능 제거(날짜): 대상 기능이 패키지에서 제거되어 ID 만 남기고 수치 집계에서 뺀다 |
-| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 실측 JSON 리포트 기준으로 기재한다. 2026-09-16 재측정에서 수치나 내용이 바뀐 TC(TC-U-020, TC-S-003)는 2026-09-16 으로 표기하고, 2026-09-15 로 표기된 나머지 TC 수치는 2026-09-16 재측정 값과 같다 |
+| 테스트 수 | 해당 TC 에 속한 `it`/`it.todo` 개수를 실측 JSON 리포트 기준으로 기재한다. 2026-09-30 에 새로 완료한 TC-U-007 은 2026-09-30 으로, 2026-09-16 재측정에서 수치나 내용이 바뀐 TC(TC-U-020, TC-S-003)는 2026-09-16 으로 표기하고, 2026-09-15 로 표기된 나머지 TC 수치는 2026-09-16 재측정 값과 같다 |
 | 단계 표 근거 | ✅ 완료 TC 는 실제 테스트 이름과 단언에서 대표 항목을 뽑는다. 🔲 계획 TC 는 소스 코드 동작에 근거한다 |
 
 ---
@@ -50,7 +52,7 @@
 | SC-U-004 | 모든 블록 타입 HTML 렌더링 검증 | Unit | High | ✅ 완료 |
 | SC-U-005 | 이미지 유효성 검사 (sync) | Unit | High | ✅ 완료 |
 | SC-U-006 | 이미지 유효성 검사 (async, magic number) | Unit | High | ✅ 완료 |
-| SC-U-007 | 이미지 리사이즈 로직 (Canvas API 모킹) | Unit | High | 🔲 계획 |
+| SC-U-007 | 이미지 리사이즈 로직 (Canvas API 모킹) | Unit | High | ✅ 완료 |
 | SC-U-008 | BlockEditorProvider 컨텍스트 제공 | Unit | Medium | ✅ 완료 |
 | SC-U-009 | BlockRenderer 에디터 폼 렌더링 | Unit | Medium | 🔲 계획 |
 | SC-U-010 | useImageDropZone hook 동작 | Unit | Medium | ✅ 완료 |
@@ -258,29 +260,28 @@
 
 ---
 
-### TC-U-007: 이미지 리사이즈 (resizeImageIfNeeded) 🔲 계획
+### TC-U-007: 이미지 리사이즈 (resizeImageIfNeeded)
 
 | 항목 | 내용 |
 |------|------|
 | **시나리오** | SC-U-007 |
-| **파일** | `__tests__/unit/core/image-resize.test.ts` (추가 예정) |
-| **대상** | `src/core/image-resize.ts`: `resizeImageIfNeeded()` 의 Canvas 단계 (`loadImage`, `canvasToBlob`, `toResult`) |
+| **파일** | `__tests__/unit/core/image-resize.test.ts` (`resizeImageIfNeeded (resize stages)` describe) |
+| **대상** | `src/core/image-resize.ts`: `resizeImageIfNeeded()` 의 리사이즈 단계 (1단계 품질 축소, 2단계 크기 축소, 최후 단계)와 내부 함수 `loadImage`, `canvasToBlob`, `toResult` |
 | **우선순위** | High |
-| **전제조건** | `Image`(onload/onerror), `URL.createObjectURL`/`revokeObjectURL`, `HTMLCanvasElement.getContext`·`toBlob` vi.mock 필요. jsdom canvas 는 stub 이므로 실제 픽셀 결과는 검증 대상이 아니다 |
-| **테스트 데이터** | `size` 를 10MB·15MB 로 재정의한 JPEG·PNG·WebP, `toBlob` 이 반환할 Blob 크기 시퀀스 |
+| **전제조건** | 파일 안의 `stubImagePipeline()` 이 `Image` 를 `vi.stubGlobal` 로 대체하고(가로 4000·세로 3000, `src` 지정 시 microtask 로 `onload` 또는 `onerror` 발생), `URL.createObjectURL`·`revokeObjectURL` 과 `document.createElement('canvas')` 를 `vi.spyOn` 으로 대체한다. 대체 canvas 는 `toBlob` 호출마다 폭·높이·MIME·품질·흰색 배경 채움 여부를 기록하고, 테스트가 정한 크기의 Blob(또는 `null`)을 돌려준다. 픽셀 결과가 아니라 어느 단계에서 어떤 크기·품질·MIME 으로 멈추는지를 검증한다. `beforeEach`·`afterEach` 에서 `vi.restoreAllMocks()`, `afterEach` 에서 `vi.unstubAllGlobals()` |
+| **테스트 데이터** | `size` 를 20MB·30MB·45MB 로 재정의한 `photo.final.png`(PNG)·`shot.webp`(WebP)·`huge.jpg`(JPEG), 실패 경로용 20MB JPEG(`bad.jpg`, `a.jpg`), 호출 조건별 Blob 크기(8MB·9MB·11MB·12MB) |
 
 | # | 단계 | 예상 결과 |
 |---|------|---------|
-| 1 | 정확히 10MB(10×1024×1024 bytes) JPEG | `{ wasResized: false }`, 원본 반환 (`size <= RESIZE_THRESHOLD`) |
-| 2 | 15MB JPEG, 첫 `toBlob` 결과 5MB | 1단계 품질 0.85 에서 종료, `{ wasResized: true, newSize: 5MB }` |
-| 3 | 15MB JPEG, 1단계 5회(품질 0.85/0.75/0.65/0.55/0.5) 모두 10MB 초과 | 2단계 배율 0.9 부터 품질 0.75 로 재시도 |
-| 4 | 1·2단계 모두 10MB 초과 | 마지막으로 배율 0.3·품질 0.5 결과를 크기와 무관하게 반환 |
-| 5 | PNG 입력 | 출력 MIME `image/jpeg`, 파일명 확장자 `.jpg` |
-| 6 | `my-photo.jpeg` JPEG 입력 / WebP 입력 | 출력 파일명 `my-photo.jpg` / 확장자 `.webp` |
-| 7 | `getContext('2d')` 가 `null` / `toBlob` 콜백 인자가 `null` / `Image.onerror` 발생 | 각각 `이미지 처리에 실패했습니다.` / `이미지 변환에 실패했습니다.` / `이미지 로드에 실패했습니다.` 로 reject, `onerror` 경로에서도 `revokeObjectURL` 호출 |
+| 1 | 20MB PNG, 품질 0.75 이하에서 9MB·그 외 12MB 반환 | `toBlob` 품질 순서 `[0.85, 0.75]` 에서 1단계 종료, 모든 호출이 원본 크기(4000×3000)·MIME `image/jpeg`·흰색 배경 채움. `wasResized: true`, `originalSize` 20MB, `newSize` 9MB, 파일명 `photo.final.jpg`, type `image/jpeg`, `revokeObjectURL` 이 `blob:fake` 로 1회 호출 |
+| 2 | 30MB WebP, 폭 3200 이하에서 8MB·그 외 11MB 반환 | 1단계 품질 5회 `[0.85, 0.75, 0.65, 0.55, 0.5]` 가 모두 초과한 뒤 2단계에서 `[3600, 2700, 0.75]`, `[3200, 2400, 0.75]` 순으로 호출하고 멈춤. 흰색 배경 채움 없음, 파일명 `shot.webp`, type `image/webp`, `newSize` 8MB |
+| 3 | 45MB JPEG, 모든 호출에서 11MB 반환 | `toBlob` 13회(1단계 5, 2단계 7, 최후 1), 마지막 호출이 `[1200, 900, 0.5]`(30% 크기·품질 0.5). 10MB 를 넘어도 `wasResized: true`, `newSize` 11MB, 파일명 `huge.jpg` 로 반환 |
+| 4 | `Image` 가 `onerror` 발생 | `이미지 로드에 실패했습니다.` 로 reject, `revokeObjectURL` 이 `blob:fake` 로 호출됨, `toBlob` 호출 0회 |
+| 5 | `getContext('2d')` 가 `null` | `이미지 처리에 실패했습니다.` 로 reject |
+| 6 | `toBlob` 콜백 인자가 `null` | `이미지 변환에 실패했습니다.` 로 reject |
 
-- **자동화:** 가능 ✅ (Canvas API 전체 모킹 필요)
-- **비고:** 조기 반환 분기(1KB JPEG, 15MB GIF)는 TC-U-012 로 완료되었다. 이 함수의 Canvas 단계는 `useImageDropZone` 경유로는 실행되지 않는다(TC-A-003 비고 참조). 공개 export 를 직접 호출하는 호스트 경로에서만 실행된다.
+- **자동화:** 가능 ✅ | **테스트 수:** 6개 (2026-09-30 실측)
+- **비고:** 2026-09-30 (`947ea24`) 에 구현되었다. 이전에는 같은 파일 주석이 "jsdom 캔버스는 stub 이라 리사이즈 단계는 검증하지 않는다"고 적었으나, 이제는 `Image`·object URL·canvas 를 대체해 단계별 멈춤 위치를 검증한다고 적는다. 이 6건으로 `image-resize.ts` Lines 커버리지가 58.67% 에서 96.69% 로 올랐다. 계획 단계 중 정확히 10MB 경계 입력과 `.jpeg` 파일명이 `.jpg` 로 바뀌는 경우는 테스트하지 않는다 (확장자 교체는 1단계의 `photo.final.png` → `photo.final.jpg` 로 확인). 조기 반환 분기(1KB JPEG, 15MB GIF)는 TC-U-012 가 담당한다. 이 함수의 리사이즈 단계는 `useImageDropZone` 경유로는 실행되지 않는다(TC-A-003 비고 참조). 공개 export 를 직접 호출하는 호스트 경로에서만 실행된다.
 
 ---
 
@@ -1573,7 +1574,7 @@ beforeEach(() => {
 
 | 유형 | 파일 수 | 테스트 수 (통과 / todo) | SC 수 (완료 / 계획) | TC 수 (완료 / 계획) |
 |------|--------|----------------------|-------------------|-------------------|
-| **Unit** | 11개 | 324개 (324 / 0) | 19개 (15 / 4) | 20개 (16 / 4) |
+| **Unit** | 11개 | 330개 (330 / 0) | 19개 (16 / 3) | 20개 (17 / 3) |
 | **Integration** | 1개 | 28개 (28 / 0) | 6개 (5 / 1) | 6개 (5 / 1) |
 | **API** | 1개 | 11개 (11 / 0) | 8개 (6 / 2) | 8개 (6 / 2) |
 | **E2E** | 3개 | 57개 (57 / 0) | 3개 (3 / 0) | 3개 (3 / 0) |
@@ -1581,9 +1582,10 @@ beforeEach(() => {
 | **Performance** | 2개 | 12개 (12 / 0) | 4개 (3 / 1) | 4개 (3 / 1) |
 | **Accessibility** | 1개 | 46개 (20 / 26) | 10개 (4 / 6) | 10개 (4 / 6) |
 | **Smoke (SM)** | 0개 | 0개 | 2개 (0 / 2) | 2개 (0 / 2) |
-| **합계** | **22개** | **523개 (497 / 26)** | **56개 (39 / 17)** | **57개 (40 / 17)** |
+| **합계** | **22개** | **529개 (503 / 26)** | **56개 (40 / 16)** | **57개 (41 / 16)** |
 
 - SC·TC 수는 ⛔ 기능 제거(2026-09-29) 로 표시한 SC 3개(SC-I-006, SC-S-004, SC-S-005)와 TC 3개(TC-I-006, TC-S-004, TC-S-005)를 뺀 값이다.
+- 2026-09-30 (`947ea24`, 미릴리스) 에서 `image-resize.test.ts` 에 리사이즈 단계 테스트 6건(TC-U-007)이 늘어 523개에서 529개가 되었고, SC-U-007·TC-U-007 이 계획에서 완료로 바뀌었다. 기존 테스트의 기대값 변경은 없다.
 - 2026-09-29 (`c97f515`, 미릴리스) 에서 약력 편집기 컴포넌트 제거로 Integration 파일 1개(6건)와 `attribute-injection.test.tsx` SEC-009 5건이 삭제되어 파일 23개·534개에서 22개·523개가 되었다. 남은 테스트의 기대값 변경은 없다.
 - 실패 0개, 스킵 0개이다 (2026-09-15 첫 실행과 2026-09-16 커버리지 실행의 PERF-002 측정 편차 각 1건은 TC-P-003 비고 참조). todo 26개는 모두 `accessibility.test.ts` 에 있다.
 - 2026-09-16 (`b68d5e1`, 미릴리스) 에서 `html-renderer.test.ts` 9건(TC-U-020 5~9단계)이 늘어 525개에서 534개가 되었다. 기존 테스트 중 기대값이 바뀐 것은 TC-U-001 7단계 1건, TC-U-020 2·3단계 2건, TC-S-003 1~3단계 3건으로 모두 6건이다.
@@ -1598,7 +1600,7 @@ beforeEach(() => {
 | `__tests__/unit/core/html-renderer.test.ts` | Unit | 67 | 67 | 0 | TC-U-001, TC-U-002, TC-U-020 |
 | `__tests__/unit/core/serializer.test.ts` | Unit | 38 | 38 | 0 | TC-U-003 |
 | `__tests__/unit/blocks/built-in.test.ts` | Unit | 47 | 47 | 0 | TC-U-004 |
-| `__tests__/unit/core/image-resize.test.ts` | Unit | 16 | 16 | 0 | TC-U-005, TC-U-006, TC-U-012 |
+| `__tests__/unit/core/image-resize.test.ts` | Unit | 22 | 22 | 0 | TC-U-005, TC-U-006, TC-U-007, TC-U-012 |
 | `__tests__/unit/context/BlockEditorProvider.test.tsx` | Unit | 7 | 7 | 0 | TC-U-008 |
 | `__tests__/unit/hooks/useImageDropZone.test.tsx` | Unit | 20 | 20 | 0 | TC-U-010 |
 | `__tests__/unit/core/html-renderer-blocks.test.ts` | Unit | 85 | 85 | 0 | TC-U-011 |
@@ -1617,7 +1619,7 @@ beforeEach(() => {
 | `__tests__/performance/rendering-performance.test.ts` | Performance | 7 | 7 | 0 | TC-P-001, TC-P-002 |
 | `__tests__/performance/serializer-renderer-perf.test.ts` | Performance | 5 | 5 | 0 | TC-P-003 |
 | `__tests__/accessibility/accessibility.test.ts` | Accessibility | 46 | 20 | 26 | TC-AC-001~005 |
-| **합계 22개** | | **523** | **497** | **26** | 누락 파일 0개 |
+| **합계 22개** | | **529** | **503** | **26** | 누락 파일 0개 |
 
 ### 소스 모듈 대조
 
@@ -1668,7 +1670,6 @@ beforeEach(() => {
 | 3 | 자동 리사이즈가 `useImageDropZone` 경유로 실행되지 않음 | 10MB 고정 검증이 리사이즈보다 먼저 실행되고 `resizeImageIfNeeded` 는 10MB 이하 파일을 축소하지 않는다. ImageUploadField 안내 "10MB 초과시 자동 최적화" 와 실제 동작이 다르다 | SC-A-003, SC-U-007 |
 | 4 | PERF-001 시간 단언 허위 양성 | 전역 가짜 타이머 때문에 `performance.now()` 차이가 0 이다 | SC-P-004 |
 | 5 | exports 16개 Smoke 부재 | dist 산출물을 검증하는 테스트·스크립트가 없다 | SC-SM-001~002 |
-| 6 | 커버리지 임계값 미적용 | coverage provider 는 `be1579e` 에서 devDependencies 에 추가되어 `npm ci` 후 `npm run test:coverage` 가 실행된다 (2026-09-29 확인). 임계값 키 위치가 Vitest 4 설정 형식과 달라 적용되지 않는다 | "테스트 커버리지 목표" 절 |
 
 ### 해소된 갭
 
@@ -1678,13 +1679,14 @@ beforeEach(() => {
 | 2026-09-13 2순위 (0.3.1) | 약력 편집기 미리보기·onChange HTML 이미지 속성 미이스케이핑 | `977be3f`: `generateHtml()` 이 대표 이미지·갤러리 src 에 `sanitizeImageSrc()` + `hAttr()` 를 적용하고, 허용되지 않는 주소는 img 를 출력하지 않게 수정되었다. 2026-09-29 (`c97f515`) 에 컴포넌트와 SEC-009 가 함께 제거되었다 | SC-S-004 |
 | 2026-09-15 6순위 (미릴리스) | 따옴표로 감싼 URL 의 링크 대상에 닫는 따옴표가 포함됨 | `b68d5e1`: `linkify()` URL 일치가 원문 따옴표와 따옴표 엔티티(`&quot;`·`&#39;`·`&#x27;`·`&apos;`) 앞에서 끝난다. `html-renderer.test.ts` 의 따옴표로 감싼 URL describe 9건이 회귀를 막는다 (TC-U-020 5~9단계) | SC-U-019 |
 | 2026-09-16 5순위 | 약력 편집기 업로드 파일 검증 부재 | 2026-09-29 (`c97f515`) 에 대상 컴포넌트가 제거되어 해당 없음 | SC-S-005 |
+| 2026-09-29 6순위 (미릴리스) | 커버리지 임계값 미적용 | `947ea24`: 임계값을 `coverage` 최상위에서 `coverage.thresholds` 아래로 옮겨(기준값 lines 85·functions 85·branches 80·statements 85, `autoUpdate: false` 유지) `npm run test:coverage` 와 CI(`npm run test:coverage -- --exclude '**/performance/**'`)가 기준 미달 시 실패한다. 옮기기만 하면 CI 조건 Lines 가 84.97% 로 미달이어서 같은 커밋에서 리사이즈 단계 테스트 6건(TC-U-007)을 추가했고, CI 조건 Lines 는 95.29% 가 되었다 (2026-09-30 재측정) | "테스트 커버리지 목표" 절, SC-U-007 |
 
 ### 문서·명칭 불일치
 
 | 대상 | 내용 |
 |------|------|
 | `docs/04-report/CHANGELOG.md` | `[0.1.0] - 2026-03-03` 항목과 2026-09-29 에 추가한 `[Unreleased]` 기능 제거 항목만 있다. 0.2.0 (MiniEditor, 렌더러 시맨틱 HTML 개선)·0.3.0 (BlockPreviewTheme)·0.3.1 (속성 주입 수정) 기록이 없다. 저장소 루트에는 `CHANGELOG.md` 가 없다 |
-| `__tests__/docs/TEST-GUIDE.md` | 해소: 2026-09-15 에 테스트 수를 정정했고, 2026-09-16 (`9474f71`) 에 나머지 불일치를 정정했다. 정정 항목은 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), gallery 예시 필드·클래스, 커버리지 `97%+` 표기(2026-09-16 실측값으로 교체), 적용되지 않는 임계값을 "Enforced" 로 적은 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조, `__tests__/docs` 기준으로 깨진 문서 링크, E2E 렌더링 테스트의 접근성 속성 검증 표기이다 |
+| `__tests__/docs/TEST-GUIDE.md` | 해소: 2026-09-15 에 테스트 수를 정정했고, 2026-09-16 (`9474f71`) 에 나머지 불일치를 정정했다. 정정 항목은 예시 코드 시그니처(`h(tag, attrs?, content?)`, `hAttr(attrs)`, `sanitizeUrl` 이 throw), gallery 예시 필드·클래스, 커버리지 `97%+` 표기(2026-09-16 실측값으로 교체), 적용되지 않는 임계값을 "Enforced" 로 적은 표기, `__mocks__/factories/`·`docs/PDCA-TEST-PHASE-SUMMARY.md` 참조, `__tests__/docs` 기준으로 깨진 문서 링크, E2E 렌더링 테스트의 접근성 속성 검증 표기이다. 2026-09-30 에는 임계값 적용(`947ea24`)에 맞춰 커버리지 절을 "Enforced Thresholds" 로 바꾸고 테스트 수·커버리지를 재측정값으로 갱신했다 |
 | `__tests__/docs/TEST-SCRIPTS.md`, `docs/04-report/*.md` | `381` 테스트 표기가 남아 있다 (수정하지 않음) |
 | `__tests__/accessibility/accessibility.test.ts` | 머리 주석 A11Y-005 설명은 2026-09-13 에 정정했다. describe 이름 `N/A (no form components shipped)` 와 SCOPE NOTE 의 "BlockEditor UI a11y → `__tests__/e2e/block-editor-render.test.tsx`" 는 사실과 다르며 수정하지 않았다 |
 | `__tests__/api/upload-single.test.ts` | describe 내부 TC 번호가 이 문서 ID 와 다르다. 3절 대응표를 참조한다 |
@@ -1697,24 +1699,38 @@ beforeEach(() => {
 
 ## 테스트 커버리지 목표
 
-| 지표 | `vitest.config.ts` 기재값 | 2026-03-04 기록값 | 2026-09-16 실측: 테스트가 불러온 파일 | 2026-09-16 실측: `src/**` 전체 | 2026-09-29 실측: 테스트가 불러온 파일 | 2026-09-29 실측: `src/**` 전체 |
-|------|------|------|------|------|------|------|
-| Stmts | 85% | 76.84% | 86.69% | 58.68% | 86.2% | 54.41% |
-| Lines | 85% | 72.04% | 86.43% | 58.93% | 85.2% | 53.97% |
-| Funcs | 85% | 83.92% | 89.91% | 48.41% | 90.52% | 43.65% |
-| Branches | 80% | 81.67% | 88.04% | 58.93% | 88.98% | 57.14% |
+**기준값:** `vitest.config.ts` 의 `coverage.thresholds` 에 Stmts 85%, Lines 85%, Funcs 85%, Branches 80% 를 지정한다 (`autoUpdate: false`). 2026-09-30 (`947ea24`) 부터 적용되어, 측정값이 기준에 못 미치면 커버리지 실행이 `ERROR: Coverage for <지표> (...) does not meet global threshold (...)` 를 출력하고 종료 코드 1 로 실패한다. CI(`.github/workflows/ci.yml`)는 `npm run test:coverage -- --exclude '**/performance/**'` 를 실행하므로 CI 에서도 미달 시 실패한다.
 
+**2026-09-30 실측 (측정 대상 `947ea24`)**
+
+| 측정 명령 | 보고서 범위 | 파일 / 테스트 | Stmts | Branch | Funcs | Lines | 임계값 판정 (종료 코드) |
+|------|------|------|------|------|------|------|------|
+| (a) `npm run test:coverage` | 테스트가 불러온 파일, 성능 테스트 포함 | 22개 / 529개 (통과 503, todo 26) | 95.21% | 92.8% | 98.94% | 95.51% | 통과 (0) |
+| (b) CI 조건: `npm run test:coverage -- --exclude '**/performance/**'` | 테스트가 불러온 파일, 성능 테스트 제외 | 20개 / 517개 (통과 491, todo 26) | 95.01% | 92.58% | 98.94% | 95.29% | 통과 (0) |
+| (c) `npx vitest run --coverage --coverage.include='src/**'` | `src/**` 전체, 성능 테스트 포함 | 22개 / 529개 (통과 503, todo 26) | 60.09% | 59.59% | 47.71% | 60.51% | 실패 (1): 네 지표 모두 기준 미달 |
+
+**이전 측정값**
+
+| 지표 | 2026-03-04 기록값 | 2026-09-16 실측: 테스트가 불러온 파일 | 2026-09-16 실측: `src/**` 전체 | 2026-09-29 실측: 테스트가 불러온 파일 | 2026-09-29 실측: `src/**` 전체 |
+|------|------|------|------|------|------|
+| Stmts | 76.84% | 86.69% | 58.68% | 86.2% | 54.41% |
+| Lines | 72.04% | 86.43% | 58.93% | 85.2% | 53.97% |
+| Funcs | 83.92% | 89.91% | 48.41% | 90.52% | 43.65% |
+| Branches | 81.67% | 88.04% | 58.93% | 88.98% | 57.14% |
+
+- **측정 환경 (2026-09-30):** Vitest 4.1.11 + `@vitest/coverage-v8` 4.1.11 (devDependency). 파일 수·테스트 수는 `npx vitest run` 결과(파일 22개, 529개)와 같다. 2026-09-29 대비 수치가 오른 것은 리사이즈 단계 테스트 6건(TC-U-007)으로 `image-resize.ts` 가 2026-09-29 `src/**` 측정값 대비 Stmts 58.19% → 96.72%, Branch 73.33% → 92.22%, Funcs 50% → 100%, Lines 58.67% → 96.69% 가 되었기 때문이다 (2026-09-30 은 세 측정 모두 같은 값). 이 테스트를 넣기 전 (b) CI 조건의 Lines 는 84.97% 로 기준 85% 에 못 미쳤다.
 - **측정 환경 (2026-09-29):** `@vitest/coverage-v8` 4.1.11 이 `be1579e` 에서 devDependencies 에 추가되어 `npm ci` 만으로 `npm run test:coverage` 가 실행된다. 측정 대상 `c97f515`. 약력 편집기 컴포넌트가 빠지면서 테스트가 불러온 파일의 Stmts·Lines 는 조금 내려가고 `src/**` 전체 수치도 내려갔다 (제거된 파일의 커버된 줄이 함께 빠짐).
 - **측정 환경 (2026-09-16 까지):** `@vitest/coverage-v8` 가 devDependencies 에 없고 `package-lock.json` 에는 vitest 의 선택적 peer 로만 기재되어 설치되지 않는다. 그래서 `npm ci` 환경에서 `npm run test:coverage` 는 `MISSING DEPENDENCY  Cannot find dependency '@vitest/coverage-v8'` 를 출력하고 종료 코드 1 을 반환한다 (2026-09-13·2026-09-15·2026-09-16 확인). 2026-09-16 에는 `npm install --no-save @vitest/coverage-v8@4.1.7` 로 임시 설치해 측정했다 (`package.json`·`package-lock.json` 변경 없음, 측정 대상 `b68d5e1`).
-- **측정 범위:** 기본 실행은 테스트가 불러온 파일만 보고서에 포함한다. 테스트가 import 하지 않는 `BlockEditor.tsx`·`BlockRenderer.tsx`·`ImageUploadField.tsx`·`BlockPreviewTheme.tsx` 는 기본 보고서에서 빠지며, `--coverage.include='src/**'` 로 측정하면 네 파일 모두 0% 이다 (2026-09-29 도 같다). 파일별 수치는 `__tests__/docs/TEST-GUIDE.md` "Coverage by Module" 표에 적었다. 2026-03-04 기록값과 이전 `TEST-GUIDE.md` 의 `97%+` 표기는 모두 2026-09-16 실측값과 다르다. `TEST-GUIDE.md` 파일별 표는 2026-09-29 실측값으로 갱신했다.
-- **임계값 설정 형식:** `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등을 `coverage` 바로 아래에 지정한다. Vitest 4.1.7 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 커버리지 설정 해석 코드도 `coverage.thresholds` 만 읽는다. 따라서 현재 값은 적용되지 않으며, 2026-09-29 `src/**` 전체 수치가 기재값보다 낮아도 실행은 실패하지 않는다.
+- **측정 범위:** (a)·(b) 기본 실행은 테스트가 불러온 파일만 보고서에 포함한다. 테스트가 import 하지 않는 `BlockEditor.tsx`·`BlockRenderer.tsx`·`ImageUploadField.tsx`·`BlockPreviewTheme.tsx` 는 기본 보고서에서 빠지며, (c) `--coverage.include='src/**'` 로 측정하면 네 파일 모두 Stmts·Funcs·Lines 0% 이다 (`BlockPreviewTheme.tsx` 는 분기가 없어 Branch 100% 로 표시된다). 임계값은 보고서 전체 수치에 적용되므로 (c) 는 이 네 파일 때문에 기준 미달로 실패한다. 게이트는 (a)·(b) 이며 (c) 는 미검증 파일 규모를 보는 참고 측정이다. (a) 와 (b) 의 차이는 `html-renderer.ts` 뿐이다. 92행(`sanitizeUrl()` 의 알 수 없는 프로토콜 기본 반환 `""`)을 성능 테스트만 실행하므로 (b) 에서 Stmts 98.98% → 97.97%, Branch 95.41% → 94.95%, Lines 98.76% → 97.53% 이다. 파일별 수치는 `__tests__/docs/TEST-GUIDE.md` "Coverage by Module" 표에 적었다 (2026-09-30 (c) 실측값).
+- **임계값 설정 형식:** 2026-09-29 까지 `vitest.config.ts` 는 `coverage.lines`, `coverage.functions` 등과 `thresholdAutoUpdate` 를 `coverage` 바로 아래에 지정했다. Vitest 4 타입 정의에서 이 키는 `CoverageOptions` 에 없으며 (`tsc` 결과 TS2769: `'lines' does not exist in type 'CoverageOptions'`), 커버리지 설정 해석 코드도 `coverage.thresholds` 만 읽어 기준이 적용되지 않았다. `947ea24` 에서 값을 바꾸지 않고 `coverage.thresholds` 아래로 옮겼다 (`thresholdAutoUpdate` 는 `thresholds.autoUpdate` 로 변경).
 
 **개선 우선순위 (테스트 0건 모듈 기준):**
 1. `ImageUploadField.tsx`: TC-U-018, TC-AC-006~008
 2. `BlockEditor.tsx`: TC-I-007
 3. `BlockRenderer.tsx`: TC-U-009
-4. `image-resize.ts` Canvas 단계: TC-U-007
-5. `BlockPreviewTheme.tsx`: TC-U-019, TC-SM-001
+4. `BlockPreviewTheme.tsx`: TC-U-019, TC-SM-001
+
+`image-resize.ts` 리사이즈 단계(이전 4순위, TC-U-007)는 2026-09-30 (`947ea24`) 에 완료되었다.
 
 ---
 
@@ -1723,7 +1739,7 @@ beforeEach(() => {
 - [x] 사전 조사 판정표에서 적용으로 판정된 7개 도메인(Unit, API, Integration, E2E, Security, Accessibility, Performance) 모두 포함
 - [x] Smoke 계획 SC 추가 (exports 16개, 2026-09-29 기준), Load/Stress·Chaos 는 판정 근거와 함께 별도 SC 를 두지 않음
 - [x] 테스트 파일 22개가 모두 TC 에 연결됨 (누락 0개)
-- [x] TC 별 테스트 수 합계가 2026-09-29 실측 523개 (통과 497, todo 26) 와 일치
+- [x] TC 별 테스트 수 합계가 2026-09-30 실측 529개 (통과 503, todo 26) 와 일치
 - [x] 완료 TC 단계 표를 실제 테스트 이름·단언 기준으로 작성
 - [x] 계획 TC 단계 표를 소스 동작 기준으로 작성 (현재 동작 일부는 워크트리 밖 임시 테스트로 확인)
 - [x] 보안·접근성 기준 명시 (OWASP, WCAG)
@@ -1734,7 +1750,8 @@ beforeEach(() => {
 - [ ] PERF-001 허위 양성 교정 (SC-P-004)
 - [ ] exports Smoke 구현과 실행 스크립트 추가
 - [x] 커버리지 측정 환경 구성: coverage provider devDependency 추가 (`be1579e`)
-- [ ] 커버리지 임계값 `coverage.thresholds` 형식 적용
+- [x] 커버리지 임계값 `coverage.thresholds` 형식 적용과 CI 조건 기준 충족 (2026-09-30, `947ea24`)
+- [x] 이미지 리사이즈 단계 테스트 구현: SC-U-007 (2026-09-30, `947ea24`)
 - [x] `TEST-GUIDE.md` 테스트 수를 0.3.1 실측값으로 정정 (2026-09-15)
 - [x] `TEST-GUIDE.md` 예시 코드·커버리지 표기·문서 참조 정정 (2026-09-16, `9474f71`)
 - [x] 약력 편집기 컴포넌트 제거에 맞춘 SC·TC 표시와 수치 갱신 (2026-09-29, `c97f515`)

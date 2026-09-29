@@ -20,7 +20,7 @@
  *      pixel/quality assertions would be testing the stub, not the impl.
  */
 
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import {
   validateImageFile,
   validateImageFileAsync,
@@ -193,9 +193,176 @@ describe('resizeImageIfNeeded (early-return branches)', () => {
     expect(result.newSize).toBe(15 * 1024 * 1024);
   });
 
-  // NOTE: Stage 1 (quality) / Stage 2 (dimension) branches require a working
-  // canvas + Image decoder. jsdom provides only stubs (toBlob returns null,
-  // Image.onload never fires for blob: URLs), so any assertion past the early
-  // returns would be testing the stub. Those branches are exercised by the
-  // integration suite once a real browser is available.
+  // Stage 1 (quality) / Stage 2 (dimension) branches are covered below with a
+  // stubbed Image + canvas: the assertions check which stage stops and with
+  // which dimensions/quality/MIME, not real pixel output.
+});
+
+// --- resizeImageIfNeeded: resize stages with stubbed Image + canvas ---------
+
+const MB = 1024 * 1024;
+const IMG_W = 4000;
+const IMG_H = 3000;
+
+interface CanvasCall {
+  width: number;
+  height: number;
+  mime: string;
+  quality: number;
+  filledWhite: boolean;
+}
+
+/**
+ * Replaces Image, URL.createObjectURL/revokeObjectURL and canvas creation.
+ * `blobSizeFor(call)` decides the size of each produced blob so a test can pick
+ * the stage at which resizing stops. `blobSizeFor` returning null makes
+ * toBlob yield null.
+ */
+function stubImagePipeline(options: {
+  blobSizeFor: (call: CanvasCall) => number | null;
+  imageLoads?: boolean;
+  hasContext?: boolean;
+}) {
+  const { blobSizeFor, imageLoads = true, hasContext = true } = options;
+  const calls: CanvasCall[] = [];
+  const revoked: string[] = [];
+
+  class FakeImage {
+    width = IMG_W;
+    height = IMG_H;
+    onload: (() => void) | null = null;
+    onerror: (() => void) | null = null;
+    set src(_url: string) {
+      queueMicrotask(() => (imageLoads ? this.onload?.() : this.onerror?.()));
+    }
+  }
+  vi.stubGlobal('Image', FakeImage);
+  vi.spyOn(URL, 'createObjectURL').mockReturnValue('blob:fake');
+  vi.spyOn(URL, 'revokeObjectURL').mockImplementation((url: string) => {
+    revoked.push(url);
+  });
+
+  const realCreateElement = document.createElement.bind(document);
+  vi.spyOn(document, 'createElement').mockImplementation(((tag: string) => {
+    if (tag !== 'canvas') return realCreateElement(tag);
+    let filledWhite = false;
+    const canvas = {
+      width: 0,
+      height: 0,
+      getContext: () =>
+        hasContext
+          ? {
+              set fillStyle(value: string) {
+                filledWhite = value === '#FFFFFF';
+              },
+              fillRect: vi.fn(),
+              drawImage: vi.fn(),
+            }
+          : null,
+      toBlob: (callback: (blob: Blob | null) => void, mime: string, quality: number) => {
+        const call = { width: canvas.width, height: canvas.height, mime, quality, filledWhite };
+        calls.push(call);
+        const size = blobSizeFor(call);
+        if (size === null) {
+          callback(null);
+          return;
+        }
+        const blob = new Blob([new Uint8Array(1)], { type: mime });
+        Object.defineProperty(blob, 'size', { value: size });
+        callback(blob);
+      },
+    };
+    return canvas as unknown as HTMLCanvasElement;
+  }) as typeof document.createElement);
+
+  return { calls, revoked };
+}
+
+describe('resizeImageIfNeeded (resize stages)', () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it('stage 1: stops at the first quality step under 10MB, keeps dimensions, converts PNG to JPEG', async () => {
+    const { calls, revoked } = stubImagePipeline({
+      blobSizeFor: ({ quality }) => (quality <= 0.75 ? 9 * MB : 12 * MB),
+    });
+    const file = fileOfSize(20 * MB, 'photo.final.png', 'image/png');
+
+    const result = await resizeImageIfNeeded(file);
+
+    expect(calls.map((c) => c.quality)).toEqual([0.85, 0.75]);
+    expect(calls.every((c) => c.width === IMG_W && c.height === IMG_H)).toBe(true);
+    expect(calls.every((c) => c.mime === 'image/jpeg' && c.filledWhite)).toBe(true);
+    expect(result.wasResized).toBe(true);
+    expect(result.originalSize).toBe(20 * MB);
+    expect(result.newSize).toBe(9 * MB);
+    expect(result.file.name).toBe('photo.final.jpg');
+    expect(result.file.type).toBe('image/jpeg');
+    expect(revoked).toEqual(['blob:fake']);
+  });
+
+  it('stage 2: after all quality steps fail, shrinks dimensions at quality 0.75 and keeps WebP', async () => {
+    const { calls } = stubImagePipeline({
+      blobSizeFor: ({ width }) => (width <= IMG_W * 0.8 ? 8 * MB : 11 * MB),
+    });
+    const file = fileOfSize(30 * MB, 'shot.webp', 'image/webp');
+
+    const result = await resizeImageIfNeeded(file);
+
+    expect(calls.slice(0, 5).map((c) => c.quality)).toEqual([0.85, 0.75, 0.65, 0.55, 0.5]);
+    expect(calls.slice(5).map((c) => [c.width, c.height, c.quality])).toEqual([
+      [3600, 2700, 0.75],
+      [3200, 2400, 0.75],
+    ]);
+    expect(calls.some((c) => c.filledWhite)).toBe(false);
+    expect(result.file.name).toBe('shot.webp');
+    expect(result.file.type).toBe('image/webp');
+    expect(result.newSize).toBe(8 * MB);
+  });
+
+  it('last resort: when every step stays over 10MB, returns 30% dimensions at quality 0.5', async () => {
+    const { calls } = stubImagePipeline({ blobSizeFor: () => 11 * MB });
+    const file = fileOfSize(45 * MB, 'huge.jpg', 'image/jpeg');
+
+    const result = await resizeImageIfNeeded(file);
+
+    expect(calls).toHaveLength(5 + 7 + 1);
+    const last = calls[calls.length - 1];
+    expect([last.width, last.height, last.quality]).toEqual([1200, 900, 0.5]);
+    expect(result.wasResized).toBe(true);
+    expect(result.newSize).toBe(11 * MB);
+    expect(result.file.name).toBe('huge.jpg');
+  });
+
+  it('rejects with the load error message and revokes the object URL when the image fails to load', async () => {
+    const { calls, revoked } = stubImagePipeline({ blobSizeFor: () => MB, imageLoads: false });
+
+    await expect(resizeImageIfNeeded(fileOfSize(20 * MB, 'bad.jpg', 'image/jpeg'))).rejects.toThrow(
+      '이미지 로드에 실패했습니다.',
+    );
+    expect(revoked).toEqual(['blob:fake']);
+    expect(calls).toHaveLength(0);
+  });
+
+  it('rejects with the processing error message when the canvas has no 2D context', async () => {
+    stubImagePipeline({ blobSizeFor: () => MB, hasContext: false });
+
+    await expect(resizeImageIfNeeded(fileOfSize(20 * MB, 'a.jpg', 'image/jpeg'))).rejects.toThrow(
+      '이미지 처리에 실패했습니다.',
+    );
+  });
+
+  it('rejects with the conversion error message when toBlob yields null', async () => {
+    stubImagePipeline({ blobSizeFor: () => null });
+
+    await expect(resizeImageIfNeeded(fileOfSize(20 * MB, 'a.jpg', 'image/jpeg'))).rejects.toThrow(
+      '이미지 변환에 실패했습니다.',
+    );
+  });
 });

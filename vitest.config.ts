@@ -19,12 +19,15 @@ export default defineConfig({
         '**/*.test.tsx',
         '**/*.spec.ts',
       ],
-      // Coverage thresholds: Target 90%+ for React component library
-      lines: 85,
-      functions: 85,
-      branches: 80,
-      statements: 85,
-      thresholdAutoUpdate: false,
+      // Coverage thresholds: Target 90%+ for React component library.
+      // Vitest 4 는 coverage.thresholds 아래의 값만 읽는다(최상위 lines 등은 무시된다).
+      thresholds: {
+        lines: 85,
+        functions: 85,
+        branches: 80,
+        statements: 85,
+        autoUpdate: false,
+      },
     },
     include: [
       '__tests__/unit/**/*.test.ts',
