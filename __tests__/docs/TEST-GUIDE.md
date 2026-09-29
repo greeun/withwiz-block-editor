@@ -1,8 +1,8 @@
 # Test Suite Quick Reference Guide
 
 **Project**: @withwiz/block-editor
-**Total Tests**: 497 passing, 26 todo (523 tests in 22 files, measured 2026-09-29 with `npm test` after the bio editor component was removed)
-**Code Coverage**: Statements 86.2%, Branches 88.98%, Functions 90.52%, Lines 85.2% for source files loaded by tests (measured 2026-09-29, see [Coverage Requirements](#coverage-requirements))
+**Total Tests**: 503 passing, 26 todo (529 tests in 22 files, measured 2026-09-30 with `npx vitest run` after the resize-stage tests were added)
+**Code Coverage**: Statements 95.21%, Branches 92.8%, Functions 98.94%, Lines 95.51% for source files loaded by tests with `npm run test:coverage`; 95.01% / 92.58% / 98.94% / 95.29% under the CI command. Thresholds (85/80/85/85) are enforced and CI fails below them (measured 2026-09-30, see [Coverage Requirements](#coverage-requirements))
 **Status**: ✅ 0 failing. The 26 todo tests are `it.todo` placeholders in `accessibility.test.ts`
 
 ---
@@ -19,7 +19,7 @@ npm test
 npm run test:watch
 
 # Specific test category
-npm run test:unit              # Unit tests (324)
+npm run test:unit              # Unit tests (330)
 npm run test:integration       # Integration tests (28)
 npm run test:api               # API contract tests (11)
 npm run test:e2e               # E2E tests (57)
@@ -39,11 +39,11 @@ npm run test:coverage
 
 ```
 __tests__/
-├── unit/                    # 324 tests
+├── unit/                    # 330 tests
 │   ├── core/
 │   │   ├── html-renderer.test.ts        (67 tests)
 │   │   ├── html-renderer-blocks.test.ts (85 tests)
-│   │   ├── image-resize.test.ts         (16 tests)
+│   │   ├── image-resize.test.ts         (22 tests)
 │   │   └── serializer.test.ts           (38 tests)
 │   ├── blocks/
 │   │   └── built-in.test.ts             (47 tests)
@@ -211,20 +211,20 @@ it('단락 블록이 <p> 태그로 렌더링됨', () => {
 
 | Category | Tests | Status |
 |----------|-------|--------|
-| Unit Tests | 324 | ✅ 100% pass |
+| Unit Tests | 330 | ✅ 100% pass |
 | API Tests | 11 | ✅ 100% pass |
 | E2E Tests | 57 | ✅ 100% pass |
 | Security | 45 | ✅ 100% pass |
 | Performance | 12 | ✅ 100% pass |
 | Accessibility | 46 | ✅ 20 pass, 26 todo |
 | Integration | 28 | ✅ 100% pass |
-| **Total** | **523** | **✅ 497 pass, 0 fail, 26 todo** |
+| **Total** | **529** | **✅ 503 pass, 0 fail, 26 todo** |
 
 Per-file breakdown and scenario/case mapping: `docs/testing/test-classification.md`.
 
 ### Coverage by Module
 
-Measured 2026-09-29 with `@vitest/coverage-v8@4.1.11` (devDependency) and `--coverage.include='src/**'`.
+Measured 2026-09-30 with `@vitest/coverage-v8@4.1.11` (devDependency) and `npx vitest run --coverage --coverage.include='src/**'` (performance tests included).
 
 | Module | Stmts | Branch | Funcs | Lines |
 |--------|-------|--------|-------|-------|
@@ -233,15 +233,15 @@ Measured 2026-09-29 with `@vitest/coverage-v8@4.1.11` (devDependency) and `--cov
 | src/mini-editor/toolbar-config.ts | 100% | 100% | 100% | 100% |
 | src/core/serializer.ts | 100% | 75% | 100% | 100% |
 | src/core/html-renderer.ts | 98.98% | 95.41% | 100% | 98.76% |
+| src/core/image-resize.ts | 96.72% | 92.22% | 100% | 96.69% |
 | src/mini-editor/useRichText.ts | 96.72% | 91.42% | 100% | 100% |
 | src/mini-editor/MiniEditor.tsx | 93.1% | 88% | 100% | 100% |
 | src/hooks/useImageDropZone.ts | 84.15% | 82.6% | 92.3% | 84.37% |
-| src/core/image-resize.ts | 58.19% | 73.33% | 50% | 58.67% |
-| src/components/BlockEditor.tsx, BlockRenderer.tsx, ImageUploadField.tsx, BlockPreviewTheme.tsx | 0% | 0% | 0% | 0% |
-| **Overall, files loaded by tests** (`npm run test:coverage` default) | **86.2%** | **88.98%** | **90.52%** | **85.2%** |
-| **Overall, all `src/**`** | **54.41%** | **57.14%** | **43.65%** | **53.97%** |
+| src/components/BlockEditor.tsx, BlockRenderer.tsx, ImageUploadField.tsx, BlockPreviewTheme.tsx | 0% | 0% (BlockPreviewTheme has no branches and reports 100%) | 0% | 0% |
+| **Overall, files loaded by tests** (`npm run test:coverage` default) | **95.21%** | **92.8%** | **98.94%** | **95.51%** |
+| **Overall, all `src/**`** | **60.09%** | **59.59%** | **47.71%** | **60.51%** |
 
-No test imports the four component files in the 0% row. Without `--coverage.include`, Vitest 4 leaves them out of the report, so the default overall figure only covers the other files.
+No test imports the four component files in the 0% row. Without `--coverage.include`, Vitest 4 leaves them out of the report, so the default overall figure only covers the other files. The `image-resize.ts` row rose from 58.67% lines (2026-09-29) after the resize-stage tests were added.
 
 ---
 
@@ -402,24 +402,27 @@ Coverage instrumentation slows rendering. On 2026-09-16, PERF-002 `500블록 호
 
 When Vitest detects an AI agent environment, the text reporter hides files with 100% statement, branch, and function coverage. Use `--coverage.reporter=json-summary` or open `coverage/index.html` to see every file.
 
-### Configured Thresholds (Not Enforced)
+### Enforced Thresholds
 
-`vitest.config.ts` sets these values directly under `coverage`:
+`vitest.config.ts` sets these values under `coverage.thresholds` (with `autoUpdate: false`):
 - Lines: 85%
 - Functions: 85%
 - Statements: 85%
 - Branches: 80%
 
-Vitest 4 reads thresholds only from `coverage.thresholds`, so these values are ignored and a coverage run never fails because of them. `thresholdAutoUpdate` is not a Vitest 4 option either.
+Since 2026-09-30 (`947ea24`) the thresholds are enforced. If any metric in the report falls below its value, the run prints `ERROR: Coverage for <metric> (...) does not meet global threshold (...)` and exits with code 1. CI (`.github/workflows/ci.yml`) runs `npm run test:coverage -- --exclude '**/performance/**'`, so a CI build fails when coverage drops below the thresholds. Before that commit the values sat directly under `coverage`, where Vitest 4 ignores them.
 
-### Actual Coverage (2026-09-29)
+The thresholds apply to whatever the report covers. `--coverage.include='src/**'` adds the four untested component files at 0%, so that command now fails the thresholds. Use it to see the size of untested code, not as a gate.
 
-| Scope | Stmts | Branch | Funcs | Lines |
-|-------|-------|--------|-------|-------|
-| Files loaded by tests (default report) | 86.2% | 88.98% | 90.52% | 85.2% |
-| All `src/**` | 54.41% | 57.14% | 43.65% | 53.97% |
+### Actual Coverage (2026-09-30)
 
-The default report is above the configured values. The all-`src/**` figure is below them.
+| Command | Report scope | Files / tests | Stmts | Branch | Funcs | Lines | Thresholds |
+|---------|--------------|---------------|-------|--------|-------|-------|------------|
+| `npm run test:coverage` | Files loaded by tests, performance tests included | 22 / 529 | 95.21% | 92.8% | 98.94% | 95.51% | Pass (exit 0) |
+| `npm run test:coverage -- --exclude '**/performance/**'` (CI) | Files loaded by tests, performance tests excluded | 20 / 517 | 95.01% | 92.58% | 98.94% | 95.29% | Pass (exit 0) |
+| `npx vitest run --coverage --coverage.include='src/**'` | All `src/**` | 22 / 529 | 60.09% | 59.59% | 47.71% | 60.51% | Fail (exit 1) |
+
+Before the resize-stage tests in `__tests__/unit/core/image-resize.test.ts` were added, the CI command measured 84.97% lines and would have failed the 85% threshold. The 2026-09-29 figures were 86.2% / 88.98% / 90.52% / 85.2% for files loaded by tests and 54.41% / 57.14% / 43.65% / 53.97% for all `src/**`.
 
 ---
 
@@ -445,11 +448,11 @@ npm run typecheck
 
 `package.json` has no `prepublishOnly` script, so `npm publish` does not build or test automatically. Run these before publishing.
 
-Results on 2026-09-29 (`chore/remove-consumer-mentions`):
+Results on 2026-09-29 (`chore/remove-consumer-mentions`), with the test and coverage lines updated on 2026-09-30 (`fix/coverage-thresholds`):
 - ✅ `npm run typecheck` (TypeScript compilation, no errors)
 - ✅ `npm run build` (tsup bundle + type declaration generation)
-- ✅ `npm test` (497 passing, 0 failing, 26 todo)
-- Coverage is not a gate. The configured thresholds are not enforced (see [Coverage Requirements](#coverage-requirements))
+- ✅ `npm test` (503 passing, 0 failing, 26 todo)
+- ✅ `npm run test:coverage` passes the enforced thresholds; CI fails when coverage drops below them (see [Coverage Requirements](#coverage-requirements))
 
 ---
 
@@ -467,7 +470,7 @@ Results on 2026-09-29 (`chore/remove-consumer-mentions`):
 1. Add unit tests to appropriate `__tests__/unit/` file
 2. Add edge case tests (null, undefined, empty values)
 3. Add security tests if handling user input
-4. Check coverage against the 85% target (not enforced automatically)
+4. Run `npm run test:coverage`; it fails if coverage drops below the thresholds
 
 ### For New Features
 
@@ -525,10 +528,10 @@ npx vitest run --reporter=verbose
 
 ## Quick Status
 
-✅ **497 passing, 0 failing, 26 todo** (523 tests in 22 files)
-✅ **85.2% line coverage** for files loaded by tests (53.97% across all `src/**`)
+✅ **503 passing, 0 failing, 26 todo** (529 tests in 22 files)
+✅ **95.51% line coverage** for files loaded by tests (95.29% under the CI command, 60.51% across all `src/**`), thresholds enforced in CI
 ✅ **22/22 block types** have render tests
 ✅ **6/6 html-renderer helper functions** have unit tests
 
-**Last Updated**: September 29, 2026 (test counts, coverage, and build status measured on `chore/remove-consumer-mentions` after the bio editor component was removed)
+**Last Updated**: September 30, 2026 (test counts and coverage measured on `fix/coverage-thresholds` after the thresholds moved to `coverage.thresholds` and the resize-stage tests were added; build status from September 29, 2026)
 **PDCA Report Status**: Approved (report dated 2026-03-03)
