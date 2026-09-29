@@ -2,7 +2,18 @@
 
 All notable changes to the @withwiz/block-editor project are documented here.
 
-## [Unreleased]
+## [0.5.1] - 2026-09-30
+
+### Fixed
+
+- 커버리지 임계값(lines 85·functions 85·branches 80·statements 85)이 Vitest 4 가 읽지 않는 위치에 있어 적용되지 않던 것을 `coverage.thresholds` 로 옮겼다. 이제 `npm run test:coverage` 와 CI 가 기준 미달이면 실패한다.
+
+### Tests
+
+- `resizeImageIfNeeded` 의 리사이즈 단계(품질 단계·크기 단계·최후 단계)와 로드·2D 컨텍스트·변환 실패를 검증하는 단위 테스트 6건을 추가했다. `image-resize.ts` 라인 커버리지 58.67% → 96.69%.
+- 공개 API 와 런타임 동작은 바뀌지 않았다.
+
+## [0.5.0] - 2026-09-29
 
 ### Removed
 
