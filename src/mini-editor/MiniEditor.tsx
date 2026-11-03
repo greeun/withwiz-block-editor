@@ -12,7 +12,8 @@ export interface MiniEditorProps {
   /**
    * Optional HTML sanitizer. Applied to incoming `value` before injection
    * and to outgoing HTML before `onChange`. Pure function, no I/O.
-   * Recommended: a wrapper around DOMPurify in the host app.
+   * Recommended: a wrapper around DOMPurify in the host app. Without it `value`
+   * reaches `innerHTML` unchanged, so it is required for untrusted content.
    */
   sanitize?: Sanitizer;
   /** Accessible name for the editing area. */

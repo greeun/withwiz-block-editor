@@ -75,6 +75,22 @@ const INITIAL_STATE: RichTextFormatState = {
 
 export type Sanitizer = (html: string) => string;
 
+// This package has no Node types; bundlers replace `process.env.NODE_ENV` at build time.
+declare const process: { env: { NODE_ENV?: string } };
+
+let warnedMissingSanitizer = false;
+
+/** Warn once outside production: without a sanitizer, `value` reaches `innerHTML` unchanged. */
+function warnMissingSanitizerOnce(): void {
+  if (warnedMissingSanitizer) return;
+  if (typeof process === 'undefined' || process.env.NODE_ENV === 'production') return;
+  warnedMissingSanitizer = true;
+  console.warn(
+    '[@withwiz/block-editor] MiniEditor received HTML without a `sanitize` prop. ' +
+      'Pass a DOMPurify wrapper if the value can contain untrusted content.',
+  );
+}
+
 export function useRichText(
   value: string | undefined,
   onChange: ((html: string) => void) | undefined,
@@ -105,6 +121,7 @@ export function useRichText(
     if (isComposingRef.current) return;
     const fn = sanitizeRef.current;
     const next = fn ? fn(value ?? '') : (value ?? '');
+    if (!fn && next) warnMissingSanitizerOnce();
     if (el.innerHTML !== next) {
       el.innerHTML = next;
     }

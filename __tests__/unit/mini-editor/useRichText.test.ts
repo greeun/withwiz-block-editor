@@ -108,3 +108,59 @@ describe('useRichText', () => {
     expect(result.current.formatState.bold).toBe(true);
   });
 });
+
+describe('useRichText sanitize 미지정 경고', () => {
+  async function load() {
+    vi.resetModules();
+    const mod = await import('../../../src/mini-editor/useRichText');
+    return mod.useRichText;
+  }
+
+  function renderAttached(hook: Awaited<ReturnType<typeof load>>, value: string, sanitize?: (h: string) => string) {
+    const el = document.createElement('div');
+    document.body.appendChild(el);
+    return renderHook(
+      ({ v }) => {
+        const r = hook(v, undefined, sanitize);
+        (r.editorRef as { current: HTMLDivElement | null }).current = el;
+        return r;
+      },
+      { initialProps: { v: value } },
+    );
+  }
+
+  it('sanitize 없이 내용이 주입되면 개발 환경에서 1회 경고하고 값은 그대로 넣는다', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const hook = await load();
+
+    const { rerender, result } = renderAttached(hook, '<b>a</b>');
+    rerender({ v: '<b>c</b>' });
+
+    expect(warn).toHaveBeenCalledTimes(1);
+    expect(String(warn.mock.calls[0][0])).toContain('sanitize');
+    expect(result.current.editorRef.current?.innerHTML).toBe('<b>c</b>');
+    warn.mockRestore();
+  });
+
+  it('sanitize 를 지정하면 경고하지 않는다', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const hook = await load();
+
+    renderAttached(hook, '<b>a</b>', (h) => h);
+
+    expect(warn).not.toHaveBeenCalled();
+    warn.mockRestore();
+  });
+
+  it('프로덕션에서는 경고하지 않는다', async () => {
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    vi.stubEnv('NODE_ENV', 'production');
+    const hook = await load();
+
+    renderAttached(hook, '<b>a</b>');
+
+    expect(warn).not.toHaveBeenCalled();
+    vi.unstubAllEnvs();
+    warn.mockRestore();
+  });
+});
